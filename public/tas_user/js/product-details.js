@@ -81,8 +81,9 @@ function addToCart(id) {
   }
 
   fetch(url, options)
+  .then(response=>response.json())
   .then(response => {
-    if(!response.ok) return response.json().then(err => { throw new Error(err.error); });
+    if(!response.success) return response.json().then(err => { throw new Error(err.error); });
     window.location.href = response.url;
   })
   .catch(error => console.log('cart error : ', error));

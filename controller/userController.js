@@ -293,7 +293,6 @@ const getShopAll = async (req, res) => {
   const sortOption = req.query.sort || "a-z";
   const filterOption = req.query.filter || "";
 
-
   let sortCriteria;
 
   switch (sortOption) {
@@ -316,15 +315,24 @@ const getShopAll = async (req, res) => {
       sortCriteria = {}; // Default to no sorting
   }
   try {
-    let category = filterOption && await Category.findOne({deleted: false, category_name:filterOption});
-    console.log('heloow gooasdlfk : ', category)
+    let category =
+      filterOption &&
+      (await Category.findOne({ deleted: false, category_name: filterOption }));
+    console.log("heloow gooasdlfk : ", category);
 
-    const filterCritiria = (category) ? {category:category._id, deleted:false} : {deleted:false}
+    const filterCritiria = category
+      ? { category: category._id, deleted: false }
+      : { deleted: false };
 
     let products = await Product.find(filterCritiria).sort(sortCriteria);
-    console.log('heloow smikle dshasld : ', products)
+    console.log("heloow smikle dshasld : ", products);
     let userSession = req.session.user;
-    res.render("user/pages/shopPage/shop-all-page.ejs", { products, sortOption, filterOption, userSession });
+    res.render("user/pages/shopPage/shop-all-page.ejs", {
+      products,
+      sortOption,
+      filterOption,
+      userSession,
+    });
   } catch (err) {}
 };
 
@@ -370,35 +378,54 @@ const getCartPage = async (req, res) => {
 
 const postCart = async (req, res) => {
   try {
-    const {productId, quantity} = req.body;
+    const { productId, quantity } = req.body;
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
 
     let cart = await Cart.findOne({ userId: userId });
-    let product = await Product.findOne({_id:productId});
+    let product = await Product.findOne({ _id: productId });
+
+    if (!product || product.deleted) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Item not available." });
+    }
+
     const totalPrice = product.price * quantity;
 
-    console.log('cart : ',cart)
-    console.log('product : ',product)
-    console.log('totalPrice : ',totalPrice)
+    console.log("cart : ", cart);
+    console.log("product : ", product);
+    console.log("totalPrice : ", totalPrice);
 
     if (cart) {
-      cart.items.push({ ...item, totalPrice });
-      await cart.save();
+      const cartItem = cart.items.filter(
+        (item) => item.productId === productId
+      );
+      if (cartItem)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "This product already added to cart",
+          });
+      cart.items.push({ productId: product._id, quantity, totalPrice });
     } else {
-      const newCartItem = new Cart({
-        userId: userId,
+      console.log("cart else started ........");
+
+      cart = new Cart({
+        userId,
         items: [
           {
-            productId,
-            totalPrice,
+            productId: product._id,
             quantity,
+            totalPrice,
           },
         ],
       });
-      await newCartItem.save();
-      console.log("cart post : ", newCartItem, " added");
+      console.log("cart saving ........");
     }
+    await cart.save();
+    console.log("................. cart end ........");
     res.redirect("/cart");
   } catch (err) {
     console.log("post cart error : ", err);

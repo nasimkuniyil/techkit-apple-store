@@ -9,7 +9,7 @@ const cartSchema = new Schema(
     userId: { type: ObjectId, ref: "User", required: true },
     items: [
       {
-        productId: { type: ObjectId, ref: "Product" },
+        productId: { type: String },
         quantity: { type: Number },
         totalPrice: { type: Number },
       },

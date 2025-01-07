@@ -26,7 +26,7 @@
             <% cartProducts.forEach(product => { %>
           <div class="cart-item">
             <img
-              src="../../../../product.thumb_image[0]"
+              src="../../../../<%-product.images[0].replace(/\\/g, '/' ) %>"
               alt="Product"
               class="item-image"
             />
