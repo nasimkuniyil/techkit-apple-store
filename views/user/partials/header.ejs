@@ -1,0 +1,106 @@
+<!-- Header Navigation -->
+<section class="header-main">
+  <div class="header-container">
+    <nav class="header-nav">
+      <!-- Logo -->
+      <a href="/" class="header-logo">
+        <h2><strong>TechKit</strong></h2>
+      </a>
+
+      <!-- Mobile Menu Toggle -->
+      <button class="header-mobile-toggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Main Navigation -->
+      <div class="header-nav-content">
+        <ul class="header-nav-list">
+          <li class="header-nav-item">
+            <a href="/" class="header-nav-link">Home</a>
+          </li>
+          
+          <!-- Shop Dropdown -->
+          <li class="header-nav-item header-dropdown">
+            <a href="/shop-all" class="header-nav-link">
+              Shop
+              <svg class="header-dropdown-icon" width="10" height="6" viewBox="0 0 10 6">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.5"/>
+              </svg>
+            </a>
+            <ul class="header-dropdown-content">
+              <li><a href="/shop-all">All</a></li>
+              <li><a href="/shop/mac">Mac</a></li>
+              <li><a href="/shop/iphone">iPhone</a></li>
+              <li><a href="/shop/ipad">iPad</a></li>
+              <li><a href="/shop/watch">Apple Watch</a></li>
+              <li><a href="/shop/accessories">Accessories</a></li>
+            </ul>
+          </li>
+
+          <li class="header-nav-item">
+            <a href="/contact-us" class="header-nav-link">Contact</a>
+          </li>
+          
+          <li class="header-nav-item">
+            <a href="/help" class="header-nav-link">Help</a>
+          </li>
+
+          <!-- Account Dropdown -->
+          <li class="header-nav-item header-dropdown">
+            <a href="#" class="header-nav-link">
+              Account
+              <svg class="header-dropdown-icon" width="10" height="6" viewBox="0 0 10 6">
+                <path d="M1 1l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.5"/>
+              </svg>
+            </a>
+            <ul class="header-dropdown-content">
+              <% if(userSession) { %>
+                <li><a href="/user-profile">Profile</a></li>
+                <li><a href="/wishlist">Wishlist</a></li>
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/logout">Logout</a></li>
+              <% } else { %>
+                <li><a href="/login">Login</a></li>
+              <% } %>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right Icons -->
+      <div class="header-actions">
+        <button class="header-search-toggle" aria-label="Search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15px" height="44px" viewBox="0 0 15 44">
+            <path d="M14.298,27.202l-3.87-3.87c0.701-0.929,1.122-2.081,1.122-3.332c0-3.06-2.489-5.55-5.55-5.55c-3.06,0-5.55,2.49-5.55,5.55 c0,3.061,2.49,5.55,5.55,5.55c1.251,0,2.403-0.421,3.332-1.122l3.87,3.87c0.151,0.151,0.35,0.228,0.548,0.228 s0.396-0.076,0.548-0.228C14.601,27.995,14.601,27.505,14.298,27.202z M1.55,20c0-2.454,1.997-4.45,4.45-4.45 c2.454,0,4.45,1.997,4.45,4.45S8.454,24.45,6,24.45C3.546,24.45,1.55,22.454,1.55,20z"></path>
+          </svg>
+        </button>
+        <a href="/cart" class="header-cart" aria-label="Shopping Cart">
+          <svg height="44" viewBox="0 0 14 44" width="14" xmlns="http://www.w3.org/2000/svg">
+            <path d="m11.3535 16.0283h-1.0205a3.4229 3.4229 0 0 0 -3.333-2.9648 3.4229 3.4229 0 0 0 -3.333 2.9648h-1.02a2.1184 2.1184 0 0 0 -2.117 2.1162v7.7155a2.1186 2.1186 0 0 0 2.1162 2.1167h8.707a2.1186 2.1186 0 0 0 2.1168-2.1167v-7.7155a2.1184 2.1184 0 0 0 -2.1165-2.1162zm-4.3535-1.8652a2.3169 2.3169 0 0 1 2.2222 1.8652h-4.4444a2.3169 2.3169 0 0 1 2.2222-1.8652zm5.37 11.6969a1.0182 1.0182 0 0 1 -1.0166 1.0171h-8.7069a1.0182 1.0182 0 0 1 -1.0165-1.0171v-7.7155a1.0178 1.0178 0 0 1 1.0166-1.0166h8.707a1.0178 1.0178 0 0 1 1.0164 1.0166z"></path></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="header-search-overlay">
+    <div class="header-search-container">
+      <form class="header-search-form">
+        <input type="text" placeholder="Search Here" class="header-search-input">
+        <button type="submit" class="header-search-submit">
+          <svg width="17" height="17" viewBox="0 0 17 17">
+            <path d="M7.5 13C10.5376 13 13 10.5376 13 7.5C13 4.46243 10.5376 2 7.5 2C4.46243 2 2 4.46243 2 7.5C2 10.5376 4.46243 13 7.5 13ZM7.5 15C11.6421 15 15 11.6421 15 7.5C15 3.35786 11.6421 0 7.5 0C3.35786 0 0 3.35786 0 7.5C0 11.6421 3.35786 15 7.5 15Z" fill="currentColor"/>
+            <path d="M12 12L16 16" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+        <button type="button" class="header-search-close">
+          <svg width="17" height="17" viewBox="0 0 17 17">
+            <path d="M3 3L14 14M14 3L3 14" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>

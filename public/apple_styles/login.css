@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.5;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.form-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+}
+
+h1 {
+    font-size: 27px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.subtitle {
+    color: #86868b;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #0071e3;
+}
+
+label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #86868b;
+    transition: all 0.3s;
+    pointer-events: none;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    background-color: white;
+    padding: 0 4px;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.forgot-link {
+    color: #0071e3;
+    text-decoration: none;
+}
+
+.sign-in-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #0071e3;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sign-in-btn:hover {
+    background-color: #0077ed;
+}
+
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    color: #86868b;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    display: inline-block;
+    width: 40%;
+    height: 1px;
+    background-color: #d2d2d7;
+    vertical-align: middle;
+    margin: 0 10px;
+}
+
+.google-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: white;
+    border: 1px solid #d2d2d7;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background-color 0.3s;
+}
+
+.google-btn:hover {
+    background-color: #f5f5f7;
+}
+
+.signup-text {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.signup-text a {
+    color: #0071e3;
+    text-decoration: none;
+}
+
+/* OTP Styles */
+.otp-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.timer {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #86868b;
+}
+
+.otp-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.resend-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #0071e3;
+    cursor: pointer;
+}
+
+.resend-btn:disabled {
+    color: #86868b;
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #ff3b30;
+    cursor: pointer;
+}

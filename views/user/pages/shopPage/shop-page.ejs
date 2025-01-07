@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/apple_styles/shop.css" />
+    <link rel="stylesheet" href="/apple_styles/card-style.css" />
+  </head>
+  <body>
+    <header><%- include('../../partials/header.ejs') %></header>
+    <main>
+      <section class="container">
+        <div class="main-heading">
+          <div class="heading">
+            <h1>
+              <span>Shop <%- category %>.</span>
+            </h1>
+          </div>
+        </div>
+      </section>
+
+      <!-- filter section -->
+      <section class="container">
+        <div class="filter-bar">
+          <div class="filter-container">
+            <div class="filter-group">
+              <label for="sort">Sort</label>
+              <select id="sort">
+                <option value="a-z" <%= sortOption === 'a-z' ? 'selected' : '' %>>A-Z</option>
+                <option value="z-a" <%= sortOption === 'z-a' ? 'selected' : '' %>>Z-A</option>
+                <option value="low-high" <%= sortOption === 'low-high' ? 'selected' : '' %>>Low - High</option>
+                <option value="high-low" <%= sortOption === 'high-low' ? 'selected' : '' %>>High - Low</option>
+                <option value="popular" <%= sortOption === 'popular' ? 'selected' : '' %>>Popular</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <diV class="card-container">
+          <div class="content-wrapper">
+            <div class="card-list shop">
+              <%- include('../../partials/card-item', {products:products}) %>
+            </div>
+          </div>
+        </diV>
+      </section>
+    </main>
+    <footer><%- include('../../partials/footer') %></footer>
+    <script defer src="/tas_user/js/shop.js"></script>
+    <%- include('../../../partials/scripts') %>
+  </body>
+</html>

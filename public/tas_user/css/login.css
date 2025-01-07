@@ -1,0 +1,115 @@
+.signin-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-container h1{
+    font-size: 1.8rem;
+    font-weight: 700;
+    padding: 0;
+    color: #1d1d1f;
+    text-align: center;
+  }
+
+  .login-container h2{
+    font-size: 1.3rem;
+    font-weight: 500;
+    padding: 0;
+    color: #1d1d1f;
+    text-align: center;
+    padding: 15px 0;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    border-color: #0071e3;
+  }
+
+  .password-container {
+    position: relative;
+  }
+
+  .show-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #0071e3;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    background: #0071e3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.25s;
+  }
+
+  .btn:hover {
+    background: #0077ed;
+    color: white;
+  }
+
+  .google-btn {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #1d1d1f;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 1rem 0;
+  }
+
+  .links {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .links a {
+    color: #0071e3;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin: 0 10px;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
+  }

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/apple_styles/product-details.css" />
+    <link rel="stylesheet" href="/apple_styles/breadcrumb.css" />
+    <link rel="stylesheet" href="/apple_styles/card-style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+    <main class="prod-pt">
+      <!-- Breadcrumb Section -->
+      <section class="container">
+        <nav class="breadcrumb">
+          <a href="/">Home</a>
+          <span class="separator">›</span>
+          <a href="/shop/<%- category_name %>"><%- category_name %></a>
+          <span class="separator">›</span>
+          <span><%- product.product_name %></span>
+        </nav>
+      </section>
+      <!-- Image Gallery Section -->
+      <section class="container">
+        <div class="product-grid">
+          <div class="image-gallery">
+            <div class="main-image">
+              <img
+                src="../../../../<%- product.images[0] %>"
+                alt="Product Main Image"
+                id="mainImage"
+              />
+              <div id="zoomPane"></div>
+            </div>
+            <div class="thumbnail-container">
+              <%product.thumb_image.forEach( (img,index) => { %>
+              <div class="thumbnail active">
+                <img
+                  src="../../../../<%- product.thumb_image[index] %>"
+                  alt="Product Thumbnail 1"
+                  data-src="../../../../<%- product.images[index] %>"
+                />
+              </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <!-- Product Info Section -->
+          <div class="product-info">
+            <h1 class="product-title"><%- product.product_name %></h1>
+
+            <div class="rating">
+              ★★★★☆
+              <span style="color: #86868b; margin-left: 10px">(4.5/5)</span>
+            </div>
+
+            <div class="color-options">
+              <p>Color : <span><%- product.color %></span></p>
+            </div>
+
+            <% if(product.quantity > 0){ %>
+
+            <p class="stock-status">
+              <%- product.quantity < 10 ? "Only few products are left" : "" %>
+            </p>
+            <div class="quantity-selector">
+              <button class="quantity-btn" onclick="updateQuantity({change:-1, prodQuantity:'<%= product.quantity %>'})">
+                -
+              </button>
+              <span class="quantity-display" id="quantity">1</span>
+              <button class="quantity-btn" onclick="updateQuantity({change:1, prodQuantity:'<%= product.quantity %>'})">
+                +
+              </button>
+            </div>
+
+            <p class="stock-status" id="stockStatus"></p>
+
+            <% }else{ %>
+            <p class="stock-status" id="stockStatus">Out of stock</p>
+            <% } %>
+
+            <div class="action-buttons">
+              <button
+                class="add-to-cart"
+                onclick="addToCart('<%= product._id %>')"
+              >
+                Add to Cart
+              </button>
+              <button class="add-to-wishlist" onclick="addToWishlist('<%= product._id %>')">
+                <i class="far fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Product Description -->
+      <section class="container">
+        <div class="product-description">
+          <div class="product-description-grid">
+            <div class="description-content">
+              <h2>About <%- product.product_name %></h2>
+              <p><%- product.description %></p>
+            </div>
+            <div class="features-list">
+              <h3>Key Features</h3>
+              <ul>
+                <li>
+                  <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  6.1-inch Super Retina XDR display with ProMotion
+                </li>
+                <li>
+                  <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  A17 Pro chip with 6-core GPU
+                </li>
+                <li>
+                  <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  Pro camera system with 48MP main
+                </li>
+                <li>
+                  <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  Action button for quick access to your favorite features
+                </li>
+                <li>
+                  <span class="feature-icon">
+                    <i class="fas fa-check"></i>
+                  </span>
+                  All-day battery life and MagSafe charging
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews Section -->
+      <section class="container">
+        <div class="reviews-section">
+          <h2 class="section-title">Customer Reviews</h2>
+
+          <div class="review-form">
+            <h3>Write a Review</h3>
+            <form onsubmit="submitReview(event)">
+              <div class="star-rating">
+                <input type="radio" id="star1" name="rating" value="1" />
+                <label for="star1" class="fas fa-star"></label>
+                <input type="radio" id="star2" name="rating" value="2" />
+                <label for="star2" class="fas fa-star"></label>
+                <input type="radio" id="star3" name="rating" value="3" />
+                <label for="star3" class="fas fa-star"></label>
+                <input type="radio" id="star4" name="rating" value="4" />
+                <label for="star4" class="fas fa-star"></label>
+                <input type="radio" id="star5" name="rating" value="5" />
+                <label for="star5" class="fas fa-star"></label>
+              </div>
+              <textarea
+                placeholder="Write your review here..."
+                required
+              ></textarea>
+              <button type="submit" class="submit-review">Submit Review</button>
+            </form>
+          </div>
+
+          <div class="review-list">
+            <div class="review-item">
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+              <p>
+                Amazing product! The quality is outstanding and it exceeded my
+                expectations.
+              </p>
+              <small style="color: #86868b">John D. - 2 days ago</small>
+            </div>
+            <div class="review-item">
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+              </div>
+              <p>Great device, but the battery life could be better.</p>
+              <small style="color: #86868b">Sarah M. - 1 week ago</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <diV class="card-container">
+          <div class="content-wrapper">
+            <div class="heading">
+              <h2><span>You May Also Like</span></h2>
+            </div>
+            <div class="card-list">
+              <%- include('../../partials/card-item', {products:
+              recommendedProducts}) %>
+            </div>
+          </div>
+        </diV>
+      </section>
+    </main>
+    <footer><%-include('../../partials/footer')%></footer>
+    <script defer src="/tas_user/js/product-details.js"></script>
+  </body>
+</html>

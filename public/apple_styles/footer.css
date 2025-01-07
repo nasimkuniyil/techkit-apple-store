@@ -1,0 +1,148 @@
+footer {
+    padding: 10px calc(100vw* 0.1);
+}
+
+.ftr_links_under_heading{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px 0 40px;
+}
+
+.ftr_h_link a{
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+    font-size: 16px;
+    text-decoration: none;
+    color: rgb(32, 32, 32);
+    transition: 0.35s;
+}
+
+.ftr_h_link a:hover{
+    background-color: rgb(32, 32, 32);
+    color: white;
+}
+
+/* footer all links heading */
+.ftr_apple_link_heading{
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+.ftr_apple_link_heading img{
+    width: 20px;
+}
+.ftr_apple_link_heading span{
+    font-size: 13px;
+    color: rgb(78, 78, 78);
+}
+
+/* footer all */
+.ftr_all_links{
+    padding: 25px 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.ftr_all_links ul[title]:before{
+    content: attr(title);
+    font-weight: 600;
+}
+
+.ftr_all_links li{
+    list-style: none;
+    padding-top: 8px;
+}
+
+.ftr_all_links a{
+    text-decoration: none;
+    color: grey;
+    font-size: 14px;
+}
+
+.ftr_all_links a:hover{
+    text-decoration: underline;
+}
+
+/* footer bottom */
+.ftr_bottom_container{
+    font-size: 14px;
+    color: rgb(148, 148, 148);
+}
+
+.ftr_sml_para{
+    border-bottom: 1px solid  rgba(136, 136, 136, 0.397);
+    padding-bottom: 10px;
+}
+
+.ftr_sml_para a{
+    color: var(--blue);
+}
+
+.ftr_bottom_content{
+    display: flex;
+    gap: 40px;
+    padding-top: 15px;
+}
+
+.ftr_bottom_content a{
+    text-decoration: none;
+    color: rgb(148, 148, 148);
+}
+.ftr_bottom_content a:hover{
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVE STYLES */
+
+@media (max-width: 576px) {
+    .ftr_all_links{
+        flex-direction: column;
+    }
+}
+
+@media all and (max-width: 992px){
+    .ftr_links_under_heading {
+        padding: 10px 0 20px;
+        gap:22px 8px;
+    }
+    .ftr_h_link a{
+        padding: 8px;
+        border-radius: 15px;
+        font-size: 13px;
+    }
+
+    .ftr_all_links ul[title]:before {
+        font-size: 13px;
+    }
+
+    .ftr_all_links{
+        padding: 25px 0;
+        gap: 20px;
+        /* flex-direction: column; */
+    }
+
+    .ftr_all_links li {
+        padding-top: 5px;
+    }
+
+    .ftr_all_links a {
+        font-size: 12px;
+    }
+
+    .ftr_sml_para {
+        font-size: 12px;
+    }
+
+    .ftr_bottom_content {
+        gap: 10px;
+        flex-direction: column;
+        font-size: 12px;
+    }
+    
+}

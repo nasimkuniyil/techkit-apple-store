@@ -1,0 +1,79 @@
+.flash {
+  position: absolute;
+  padding: 8px 15px;
+  border-radius: 5px;
+  left: calc(50% - 5%);
+  opacity: 0; 
+  transform: translateY(-20px); 
+  transition: all  0.3s ease-in-out;
+}
+
+.flash-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.show {
+  opacity: 1;
+  transform: translateY(10px); 
+}
+
+/* -- fetch method related notificaiton style */
+#popup-message{
+  width: fit-content;
+  padding: 10px;
+  opacity: 1;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  animation: popup ease 0.5s;
+  transition: all 3s ease-in-out;
+}
+
+#notification{
+  position: fixed;
+  height: fit-content;
+  top : 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 3s ease-in-out;
+}
+
+#popup-message.hide{
+  opacity: 0;
+  transition: all 0.25s;
+}
+
+.success{
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.failed{
+  background-color: #ffe4e6;
+  color: #e11d48;
+}
+
+@keyframes popup {
+  from{
+      transform: translateY(-100%);
+      opacity: 0;
+  }
+  to{
+      transform: 0;
+      opacity: 1;
+  }
+}
+@keyframes hide {
+  0%{
+      transform: 0;
+      opacity: 1;
+  }
+  20%{
+      transform: translateY(5px);
+  }
+  100%{
+      transform: translateY(-100%);
+      opacity: 0;
+  }
+}

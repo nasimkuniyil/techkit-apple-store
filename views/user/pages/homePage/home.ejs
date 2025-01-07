@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/apple_styles/home.css" />
+  </head>
+  <body>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+    <main>
+      <section class="hero-section">
+        <div class="hero-item">
+          <div class="main-heading">
+            <div class="heading">
+              <h1>
+                <span>Store.</span> The best way to buy the products you love.
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="hero-item">
+          <%- include('./sections/product-nav-section') %>
+        </div>
+      </section>
+      <!-- Latest Product Section -->
+      <section>
+        <diV class="card-container">
+          <div class="content-wrapper">
+            <div class="heading">
+              <h2><span>The latest.</span> Let them unwrap wonders.</h2>
+            </div>
+            <div class="card-list">
+              <%- include('../../partials/card-item', {products: latestProd}) %>
+            </div>
+          </div>
+        </diV>
+      </section>
+      <!-- Personalization Product Section -->
+      <section>
+        <diV class="card-container">
+          <div class="content-wrapper">
+            <div class="heading">
+              <h2><span>Popular Picks.</span> Unwrap the Magic.</h2>
+            </div>
+            <div class="card-list">
+              <%- include('../../partials/card-item', {products: popularProd}) %>
+            </div>
+          </div>
+        </diV>
+      </section>
+
+      <!-- Popular Product Section -->
+      <section>
+        <diV class="card-container">
+          <div class="content-wrapper">
+            <div class="heading">
+              <h2>
+                <span>Personalization.</span> Just for them, just from you.
+              </h2>
+            </div>
+            <div class="card-list">
+              <%- include('../../partials/card-item', {products: accessories}) %>
+            </div>
+          </div>
+        </diV>
+      </section>
+      <!-- Shop Highlight Section -->
+      <section class="shop-highlights-section">
+        <%- include('./sections/shop-highlights-section') %>
+      </section>
+    </main>
+    <footer><%- include('../../partials/footer') %></footer>
+    <%- include('../../../partials/scripts') %>
+  </body>
+</html>

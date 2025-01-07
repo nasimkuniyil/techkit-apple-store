@@ -1,0 +1,54 @@
+/* --------------- PRODUCT NAV SECTION START ---------------*/
+
+/* --- HERO SECTION --- */
+.hero-section {
+    min-height: calc(100vh* 0.81);
+    display: flex;
+    flex-direction: column;
+    padding: 0 calc(100vw * 0.1);
+  }
+  
+  .hero-item {
+    flex: 1;
+  }
+
+  .hero-item h1{
+    max-width: 580px;
+  }
+
+
+/* products container */
+.product_wrapper {
+  display: flex;
+  justify-content: center;
+  column-gap: 25px;
+  overflow-x: scroll;
+}
+
+.product_wrapper a {
+  text-decoration: none;
+}
+
+.product_card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
+  width: 130px;
+}
+
+.product_card img {
+  width: 120px;
+}
+
+.product_card p {
+  color: var(--black);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.product_card p:hover {
+  text-decoration: underline;
+}
+/* --------------- PRODUCT NAV SECTION END ---------------*/

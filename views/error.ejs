@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head.ejs') %>
+    <title>Error Page</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 text-center d-flex align-items-center justify-content-center" style="height: 100vh;">
+          <div>
+            <h1>Error page!</h1>
+            <p><%- err.message %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

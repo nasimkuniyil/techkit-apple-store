@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/cart.css" />
+  </head>
+  <body>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+    <main>
+      <section class="container">
+        <div class="main-heading">
+          <div class="heading">
+            <h1>
+              <span>Cart</span>
+            </h1>
+          </div>
+        </div>
+      </section>
+
+      <div class="cart-container">
+        <div class="cart-items" id="cartItems">
+          <!-- Sample cart item - This will be dynamically populated -->
+          <% if ( cartProducts ) { %> 
+            <% cartProducts.forEach(product => { %>
+          <div class="cart-item">
+            <img
+              src="../../../../product.thumb_image[0]"
+              alt="Product"
+              class="item-image"
+            />
+            <div class="item-details">
+              <h3 class="item-name"><%- product.product_name %></h3>
+              <!-- <p class="item-specs">128GB - Space Black</p> -->
+              <div class="quantity-selector">
+                <button class="quantity-btn decrease" onclick="updateQty(-1)">−</button>
+                <span class="quantity">1</span>
+                <button class="quantity-btn increase" onclick="updateQty(1)">+</button>
+              </div>
+            </div>
+            <div class="item-price">
+              <p class="price"><%- product.price %></p>
+              <button class="remove-btn">Remove</button>
+            </div>
+          </div>
+          <%})%>
+          <% }else{ %>
+          <p>Cart items are not available.</p>
+          <% } %>
+        </div>
+
+        <!-- Cart summary -->
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="subtotal">$999.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="shipping">FREE</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="total">$999.00</span>
+          </div>
+          <button class="checkout-btn">Check Out</button>
+        </div>
+      </div>
+    </main>
+    <footer><%- include('../../partials/footer') %></footer>
+    <script src="tas_user/js/cart.js"></script>
+    <%- include('../../../partials/scripts') %>
+  </body>
+</html>

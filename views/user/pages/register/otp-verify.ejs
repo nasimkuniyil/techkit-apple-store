@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/otp-verify.css">
+  </head>
+  <body>
+    <section id="notification"></section>
+    <section class="wrapper">
+      <div class="container">
+        <h1>Verification Code</h1>
+        <p class="subtitle">Enter the verification code sent to your email</p>
+
+        <form id="otpForm">
+          <div class="otp-container">
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+              autofocus
+            />
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+            />
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+            />
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+            />
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+            />
+            <input
+              type="text"
+              class="otp-input"
+              maxlength="1"
+              pattern="[0-9]"
+              required
+            />
+          </div>
+
+          <div class="timer" id="timer">
+            Time remaining: <span id="time">02:00</span>
+          </div>
+
+          <div class="btn-container">
+            <button type="button" class="btn cancel" id="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn">Verify</button>
+          </div>
+        </form>
+
+        <div class="resend">
+          <button id="resendBtn" disabled>Resend Code</button>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+          Invalid verification code. Please try again.
+        </div>
+      </div>
+    </section>
+
+    <script src="/tas_user/js/otp-verify.js"></script>
+  </body>
+</html>
