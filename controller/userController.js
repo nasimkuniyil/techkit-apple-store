@@ -208,12 +208,76 @@ const getLogout = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const uId = req.session.user;
-    const userId = auth.getUserSessionData(uId);
-    const userData = await User.findOne({ _id: userId });
-    return res.render("user/pages/profilePage/userProfile", { userData });
+    return res.render("user/pages/profilePage/userProfile", {
+      userSession: uId,
+    });
   } catch (err) {
     console.log("getProfile error : ", err.message);
   }
+};
+
+const getProfileData = async (req, res) => {
+  try {
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    const userData = await User.findOne({ _id: userId });
+    if (!userData)
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+
+    const profileAvatar = `${userData.firstname[0]}${userData.lastname[0]}`;
+    return res.status(200).json({ userData, profileAvatar });
+  } catch (err) {
+    console.log("getProfileData error : ", err.message);
+  }
+};
+
+const editProfile = async (req, res) => {
+  try {
+    console.log("Entered Edit Profile Page.");
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    const { firstName, lastName, mobile } = req.body;
+    console.log("user data : ", req.body);
+    const userData = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          firstname: firstName,
+          lastname: lastName,
+          mobile,
+        },
+      }
+    );
+
+    if (!userData) {
+      return res
+        .status(400)
+        .json({ success: false, message: "user update error" });
+    }
+    return res.status(200).redirect("/profile");
+  } catch (err) {
+    console.log("getProfile error : ", err.message);
+  }
+};
+
+const getAddress = async (req, res) => {
+  try {
+    return res.render("user/pages/addressPage/address-page", {
+      userSession: req.session.user,
+    });
+  } catch (err) {
+    console.log("getProfile error : ", err.message);
+  }
+};
+
+const getAddressData = async (req, res) => {
+  try {
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    const userData = await User.findOne({ _id: userId });
+  } catch (err) {}
 };
 
 const getHome = async (req, res) => {
@@ -363,14 +427,49 @@ const getCartPage = async (req, res) => {
     const userSession = req.session.user;
     const userId = auth.getUserSessionData(userSession);
     let cartList = await Cart.findOne({ userId });
-    let cartProducts = await Promise.all(
-      cartList.items.map((product) => {
-        return Product.findOne({ _id: product.productId });
-      })
-    );
-    console.log("cart products details : ", cartProducts);
+    let cartProductData = [];
 
-    res.render("user/pages/cartPage/cart-page", { cartProducts, userSession });
+    if (cartList) {
+      //collect cart product details
+      const cartProducts = await Promise.all(
+        cartList.items.map((product) => {
+          return Product.findOne({ _id: product.productId, deleted: false });
+        })
+      );
+
+      cartProducts.forEach((element) => {
+        for (cartElem of cartList.items)
+          if (element._id === cartElem.productId) {
+            console.log("items prod : ", element);
+            console.log("items cart : ", cartElem);
+            const data = {
+              id: element._id,
+              product_name: element.product_name,
+              color: element.color,
+              thumb_image: element.thumb_image[0],
+              price: element.price,
+              category: element.category,
+              quantity: element.quantity,
+              cartQty: cartElem.quantity,
+              totalPrice: cartElem.totalPrice,
+            };
+            cartProductData.push(data);
+          }
+      });
+    }
+
+    console.log(
+      "---------------------- CART PRODUCT DETAILS START ---------------"
+    );
+    console.log(cartProductData);
+    console.log(
+      "---------------------- CART PRODUCT DETAILS END ---------------"
+    );
+
+    res.render("user/pages/cartPage/cart-page", {
+      cartProductData,
+      userSession,
+    });
   } catch (err) {
     console.log("getcart page error : ", err);
   }
@@ -398,16 +497,16 @@ const postCart = async (req, res) => {
     console.log("totalPrice : ", totalPrice);
 
     if (cart) {
-      const cartItem = cart.items.filter(
-        (item) => item.productId === productId
+      const cartItem = cart.items.some(
+        (item) => item.productId.toString() === productId.toString()
       );
-      if (cartItem)
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "This product already added to cart",
-          });
+      if (cartItem) {
+        console.log("item available in cart");
+        return res.status(400).json({
+          success: false,
+          message: "This product already added to cart",
+        });
+      }
       cart.items.push({ productId: product._id, quantity, totalPrice });
     } else {
       console.log("cart else started ........");
@@ -435,8 +534,35 @@ const postCart = async (req, res) => {
 const updateCart = async (req, res) => {
   try {
     console.log("entered update cart.");
-    const { productId, quantity } = req.body;
-    console.log(`product id is -${productId}- | quantity : ${quantity}`);
+
+    const { productId, quantity, deleted, price } = req.body;
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+
+    console.log(
+      `product id is -${productId}- | quantity : ${quantity} | deleted : ${deleted}`
+    );
+    const updatedCart = await Cart.findOneAndUpdate(
+      { userId: userId, "items.productId": productId },
+      {
+        $set: {
+          "items.$.quantity": quantity,
+          "items.$.totalPrice": quantity * price,
+        },
+      }
+    );
+
+    if (updatedCart.nModified > 0) {
+      console.log("Cart product updated.");
+      return res
+        .status(200)
+        .json({ success: true, message: "Product updated in cart" });
+    } else {
+      console.log("Product not found in cart.");
+      return res
+        .status(400)
+        .json({ success: false, message: "Product not found in cart." });
+    }
   } catch (err) {}
 };
 
@@ -449,6 +575,9 @@ module.exports = {
   postVerifyOTP,
   getLogout,
   getProfile,
+  getProfileData,
+  editProfile,
+  getAddress,
   getHome,
   getShop,
   getShopAll,

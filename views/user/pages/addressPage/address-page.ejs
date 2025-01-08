@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/address-variables.css" />
+    <link rel="stylesheet" href="/tas_user/css/address-styles.css" />
+  </head>
+  <body>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+    <nav class="profile-nav">
+        <div class="profile-nav-container">
+          <h1 class="profile-nav-title">Account Settings</h1>
+          <div class="profile-nav-links">
+            <a href="/profile" class="profile-nav-link ">Profile</a>
+            <a href="/address" class="profile-nav-link active">Addresses</a>
+          </div>
+        </div>
+      </nav>
+    <div class="address-container">
+      <header class="address-header">
+        <h1>Addresses</h1>
+        <button id="address-add-btn" class="address-btn-primary">
+          Add New Address
+        </button>
+      </header>
+
+      <section class="address-list" id="address-list">
+        <div class="address-card">
+          <div class="address-card-content">
+            <h3 class="address-name">John Doe</h3>
+            <p class="address-line">123 Apple Street</p>
+            <p class="address-line">Cupertino, CA 95014</p>
+            <p class="address-line">United States</p>
+          </div>
+          <div class="address-card-actions">
+            <button class="address-btn-secondary address-edit-btn">Edit</button>
+            <button class="address-btn-secondary address-delete-btn">
+              Delete
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div id="address-modal" class="address-modal">
+        <div class="address-modal-content">
+          <h2>Add New Address</h2>
+          <form id="address-form">
+              <div class="address-form-row">
+                <div class="address-form-group">
+                  <label for="address-name">Full Name</label>
+                  <input type="text" id="address-name" required />
+                </div>
+              <div class="address-form-group">
+                <label for="address-line1">Address Line 1</label>
+                <input type="text" id="address-line1" required />
+              </div>
+              <div class="address-form-group">
+                <label for="address-line2">Address Line 2</label>
+                <input type="text" id="address-line2" />
+              </div>
+              <div class="address-form-group">
+                <label for="address-city">City</label>
+                <input type="text" id="address-city" required />
+              </div>
+              <div class="address-form-group">
+                <label for="address-state">State</label>
+                <input type="text" id="address-state" required />
+              </div>
+              <div class="address-form-group">
+                <label for="address-zip">ZIP Code</label>
+                <input type="text" id="address-zip" required />
+              </div>
+            </div>
+            <div class="address-form-actions">
+              <button
+                type="button"
+                class="address-btn-secondary"
+                id="address-cancel-btn"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="address-btn-primary">
+                Save Address
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="tas_user/js/address-script.js"></script>
+    <%- include('../../../partials/scripts') %>
+  </body>
+</html>

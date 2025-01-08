@@ -2,6 +2,7 @@ const Product = require("../models/product");
 
 const checkCart = async (req, res, next) => {
   try {
+    console.log('entered check cart middleware')
     const { productId, quantity } = req.body;
     const prod = await Product.findById(productId);
 

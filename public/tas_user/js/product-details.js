@@ -49,9 +49,9 @@ let maxStock = 5;
 const quantityDisplay = document.getElementById("quantity");
 const stockStatus = document.getElementById("stockStatus");
 
-function updateQuantity({change, prodQuantity}) {
+function updateQuantity({ change, prodQuantity }) {
   const newQuantity = quantity + change;
-  maxStock = (maxStock >= prodQuantity) ? prodQuantity : maxStock;
+  maxStock = maxStock >= prodQuantity ? prodQuantity : maxStock;
   if (newQuantity >= 1 && newQuantity <= maxStock) {
     quantity = newQuantity;
     quantityDisplay.textContent = quantity;
@@ -70,23 +70,29 @@ function updateStockStatus() {
 
 // Cart and Wishlist Functions
 function addToCart(id) {
-
-  const url = window.location.origin+"/add-cart";
+  const url = window.location.origin + "/add-cart";
   const options = {
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-    body:JSON.stringify({productId:id, quantity})
-  }
+    body: JSON.stringify({ productId: id, quantity }),
+  };
 
   fetch(url, options)
-  .then(response=>response.json())
-  .then(response => {
-    if(!response.success) return response.json().then(err => { throw new Error(err.error); });
-    window.location.href = response.url;
-  })
-  .catch(error => console.log('cart error : ', error));
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((err) => {
+          throw new Error(err.message); // Handle errors from the server
+        });
+      }
+      window.location.href = response.url;
+      // return response.json();
+    })
+    .catch((error) => {
+      const text = `${error}`;
+      alert(text)
+    });
 }
 
 function addToWishlist() {
@@ -106,24 +112,23 @@ const starRatingLabel = document.querySelectorAll(".star-rating label");
 starRatingInput.forEach((input) => {
   input.addEventListener("change", (e) => {
     userRating = e.target.value;
-    console.log(userRating)
-    removeStarFill()
-    starRatingLabel.forEach((item, index) =>{
-        if(userRating > index){
-            item.classList.add('star-fill')
-        }
-
-    })
+    console.log(userRating);
+    removeStarFill();
+    starRatingLabel.forEach((item, index) => {
+      if (userRating > index) {
+        item.classList.add("star-fill");
+      }
+    });
+  });
 });
-});
 
-function removeStarFill(){
-    starRatingLabel.forEach(item => item.classList.remove('star-fill'))
+function removeStarFill() {
+  starRatingLabel.forEach((item) => item.classList.remove("star-fill"));
 }
 
 function submitReview(event) {
-    event.preventDefault();
-    console.log(userRating)
+  event.preventDefault();
+  console.log(userRating);
   const reviewText = event.target.querySelector("textarea").value;
 
   if (userRating === 0) {

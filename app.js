@@ -12,6 +12,11 @@ const {sessionMiddleware} = require('./middleware/session.js')
 // port
 const port = process.env.PORT || 3000;
 
+app.use((err, req, res, next)=>{
+    if(err)return console.log("--- | MAIN ERROR MESSAGE |--- :",err);
+    next()
+})
+
 //express configuration
 app.use(express.urlencoded({extended : true}));
 app.use(express.json())
