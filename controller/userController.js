@@ -206,6 +206,30 @@ const getLogout = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    const userData = await User.findOne({ _id: userId });
+
+    const {currentPassword, newPassword} = req.body;
+
+    // check user exist in database
+    if(!userData) return res.status(400).json({success:false, message:'User not found'});
+    
+    // checking password
+    if(userData.password !== currentPassword) return res.status(400).json({success:false, message:'Wrong password'});
+
+    // Change Password
+    userData.password = newPassword;
+    await userData.save();
+
+    return res.status(200).json({success:true, message:'Password Changed'});
+  } catch (err) {
+    console.log("changePassword error message : ", err.message);
+  }
+};
+
 const getProfile = async (req, res) => {
   try {
     const uId = req.session.user;
@@ -664,6 +688,7 @@ module.exports = {
   getOtpPage,
   postVerifyOTP,
   getLogout,
+  changePassword,
   getProfile,
   getProfileData,
   editProfile,

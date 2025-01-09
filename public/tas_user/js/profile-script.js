@@ -158,14 +158,26 @@ function handlePasswordUpdate(event) {
     return;
   }
 
-  // Here you would typically send the password update to a server
   console.log("Password update request:", { currentPassword, newPassword });
+
+  const url = '/api/change-password'
+
+  const options={
+    method:'PUT',
+    headers:{
+      'Content-Type' : 'application/json'
+    },
+    body:JSON.stringify({currentPassword,newPassword})
+  }
+
+  fetch(url, options)
+  .then((response)=> {
+    if(response.ok) closeChangePasswordModal();
+  })
+  .catch(err => console.log('change password error : ', err))
 
   // Show success message
   showNotification("Password updated successfully!");
-
-  // Close modal and reset form
-  closeChangePasswordModal();
 }
 
 // Utility Functions

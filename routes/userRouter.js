@@ -19,6 +19,8 @@ router.get("/auth/google",authMiddlewares.redirectIfLoggedIn, googleAuth);
 router.get("/auth/google/callback",passport.authenticate("google", { failureRedirect: "/login" }),googleCallback);
 router.get("/logout",authMiddlewares.isAuthenticated, userController.getLogout);
 
+router.put('/api/change-password',authMiddlewares.isAuthenticated, userController.changePassword);
+
 router.get("/", userController.getHome);
 router.get("/shop/:category", userController.getShop);
 router.get("/shop-all", userController.getShopAll);
