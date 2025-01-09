@@ -123,7 +123,9 @@ body {
 }
 
 .address-line {
-    margin: var(--address-spacing-xs) 0;
+    margin: 0;
+    line-height: 20px;
+    font-size: 14px;
     color: var(--address-color-text-secondary);
 }
 
@@ -180,7 +182,7 @@ body {
 
 .address-form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: var(--address-spacing-md);
 }
 

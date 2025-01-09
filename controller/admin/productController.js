@@ -1,5 +1,5 @@
-const product = require("../../models/product.js");
-const Product = require("../../models/product.js");
+const product = require("../../models/productSchema.js");
+const Product = require("../../models/productSchema.js");
 
 module.exports = {
   getAll: async () => {

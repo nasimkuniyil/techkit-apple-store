@@ -7,6 +7,9 @@ const inputField = document.querySelectorAll(".form-group input");
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  document.querySelector('#email').value = 'nsblend999@gmail.com'
+  document.querySelector('#password').value = 505050
+
   const validateResult = formValidate();
 
   if (validateResult) {
@@ -105,4 +108,10 @@ function removeElem(div) {
       div.remove();
     }, 500);
   }, 2500);
+}
+
+
+function loginUser(){
+  document.querySelector('#email').value = 'nsblend999@gmail.com'
+  document.querySelector('#password').value = 505050
 }

@@ -1,5 +1,5 @@
 const passport = require("passport");
-const User = require("../models/user");
+const User = require("../models/userSchema");
 const googleStrategy = require("passport-google-oauth2").Strategy;
 
 passport.use(

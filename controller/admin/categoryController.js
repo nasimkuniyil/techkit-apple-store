@@ -1,4 +1,4 @@
-const Category = require("../../models/category");
+const Category = require("../../models/categorySchema");
 
 module.exports = {
   add: async (category_name) => {

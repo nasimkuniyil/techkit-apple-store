@@ -31,9 +31,10 @@ router.get('/profile',authMiddlewares.isAuthenticated, userController.getProfile
 router.get('/api/profile',authMiddlewares.isAuthenticated, userController.getProfileData);
 router.put('/edit-profile',authMiddlewares.isAuthenticated, userController.editProfile);
 
-router.get("/address",userController.getAddress);
-router.post("/add-address");
-router.put("/edit-address");
-router.delete("/remove-address");
+router.get("/address",authMiddlewares.isAuthenticated, userController.getAddress);
+router.get("/api/address",authMiddlewares.isAuthenticated, userController.getAddressData);
+router.post("/api/add-address",authMiddlewares.isAuthenticated, userController.postAddress);
+router.put("/api/edit-address",authMiddlewares.isAuthenticated, userController.editAddress);
+router.delete("/api/remove-address",authMiddlewares.isAuthenticated, userController.deleteAddress);
 
 module.exports = router;

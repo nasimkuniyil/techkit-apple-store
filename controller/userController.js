@@ -4,11 +4,12 @@ const { generateOTP } = require("../service/helpers");
 
 let otpStore = {}; //temporary store for otp
 
-const Product = require("../models/product");
-const User = require("../models/user");
+const Product = require("../models/productSchema");
+const User = require("../models/userSchema");
 const auth = require("./sessionController");
-const Category = require("../models/category");
-const Cart = require("../models/cart");
+const Category = require("../models/categorySchema");
+const Cart = require("../models/cartSchema");
+const Address = require("../models/addressSchema");
 
 const getLogin = async (req, res) => {
   try {
@@ -274,9 +275,96 @@ const getAddress = async (req, res) => {
 
 const getAddressData = async (req, res) => {
   try {
+    console.log("ENTERED getAddressData");
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
-    const userData = await User.findOne({ _id: userId });
+    const address = await Address.findOne({userId});
+    console.log("address data : ", address);
+    if (!address)
+      return res
+        .status(400)
+        .json({ success: false, message: "Address not available" });
+    return res.status(200).json(address);
+  } catch (err) {}
+};
+
+const postAddress = async (req, res) => {
+  try {
+    console.log("ENTERED add address");
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+
+    const { name, mobile, address, city, state, country, pincode, landmark } = req.body;
+
+    const userAddress = await Address.findOne({ userId });
+
+    if (!userAddress) {
+      const newAddress = await Address({
+        userId,
+        address: [
+          { name, mobile, address, city, state, country, pincode, landmark },
+        ],
+      });
+      newAddress.save();
+      return res.status(200).redirect("/address");
+    }
+
+    userAddress.address.push(req.body);
+    await userAddress.save();
+    return res.status(200).redirect("/address");
+  } catch (err) {}
+};
+
+const editAddress = async (req, res) => {
+  try {
+    console.log("ENTERED edit address");
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+
+    const { addressId } = req.query;
+    const {name,mobile,address,city,state,country,pincode,landmark} = req.body;
+    
+    const addressData = await Address.findOne({userId});
+
+    if(!addressData) return res.status(400).json({success:false, message:'Address not available'});
+
+    const updatedAddress = addressData.address.map(item => {
+      if(item._id==addressId){
+        item.name = name;
+        item.mobile = mobile;
+        item.address = address;
+        item.city = city;
+        item.state = state;
+        item.country = country;
+        item.pincode = pincode;
+        item.landmark = landmark;
+      }
+
+      return item;
+    });
+    addressData.address = updatedAddress;
+    await addressData.save();
+
+    return res.status(200).redirect("/address");
+  } catch (err) {}
+};
+
+const deleteAddress = async (req, res) => {
+  try {
+    console.log("ENTERED delete address");
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    const { addressId } = req.query;
+
+    const addressData = await Address.findOne({userId});
+
+    if(!addressData) return res.status(400).json({success:false, message:'Address not available'});
+
+    const updatedAddress = addressData.address.filter(item => item._id!=addressId);
+    addressData.address = updatedAddress;
+    await addressData.save();
+
+    return res.status(200).redirect("/address");
   } catch (err) {}
 };
 
@@ -309,20 +397,25 @@ const getHome = async (req, res) => {
 const getShop = async (req, res) => {
   const sortOption = req.query.sort || "a-z";
 
+  console.log(sortOption)
+
   let sortCriteria;
 
   switch (sortOption) {
     case "a-z":
-      sortCriteria = { name: 1 }; //A-Z
+      sortCriteria = { product_name: 1 }; //A-Z
       break;
     case "z-a":
-      sortCriteria = { name: -1 }; //Z-A
+      sortCriteria = { product_name: -1 }; //Z-A
       break;
     case "low-high":
       sortCriteria = { price: 1 }; //Low to High
       break;
     case "high-low":
       sortCriteria = { price: -1 }; //High to Low
+      break;
+    case "latest":
+      sortCriteria = {createdAt : -1}; // lates (descending)
       break;
     case "popular":
       sortCriteria = { popularity: -1 }; //popularity (Descending)
@@ -339,8 +432,6 @@ const getShop = async (req, res) => {
       deleted: false,
     }).sort(sortCriteria);
     let userSession = req.session.user;
-
-    console.log("get shop console : ", products);
 
     res.render("user/pages/shopPage/shop-page.ejs", {
       category: category.category_name,
@@ -372,9 +463,12 @@ const getShopAll = async (req, res) => {
     case "high-low":
       sortCriteria = { price: -1 }; //High to Low
       break;
-    case "popular":
-      sortCriteria = { popularity: -1 }; //popularity (Descending)
+    case "latest":
+      sortCriteria = {createdAt : -1}; // lates (descending)
       break;
+    case "popular":
+    sortCriteria = { popularity: -1 }; //popularity (Descending)
+    break;
     default:
       sortCriteria = {}; // Default to no sorting
   }
@@ -382,14 +476,12 @@ const getShopAll = async (req, res) => {
     let category =
       filterOption &&
       (await Category.findOne({ deleted: false, category_name: filterOption }));
-    console.log("heloow gooasdlfk : ", category);
 
     const filterCritiria = category
       ? { category: category._id, deleted: false }
       : { deleted: false };
 
     let products = await Product.find(filterCritiria).sort(sortCriteria);
-    console.log("heloow smikle dshasld : ", products);
     let userSession = req.session.user;
     res.render("user/pages/shopPage/shop-all-page.ejs", {
       products,
@@ -521,10 +613,8 @@ const postCart = async (req, res) => {
           },
         ],
       });
-      console.log("cart saving ........");
     }
     await cart.save();
-    console.log("................. cart end ........");
     res.redirect("/cart");
   } catch (err) {
     console.log("post cart error : ", err);
@@ -578,6 +668,10 @@ module.exports = {
   getProfileData,
   editProfile,
   getAddress,
+  getAddressData,
+  postAddress,
+  editAddress,
+  deleteAddress,
   getHome,
   getShop,
   getShopAll,

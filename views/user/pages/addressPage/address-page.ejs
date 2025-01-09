@@ -10,14 +10,14 @@
       <%- include('../../partials/header.ejs') %>
     </header>
     <nav class="profile-nav">
-        <div class="profile-nav-container">
-          <h1 class="profile-nav-title">Account Settings</h1>
-          <div class="profile-nav-links">
-            <a href="/profile" class="profile-nav-link ">Profile</a>
-            <a href="/address" class="profile-nav-link active">Addresses</a>
-          </div>
+      <div class="profile-nav-container">
+        <h1 class="profile-nav-title">Account Settings</h1>
+        <div class="profile-nav-links">
+          <a href="/profile" class="profile-nav-link">Profile</a>
+          <a class="profile-nav-link active">Addresses</a>
         </div>
-      </nav>
+      </div>
+    </nav>
     <div class="address-container">
       <header class="address-header">
         <h1>Addresses</h1>
@@ -26,51 +26,44 @@
         </button>
       </header>
 
-      <section class="address-list" id="address-list">
-        <div class="address-card">
-          <div class="address-card-content">
-            <h3 class="address-name">John Doe</h3>
-            <p class="address-line">123 Apple Street</p>
-            <p class="address-line">Cupertino, CA 95014</p>
-            <p class="address-line">United States</p>
-          </div>
-          <div class="address-card-actions">
-            <button class="address-btn-secondary address-edit-btn">Edit</button>
-            <button class="address-btn-secondary address-delete-btn">
-              Delete
-            </button>
-          </div>
-        </div>
-      </section>
+      <section class="address-list" id="address-list"></section>
 
       <div id="address-modal" class="address-modal">
         <div class="address-modal-content">
           <h2>Add New Address</h2>
           <form id="address-form">
-              <div class="address-form-row">
-                <div class="address-form-group">
-                  <label for="address-name">Full Name</label>
-                  <input type="text" id="address-name" required />
-                </div>
+            <div class="address-form-row">
               <div class="address-form-group">
-                <label for="address-line1">Address Line 1</label>
-                <input type="text" id="address-line1" required />
+                <label for="name">Full Name</label>
+                <input type="text" id="name" />
               </div>
               <div class="address-form-group">
-                <label for="address-line2">Address Line 2</label>
-                <input type="text" id="address-line2" />
+                <label for="mobile">Mobile</label>
+                <input type="text" id="mobile" />
               </div>
               <div class="address-form-group">
-                <label for="address-city">City</label>
-                <input type="text" id="address-city" required />
+                <label for="address">Address</label>
+                <input type="text" id="address" />
               </div>
               <div class="address-form-group">
-                <label for="address-state">State</label>
-                <input type="text" id="address-state" required />
+                <label for="city">City</label>
+                <input type="text" id="city" />
               </div>
               <div class="address-form-group">
-                <label for="address-zip">ZIP Code</label>
-                <input type="text" id="address-zip" required />
+                <label for="state">State</label>
+                <input type="text" id="state" />
+              </div>
+              <div class="address-form-group">
+                <label for="country">country</label>
+                <input type="text" id="country" />
+              </div>
+              <div class="address-form-group">
+                <label for="pincode">Pin Code</label>
+                <input type="text" id="pincode" />
+              </div>
+              <div class="address-form-group">
+                <label for="landmark">Landmark</label>
+                <input type="text" id="landmark" />
               </div>
             </div>
             <div class="address-form-actions">

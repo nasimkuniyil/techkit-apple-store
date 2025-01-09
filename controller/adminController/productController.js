@@ -2,9 +2,9 @@ const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
 
-const Product = require("../../models/product");
-const Category = require("../../models/category");
-const product = require("../../models/product");
+const Product = require("../../models/productSchema");
+const Category = require("../../models/categorySchema");
+const product = require("../../models/productSchema");
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {

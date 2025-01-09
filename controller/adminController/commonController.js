@@ -1,4 +1,4 @@
-const Admin = require('../../models/admin');
+const Admin = require('../../models/adminSchema');
 
 
 const getDashboard = async(req, res)=>{
