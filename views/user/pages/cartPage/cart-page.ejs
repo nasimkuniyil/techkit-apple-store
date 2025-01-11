@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/tas_user/css/cart.css" />
   </head>
   <body>
+    <section id="notification"></section>
     <header class="main_menu home_menu">
       <%- include('../../partials/header.ejs') %>
     </header>
@@ -21,34 +22,7 @@
 
       <div class="cart-container">
         <div class="cart-items" id="cartItems">
-          <!-- Sample cart item - This will be dynamically populated -->
-          <% if ( cartProductData.length > 0 ) { %> 
-            <% cartProductData.forEach(product => { %>
-          <div class="cart-item"  id="<%-product._id%>">
-            <img
-              src="../../../../<%-product.thumb_image.replace(/\\/g, '/' ) %>"
-              alt="Product"
-              class="item-image"
-            />
-            <div class="item-details">
-              <h3 class="item-name"><%- product.product_name %></h3>
-              <p class="item-single-price"><%- product.price %></p>
-              <!-- <p class="item-specs">128GB - Space Black</p> -->
-              <div class="quantity-selector">
-                <button class="quantity-btn decrease">−</button>
-                <span class="quantity"><%- product.cartQty %></span>
-                <button class="quantity-btn increase">+</button>
-              </div>
-            </div>
-            <div class="item-price">
-              <p class="price"><%- product.totalPrice %></p>
-              <button class="remove-btn">Remove</button>
-            </div>
-          </div>
-          <%})%>
-          <% }else{ %>
-          <p>Cart items are not available.</p>
-          <% } %>
+          <!--  cart item - This will be dynamically populated -->
         </div>
 
         <!-- Cart summary -->

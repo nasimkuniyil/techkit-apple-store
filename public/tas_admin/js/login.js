@@ -3,45 +3,6 @@ const showPassword = document.getElementById("showPassword");
 const forgotPassword = document.getElementById("forgotPassword");
 const inputField = document.querySelectorAll(".form-group input");
 
-//Form
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  document.querySelector('#email').value = 'nsblend999@gmail.com'
-  document.querySelector('#password').value = 10201020
-
-  const validateResult = formValidate();
-
-  if (validateResult) {
-    showFlashMessage(validateResult);
-    return;
-  }
-
-  const formData = Object.fromEntries(new FormData(form));
-  fetch("/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        // Handle success (e.g., redirect to home page)
-        console.log("Logged in successfully:", data.message);
-        window.location.href = "/";
-      } else {
-        showFlashMessage(data);
-        console.log(data);
-      }
-    })
-    .catch((error) => {
-      // Handle network errors
-      console.error("Network error:", error);
-      alert("An unexpected error occurred. Please try again.");
-    });
-});
 
 // show / hide password
 showPassword.addEventListener("click", function () {
@@ -55,12 +16,6 @@ showPassword.addEventListener("click", function () {
     passwordInput.type = "password";
     showPasswordBtn.textContent = "Show";
   }
-});
-
-//forgot password
-forgotPassword.addEventListener("click", function (e) {
-  e.preventDefault();
-  window.location.href = "/forgot-password";
 });
 
 //Form validation
@@ -108,10 +63,4 @@ function removeElem(div) {
       div.remove();
     }, 500);
   }, 2500);
-}
-
-
-function loginUser(){
-  document.querySelector('#email').value = 'nsblend999@gmail.com'
-  document.querySelector('#password').value = 505050
 }

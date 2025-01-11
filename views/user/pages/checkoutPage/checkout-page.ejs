@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/checkout-styles.css" />
+  </head>
+  <body>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+    <div class="checkout-container">
+      <section id="notification"></section>
+      <!-- Header Section -->
+      <header class="checkout-header">
+        <h1>Checkout</h1>
+      </header>
+      <!-- Main Content -->
+      <main class="checkout-content">
+        <!-- Left Column -->
+        <div class="checkout-left-column">
+          <!-- Delivery Address Section -->
+          <section class="checkout-section checkout-addresses">
+            <h2>Delivery Address</h2>
+            <div class="address-list" id="addressList">
+              <!-- Existing addresses will be populated here -->
+            </div>
+            <button class="checkout-btn-secondary" id="addAddressBtn">
+              + Add New Address
+            </button>
+          </section>
+
+          <!-- Payment Method Section -->
+          <section class="checkout-section payment-method">
+            <h2>Payment Method</h2>
+            <div class="payment-option">
+              <input
+                type="radio"
+                id="cashOnDelivery"
+                name="paymentMethod"
+                checked
+              />
+              <label for="cashOnDelivery" class="payment-label">
+                <div class="payment-icon">💵</div>
+                <div class="payment-details">
+                  <h3>Cash on Delivery</h3>
+                  <p>Pay with cash when your order arrives</p>
+                </div>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <!-- Order Summary Section -->
+        <section class="checkout-section checkout-summary">
+          <h2>Order Summary</h2>
+          <div class="summary-items">
+            <!-- item section -->
+          </div>
+
+          <!-- Price Breakdown -->
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Subtotal</span>
+              <span id="subtotal">--</span>
+            </div>
+            <div class="price-row">
+              <span>Shipping</span>
+              <span id="shipping">--</span>
+            </div>
+            <div class="price-row">
+              <span>Tax</span>
+              <span id="tax">--</span>
+            </div>
+            <div class="price-row total">
+              <span>Total</span>
+              <span id="total">--</span>
+            </div>
+          </div>
+
+          <button class="checkout-btn-primary" id="placeOrderBtn">
+            Place Order
+          </button>
+        </section>
+      </main>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal" id="addressModal">
+      <div class="modal-content">
+        <h2>Add New Address</h2>
+        <form id="addressForm">
+          <div class="form-group">
+            <input type="text" id="name" required placeholder="Full Name" />
+          </div>
+          <div class="form-group">
+            <input type="text" id="address" required placeholder="Address" />
+          </div>
+          <div class="form-row">
+            <input type="text" id="mobile" required placeholder="Mobile" />
+            <input type="text" id="city" required placeholder="City" />
+          </div>
+          <div class="form-row">
+            <input type="text" id="state" required placeholder="State" />
+            <input type="text" id="country" required placeholder="Country" />
+          </div>
+          <div class="form-row">
+            <input type="text" id="pincode" required placeholder="PIN Code" />
+            <input type="text" id="landmark" required placeholder="Landmark" />
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="checkout-btn-secondary"
+              id="cancelAddress"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="checkout-btn-primary">
+              Save Address
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal" id="orderConfirmModal">
+      <div class="modal-content">
+        <h2>Order Confirmation</h2>
+        <p>Your order has been placed successfully!</p>
+        <div class="order-details">
+          <p><strong>Payment Method:</strong> Cash on Delivery</p>
+          <p><strong>Amount to be paid:</strong> $1,088.91</p>
+          <p>Please keep cash ready at the time of delivery.</p>
+        </div>
+        <button class="checkout-btn-primary" onclick="window.location.href='/'">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+    <footer><%- include('../../partials/footer') %></footer>
+    <script src="/tas_user/js/checkout-script.js"></script>
+  </body>
+</html>

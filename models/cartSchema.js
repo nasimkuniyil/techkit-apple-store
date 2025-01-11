@@ -10,8 +10,11 @@ const cartSchema = new Schema(
     items: [
       {
         productId: { type: String, unique:true },
+        product_name: { type: String },
+        color: { type: String },
         quantity: { type: Number },
         totalPrice: { type: Number },
+        price: { type: Number },
       },
     ],
   },

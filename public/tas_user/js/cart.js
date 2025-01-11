@@ -1,217 +1,268 @@
+const cartItem = document.querySelector("#cartItems");
 
-const cartItems = document.querySelectorAll(".cart-item");
-async function updateCart(data) {
-  const url = window.location.origin + "/update-cart";
-  const options = {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  };
+let cartProducts;
+let cartId;
+
+fetchCartData();
+
+// fetch Cart Data
+async function fetchCartData() {
+  const url = "/api/cart";
 
   try {
-    await fetch(url, options).then((response) => {
-      if (response.ok) {
-        alert("Cart updated");
-        return response.json();
-      } else {
-        throw new Error("Failed to update cart");
-      }
-    }).then(data =>{
-        if(data.deleted){
-            window.location.href = '/cart';
-        }
+    const response = await fetch(url, {
+      headers: { "Content-Type": "application/json" },
     });
+
+    if (!response.ok) {
+      const message = document.createElement('h3');
+      message.style.textAlign = 'center';
+      message.textContent = `Cart items not available.`;
+      document.querySelector('.cart-items').appendChild(message)
+      document.querySelector('.cart-summary').style.visibility = 'hidden';
+      throw new Error("Failed to fetch cart");
+    }
+  
+    const data = await response.json();
+    if (data.cartProducts) {
+      cartProducts = data.cartProducts;
+      console.log("data:", data.cartProducts);
+      cartId = data.cartId;
+      createCartItem(cartProducts);
+      attachEventListeners(cartProducts);
+      updateCartSummery()
+    }
   } catch (err) {
-    console.error("Error updating cart:", err);
+    console.error("Error fetching cart:", err);
+  }
+}
+
+// Cart update
+async function updateCart(data) {
+  const url = window.location.origin + "/api/update-cart";
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const result = await response.json();
+      console.log("res :", result);
+      stock = result.prodQty;
+      showFlashMessage(result);
+    } else {
+      const result = await response.json();
+      if (result.deleted) {
+        window.location.href = "/cart";
+      }
+    }
+  } catch (err) {
+    console.error("Error updating cart:", err.message);
+    // showFlashMessage()
     alert("An error occurred while updating the cart");
   }
 }
 
-function removeItemFromCart(){
-    const url = window.location.origin + "/delete-cart";
-    const options = {
+async function removeItemFromCart(productId) {
+  const url = window.location.origin + "/api/remove-cart";
+
+  try {
+    const response = await fetch(url, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(),
-    };
-    fetch(url,options)
-    .then()
-    .catch()
+      body: JSON.stringify({ productId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete item");
+    }
+
+    const cartItem = document.getElementById(productId);
+    // if (cartItem) {
+    //   cartItem.remove();
+    // }
+    window.location.href = '/cart'
+  } catch (err) {
+    console.error("Error removing item:", err);
+    alert("An error occurred while removing the item");
+  }
 }
 
-cartItems.forEach((item) => {
-  const parent = document.getElementById(`${item.id}`);
-  const qtyDisplay = parent.querySelector("span.quantity");
+function updateButtonStates(container, quantity, stock) {
+  const maxQty = Math.min(5, stock);
+  const decreaseBtn = container.querySelector(".decrease");
+  const increaseBtn = container.querySelector(".increase");
 
-  item.addEventListener("click", (event) => {
-    const elem = event.target;
-    let updateData = {
-      productId: item.id,
-      quantity: qtyDisplay.textContent,
-      deleted: false,
-    };
+  if (decreaseBtn && increaseBtn) {
+    decreaseBtn.disabled = quantity <= 1;
+    increaseBtn.disabled = quantity >= maxQty;
+  }
+}
 
-    if (elem.className == "quantity-btn increase") {
-      updateData.quantity = ++qtyDisplay.textContent;
-      updateCart(updateData);
-    }
-    if (elem.className == "quantity-btn decrease") {
-      updateData.quantity = --qtyDisplay.textContent;
-      updateCart(updateData);
-    }
+function createCartItem(products) {
+  const cartItems = products
+    .map(
+      (product) => `
+    <div class="cart-item" id="${product.id}" data-stock="${product.quantity}">
+      <img
+        src="../../../../${product.thumb_image.replace(/\\/g, "/")}"
+        alt="Product"
+        class="item-image"
+      />
+      <div class="item-details">
+        <h3 class="item-name">${product.product_name}</h3>
+        <p class="item-single-price">${product.price}</p>
+        <div class="quantity-selector">
+          <button class="quantity-btn decrease" ${
+            product.cartQty <= 1 ? "disabled" : ""
+          }>−</button>
+          <span class="quantity">${product.cartQty}</span>
+          <button class="quantity-btn increase" ${
+            product.cartQty >= Math.min(5, product.stock) ? "disabled" : ""
+          }>+</button>
+        </div>
+        ${
+          product.stock < 5
+            ? `<p class="stock-info">Stock: ${product.stock}</p>`
+            : ""
+        }
+      </div>
+      <div class="item-price">
+        <p class="price">${product.totalPrice}</p>
+        <button class="remove-btn">Remove</button>
+      </div>
+    </div>
+  `
+    )
+    .join("");
 
-    if (elem.className == "remove-btn") {
-      updateData.deleted = true;
-      updateCart(updateData);
-    }
+  cartItem.innerHTML = cartItems;
+}
+
+function attachEventListeners() {
+  document.querySelectorAll(".cart-item").forEach((cartItemElement) => {
+    console.log("HHH : ", cartItemElement);
+    const productId = cartItemElement.id;
+    const stock = parseInt(cartItemElement.dataset.stock);
+
+    const qtyDisplay = cartItemElement.querySelector(".quantity");
+    const singlePrice = cartItemElement.querySelector(".item-single-price");
+    const totalPrice = cartItemElement.querySelector(".price");
+    let currentQty = parseInt(qtyDisplay.textContent);
+
+    // Handle quantity updates
+    cartItemElement
+      .querySelector(".quantity-selector")
+      .addEventListener("click", async (event) => {
+        const button = event.target;
+        if (!button.classList.contains("quantity-btn") || button.disabled)
+          return;
+
+        let newQty = currentQty;
+        const maxQty = Math.min(5, stock);
+
+        if (button.classList.contains("increase") && currentQty < maxQty) {
+          newQty = currentQty + 1;
+        } else if (button.classList.contains("decrease") && currentQty > 1) {
+          newQty = currentQty - 1;
+        } else {
+          return;
+        }
+        
+        // Update UI first
+        qtyDisplay.textContent = newQty;
+        currentQty = newQty;
+        totalPrice.textContent = newQty * singlePrice.textContent;
+        updateButtonStates(cartItemElement, newQty, stock);
+        updateCartSummery();
+        
+        // Then update server
+        try {
+          await updateCart({
+            productId: productId,
+            quantity: newQty,
+            deleted: false,
+          });
+        } catch (error) {
+          // Revert UI if server update fails
+          qtyDisplay.textContent = currentQty;
+          updateButtonStates(cartItemElement, currentQty, stock);
+        }
+      });
+
+    // Handle remove button
+    cartItemElement
+      .querySelector(".remove-btn")
+      .addEventListener("click", () => {
+        removeItemFromCart(productId);
+      });
   });
-});
 
-// Cart state management
-// let cartState = {
-//     items: [],
-//     subtotal: 0,
-//     shipping: 0
-// };
-// // specs: '128GB - Space Black',
+  document.querySelector('.checkout-btn').addEventListener('click', (e)=>{
+    window.location.href = `/checkout?id=${cartId}`
+  })
+}
 
-// fetch('/cart-data')
-// .then(response => response.json())
-// .then(data => cartState.items.push(...data))
-// .then(()=> console.log(cartState))
+// Add styles
+const style = document.createElement("style");
+style.textContent = `
+  .quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .stock-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
+  }
+  .cart-item {
+    margin-bottom: 1rem;
+  }
+`;
+document.head.appendChild(style);
 
-// // Initialize cart when page loads
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Sample initial cart data - In a real app, this would come from your backend
-//     // cartState.items = [
-//     //     {
-//     //         id: 1,
-//     //         name: 'iPhone 15 Pro',
-//     //         price: 999,
-//     //         quantity: 1,
-//     //         image: '/api/placeholder/120/120'
-//     //     }
-//     // ];
+// SHOW FLASH MESSAGE
+function showFlashMessage({ success, message }) {
+  const notification = document.getElementById("notification");
 
-//     fetch('/cart-data')
-//     .then(response => response.json())
-//     .then(data => cartState.items.push(...data))
-//     .then(()=> console.log(cartState))
+  const messagePopup = document.createElement("div");
 
-//     renderCart();
-//     setupEventListeners();
-// });
+  messagePopup.id = "popup-message";
+  messagePopup.className = "";
+  messagePopup.classList.add(success ? "success" : "failed");
+  messagePopup.textContent = message;
+  notification.appendChild(messagePopup);
+  removeElem(messagePopup);
+}
 
-// // Render the entire cart
-// function renderCart() {
-//     const cartContainer = document.getElementById('cartItems');
-//     cartContainer.innerHTML = '';
+function removeElem(div) {
+  let timeout;
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    div.classList.add("hide");
+    setTimeout(() => {
+      clearTimeout(timeout);
+      div.remove();
+    }, 500);
+  }, 2500);
+}
 
-//     cartState.items.forEach(item => {
-//         const itemElement = createCartItemElement(item);
-//         cartContainer.appendChild(itemElement);
-//     });
+function updateCartSummery() {
+  const pricesElem = document.querySelectorAll("p.price");
+  const subtotalElem = document.querySelector("#subtotal");
+  const totalElem = document.querySelector("#total");
 
-//     updateCartTotals();
-// }
-
-// // Create HTML element for a cart item
-// function createCartItemElement(item) {
-//     const itemDiv = document.createElement('div');
-//     itemDiv.className = 'cart-item';
-//     itemDiv.dataset.itemId = item.id;
-
-//     // <p class="item-specs">${item.specs}</p>
-//     itemDiv.innerHTML = `
-//         <img src="${item.image}" alt="${item.name}" class="item-image">
-//         <div class="item-details">
-//             <h3 class="item-name">${item.name}</h3>
-//             <div class="quantity-selector">
-//                 <button class="quantity-btn decrease">−</button>
-//                 <span class="quantity">${item.quantity}</span>
-//                 <button class="quantity-btn increase">+</button>
-//             </div>
-//         </div>
-//         <div class="item-price">
-//             <p class="price">$${(item.price * item.quantity).toFixed(2)}</p>
-//             <button class="remove-btn">Remove</button>
-//         </div>
-//     `;
-
-//     return itemDiv;
-// }
-
-// // Set up event listeners for cart interactions
-// function setupEventListeners() {
-//     document.getElementById('cartItems').addEventListener('click', (e) => {
-//         const cartItem = e.target.closest('.cart-item');
-//         if (!cartItem) return;
-
-//         const itemId = parseInt(cartItem.dataset.itemId);
-//         const item = cartState.items.find(i => i.id === itemId);
-
-//         if (e.target.classList.contains('increase')) {
-//             updateItemQuantity(itemId, item.quantity + 1);
-//         }
-//         else if (e.target.classList.contains('decrease')) {
-//             if (item.quantity > 1) {
-//                 updateItemQuantity(itemId, item.quantity - 1);
-//             }
-//         }
-//         else if (e.target.classList.contains('remove-btn')) {
-//             removeItem(itemId);
-//         }
-//     });
-
-//     // Add checkout button handler
-//     document.querySelector('.checkout-btn').addEventListener('click', () => {
-//         // Implement checkout logic here
-//         console.log('Proceeding to checkout with items:', cartState.items);
-//     });
-// }
-
-// // Update item quantity
-// function updateItemQuantity(itemId, newQuantity) {
-//     const itemIndex = cartState.items.findIndex(item => item.id === itemId);
-//     if (itemIndex !== -1) {
-//         cartState.items[itemIndex].quantity = newQuantity;
-//         renderCart();
-//     }
-// }
-
-// // Remove item from cart
-// function removeItem(itemId) {
-//     cartState.items = cartState.items.filter(item => item.id !== itemId);
-//     renderCart();
-// }
-
-// // Update cart totals
-// function updateCartTotals() {
-//     const subtotal = cartState.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-//     const shipping = subtotal > 0 ? 0 : 0; // Free shipping in this example
-//     const total = subtotal + shipping;
-
-//     document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-//     document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
-//     document.getElementById('total').textContent = `$${total.toFixed(2)}`;
-// }
-
-// // Add to cart function (to be called from product pages)
-// function addToCart(product) {
-//     const existingItem = cartState.items.find(item => item.id === product.id);
-
-//     if (existingItem) {
-//         existingItem.quantity += 1;
-//     } else {
-//         cartState.items.push({
-//             ...product,
-//             quantity: 1
-//         });
-//     }
-
-//     renderCart();
-// }
+  let subtotal = 0;
+  pricesElem.forEach(p =>{
+    subtotal += parseInt(p.textContent)
+  })
+  subtotalElem.textContent = subtotal;
+  totalElem.textContent = subtotal;
+}

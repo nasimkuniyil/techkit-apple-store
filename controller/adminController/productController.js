@@ -98,6 +98,43 @@ const getUpdateProduct = async (req, res) => {
     const categories = await Category.find({ deleted: false });
     const product = await Product.findOne({ _id: req.query.id });
 
+    const imageFile = req.files;
+
+    if (imageFile) {
+      const images = imageFile.map((file) => ({
+        path: file.path,
+        filename: file.filename,
+      }));
+
+      const originalFilePath = req.files[0].destination;
+      const thumbnailPath = path.join(originalFilePath, "thumbnails");
+      let thumb_image = [];
+
+      //Create thumbnail folder
+      await fs.mkdir(thumbnailPath, { recursive: true }, (err) => {
+        if (err) {
+          console.log("thumb folder create error : ", err);
+        } else {
+          console.log("thumbnail folder created");
+        }
+      });
+
+      //create thumbnail image
+      await images.forEach(async (obj) => {
+        const thumbnail = path.join(thumbnailPath, `thumb_${obj.filename}`);
+        thumb_image.push(thumbnail);
+        await sharp(obj.path)
+          .resize(200, 150, {
+            fit: "cover",
+          })
+          .toFile(thumbnail);
+      });
+
+      console.log("thumbnail image created success");
+
+      console.log("prod id session : ", _id);
+    }
+
     // Map images to include full URLs and IDs
     const productImages = product.images.map((imgPath, index) => ({
       path: imgPath,
@@ -219,14 +256,16 @@ const putUpdateProduct = async (req, res) => {
     console.log("prod data put edit : ", prodData.images);
     console.log("prod data put edit : ", prodData.thumb_image);
 
-    const new_images = [...(existing_images.filter(img => img !== "") || []), ...newImagePaths]; // Default to empty array if undefined
+    const new_images = [
+      ...(existing_images.filter((img) => img !== "") || []),
+      ...newImagePaths,
+    ]; // Default to empty array if undefined
     const updated_thumb_image = [
       ...(prodData.thumb_image || []),
       ...thumb_image_new,
     ];
 
-
-    console.log('req files : ', req.files)
+    console.log("req files : ", req.files);
     // 3. Update product
     let updateData = {
       product_name,
@@ -257,8 +296,6 @@ const putUpdateProduct = async (req, res) => {
         images: { $in: removed_images },
       };
     }
-    
-    
 
     await Product.updateOne({ _id: id }, { $set: updateData });
 

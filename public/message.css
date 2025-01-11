@@ -37,6 +37,7 @@
   left: 50%;
   transform: translateX(-50%);
   transition: all 3s ease-in-out;
+  z-index: 99999;
 }
 
 #popup-message.hide{

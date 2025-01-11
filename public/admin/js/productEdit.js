@@ -225,8 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "PUT",
         body: formData,
       })
-        .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((response) => window.location.href = response.url)
         .catch((err) => console.log(" product add fetch error : ", err));
     } catch (err) {
       console.error("Product update error:", err);
