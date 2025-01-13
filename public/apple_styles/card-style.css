@@ -15,6 +15,10 @@
   padding: 10px 0;
 }
 
+.card-item-wrapper.hide{
+  display: none;
+}
+
 .card-list a{
   text-decoration: none;
 }

@@ -9,6 +9,7 @@ const categoryController = require("../controller/adminController/categoryContro
 const productController = require("../controller/adminController/productController");
 const userController = require("../controller/adminController/userController");
 const commonController = require("../controller/adminController/commonController");
+const orderController = require("../controller/adminController/orderController");
 
 
 adminRouter.use(flash())
@@ -48,7 +49,10 @@ adminRouter.get("/category/edit", adminAuth.isAdmin,  categoryController.getUpda
 adminRouter.put("/category/edit", adminAuth.isAdmin,  categoryController.putUpdateCategory);
 adminRouter.delete("/category/delete", adminAuth.isAdmin,  categoryController.deleteCategory);
 adminRouter.get("/category/unblock", adminAuth.isAdmin,  categoryController.unBlockCategory);
-adminRouter.delete("/category/delete-permenent", adminAuth.isAdmin, categoryController.permenentDeleteCategory
-);
+adminRouter.delete("/category/delete-permenent", adminAuth.isAdmin, categoryController.permenentDeleteCategory);
+
+//Orders Management
+adminRouter.get("/orders", adminAuth.isAdmin,  orderController.getOrdersPage);
+adminRouter.get("/api/orders",adminAuth.isAdmin,  orderController.getOrdersData);
 
 module.exports = adminRouter;

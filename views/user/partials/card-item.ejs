@@ -1,7 +1,7 @@
 
 <%if(products){%> 
   <% products.forEach( product => { %>
-    <a href="/product-details?id=<%-product._id%>">
+    <a href="/product-details?id=<%-product._id%>" class="card-item-wrapper">
       <div class="card-item" style="background-image: url(../../../<%-product.images[0].replace(/\\/g, '/' ) %>)">
         <div class="product_info card-md">
           <h3><%-product.product_name%><span> <%-product.color%></span></h3>

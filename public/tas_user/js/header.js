@@ -31,7 +31,7 @@ const header = {
   header.searchToggle?.addEventListener('click', () => {
     header.searchOverlay?.classList.add('active');
     header.searchInput?.focus();
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = '';
   });
   
   header.searchClose?.addEventListener('click', () => {

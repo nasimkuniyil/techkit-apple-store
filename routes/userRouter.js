@@ -30,6 +30,7 @@ router.get("/", userController.getHome);
 router.get("/shop/:category", userController.getShop);
 router.get("/shop-all", userController.getShopAll);
 router.get("/product-details", userController.getProduct);
+router.get('/api/get-all-products', userController.getAllproducts);
 
 router.get("/cart", authMiddlewares.isAuthenticated, userController.getCartPage);
 router.post("/add-cart", authMiddlewares.isAuthenticated, userController.postCart);

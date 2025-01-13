@@ -676,6 +676,18 @@ const getShopAll = async (req, res) => {
   } catch (err) {}
 };
 
+const getAllproducts = async (req, res) => {
+  try {
+    console.log('Api call for collect all products data')
+    const allProducts = await Product.find();
+    if(!allProducts){
+      res.status(400).json({success:false, message:"No products"});
+    }
+    console.log(allProducts)
+    res.status(200).json({success:true, products:allProducts});
+  } catch (err) {}
+};
+
 const getProduct = async (req, res) => {
   try {
     const id = req.query.id;
@@ -748,13 +760,11 @@ const getCartData = async (req, res) => {
       "---------------------- CART PRODUCT DETAILS START ---------------"
     );
     console.log(cartProductData);
-    res
-      .status(200)
-      .json({
-        success: true,
-        cartProducts: cartProductData,
-        cartId: cartList._id,
-      });
+    res.status(200).json({
+      success: true,
+      cartProducts: cartProductData,
+      cartId: cartList._id,
+    });
   } catch (err) {
     console.log("getcart page error : ", err);
   }
@@ -905,9 +915,9 @@ const removeCart = async (req, res) => {
       (item) => item.productId !== productId
     );
     await cartData.save();
-    
-    if(cartData.items.length == 0){
-      await Cart.deleteOne({userId});
+
+    if (cartData.items.length == 0) {
+      await Cart.deleteOne({ userId });
     }
     console.log("cart removed");
     return res
@@ -1046,7 +1056,7 @@ const addOrder = async (req, res) => {
     console.log("cart deleted.");
     res.status(200).json({ success: true, message: "Order placed" });
   } catch (err) {
-    console.log("add order : ", err);
+    throw new Error("");
   }
 };
 
@@ -1075,6 +1085,7 @@ module.exports = {
   getShop,
   getShopAll,
   getProduct,
+  getAllproducts,
   getCartPage,
   getCartData,
   postCart,
