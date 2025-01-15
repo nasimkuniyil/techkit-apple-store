@@ -390,6 +390,18 @@ function createCartItem(products) {
 
 // Add order
 function addOrder() {
+
+  let products = [];
+
+  porductDetails.forEach(prod =>{
+    const obj = {
+      productId:prod.id,
+      quantity:prod.cartQty,
+      price:prod.price
+    }
+    products.push(obj)
+  })
+
   const url = `/api/add-order`;
   const options = {
     method: "POST",
@@ -397,9 +409,8 @@ function addOrder() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      porductDetails,
+      products,
       addressId: selectedAddressId,
-      totalAmount,
     }),
   };
   fetch(url, options)

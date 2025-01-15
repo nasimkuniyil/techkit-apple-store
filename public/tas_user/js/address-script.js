@@ -16,7 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return response.json();
     })
     .then((data) => {
-      addAddressCard(data.address);
+      console.log(data);
+      addAddressCard(data);
       console.log("address data :", data);
     })
     .catch((error) => console.log("error : ", error));
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addressForm.addEventListener("submit", (e) => {
       e.preventDefault();
-  
+
       const addressData = {
         name: document.getElementById("name").value,
         mobile: document.getElementById("mobile").value,
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pincode: document.getElementById("pincode").value,
         landmark: document.getElementById("landmark").value,
       };
-  
+
       const options = {
         method: "POST",
         headers: {
@@ -46,15 +47,15 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify(addressData),
       };
-    
-      const url = "/api/add-address"
-  
+
+      const url = "/api/add-address";
+
       fetch(url, options)
         .then((response) => {
           window.location.href = response.url;
         })
         .catch((error) => console.log("error : ", error));
-  
+
       addAddressCard(addressData);
       addressModal.classList.remove("active");
       addressForm.reset();
@@ -68,21 +69,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Handle form submission
-  
 
   // Add new address card
   function addAddressCard(data) {
-    data.forEach((address) => {
+    data.forEach((item) => {
       const addressCard = document.createElement("div");
       addressCard.className = "address-card";
       addressCard.innerHTML = `
             <div class="address-card-content">
-                <h3 class="address-name">${address.name}</h3>
-                <p class="address-line">${address.mobile}</p>
-                <p class="address-line">${address.address}</p>
-                <p class="address-line">${address.city}, ${address.state} ${address.country}</p>
-                <p class="address-line">${address.pincode}</p>
-                <p class="address-line">${address.landmark}</p>
+                <h3 class="address-name">${item.address.name}</h3>
+                <p class="address-line">${item.address.mobile}</p>
+                <p class="address-line">${item.address.address}</p>
+                <p class="address-line">${item.address.city}, ${item.address.state} ${item.address.country}</p>
+                <p class="address-line">${item.address.pincode}</p>
+                <p class="address-line">${item.address.landmark}</p>
             </div>
             <div class="address-card-actions">
                 <button class="address-btn-secondary address-edit-btn">Edit</button>
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((response) => {
             // alert('removed success')
-            return window.location.href = response.url;
+            return (window.location.href = response.url);
           })
           .catch((err) => console.log("delete error : ", err));
       });
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         addressForm.addEventListener("submit", (e) => {
           e.preventDefault();
-      
+
           const addressData = {
             name: document.getElementById("name").value,
             mobile: document.getElementById("mobile").value,
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pincode: document.getElementById("pincode").value,
             landmark: document.getElementById("landmark").value,
           };
-      
+
           const options = {
             method: "PUT",
             headers: {
@@ -137,15 +137,15 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify(addressData),
           };
-        
-          const url = `/api/edit-address?addressId=${address._id}`
-      
+
+          const url = `/api/edit-address?addressId=${address._id}`;
+
           fetch(url, options)
             .then((response) => {
               window.location.href = response.url;
             })
             .catch((error) => console.log("error : ", error));
-      
+
           addressForm.reset();
         });
       });

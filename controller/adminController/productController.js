@@ -4,7 +4,8 @@ const sharp = require("sharp");
 
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
-const product = require("../../models/productSchema");
+const Color = require("../../models/colorSchema");
+
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
@@ -28,11 +29,12 @@ const getAddProduct = async (req, res) => {
 // ADD NEW PRODUCT
 const postAddProduct = async (req, res) => {
   try {
+    console.log("--- Started add product post method ---");
     const { product_name, description, color, price, quantity, category } =
       req.body;
 
-    console.log("add product data : ", req.body);
-    console.log("add product data : ", req.files);
+    console.log("body data : ", req.body);
+    console.log("mage data : ", req.files);
 
     const _id = req.session.prodId;
     const imageFile = req.files;

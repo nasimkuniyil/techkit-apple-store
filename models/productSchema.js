@@ -5,7 +5,7 @@ const { Schema, model } = mongoose;
 const ObjectId = Schema.ObjectId;
 
 const productSchema = new Schema({
-  _id: { type: String, required: true },
+  _id: { type: ObjectId, required: true },
   product_name: { type: String, required: true },
   description: { type: String, required: true },
   color: { type: String, required: true },
@@ -13,6 +13,7 @@ const productSchema = new Schema({
   thumb_image: { type: Array, required: true },
   images: { type: Array, required: true },
   category: { type: ObjectId, ref: "Category", required: true },
+  color: { type: ObjectId, ref: "Color", required: true },
   quantity: { type: Number },
   deleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: new Date() },

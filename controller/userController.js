@@ -449,20 +449,23 @@ const getAddress = async (req, res) => {
   }
 };
 
-const getAddressData = async (req, res) => {
+const getAddressData = async (req, res, next) => {
   try {
     console.log("----- ENTERED getAddressData -----");
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
-    const address = await Address.findOne({ userId });
+    const address = await Address.find({ userId });
     console.log("address data : ", address);
     if (!address)
       return res.status(400).json({ success: false, message: "Add address" });
     return res.status(200).json(address);
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error geting address data - !!!");
+    next(err);
+  }
 };
 
-const postAddress = async (req, res) => {
+const postAddress = async (req, res, next) => {
   try {
     console.log("----- ENTERED add address -----");
     const uId = req.session.user;
@@ -471,26 +474,29 @@ const postAddress = async (req, res) => {
     const { name, mobile, address, city, state, country, pincode, landmark } =
       req.body;
 
-    const userAddress = await Address.findOne({ userId });
+    const newAddress = await new Address({
+      userId,
+      address: {
+        name,
+        mobile,
+        address,
+        city,
+        state,
+        country,
+        pincode,
+        landmark,
+      },
+    });
 
-    if (!userAddress) {
-      const newAddress = await Address({
-        userId,
-        address: [
-          { name, mobile, address, city, state, country, pincode, landmark },
-        ],
-      });
-      newAddress.save();
-      return res.status(200).redirect("/address");
-    }
-
-    userAddress.address.push(req.body);
-    await userAddress.save();
+    newAddress.save();
     return res.status(200).redirect("/address");
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error adding address - !!!");
+    next(err);
+  }
 };
 
-const editAddress = async (req, res) => {
+const editAddress = async (req, res, next) => {
   try {
     console.log("----- ENTERED edit address -----");
     const uId = req.session.user;
@@ -500,56 +506,56 @@ const editAddress = async (req, res) => {
     const { name, mobile, address, city, state, country, pincode, landmark } =
       req.body;
 
-    const addressData = await Address.findOne({ userId });
+    const addressData = await Address.findOne({ _id: addressId, userId });
+    console.log("address data : ", addressData);
 
     if (!addressData)
       return res
         .status(400)
         .json({ success: false, message: "Address not available" });
 
-    const updatedAddress = addressData.address.map((item) => {
-      if (item._id == addressId) {
-        item.name = name;
-        item.mobile = mobile;
-        item.address = address;
-        item.city = city;
-        item.state = state;
-        item.country = country;
-        item.pincode = pincode;
-        item.landmark = landmark;
-      }
-
-      return item;
+    const updatedAddress = (addressData.address = {
+      name,
+      mobile,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      landmark,
     });
-    addressData.address = updatedAddress;
-    await addressData.save();
+    await updatedAddress.save();
+    console.log('address updated successfully.')
 
     return res.status(200).redirect("/address");
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error editing address - !!!");
+    next(err);
+  }
 };
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
   try {
     console.log("----- ENTERED delete address -----");
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
     const { addressId } = req.query;
 
-    const addressData = await Address.findOne({ userId });
+    const addressData = await Address.findOneAndDelete({ _id:addressId, userId });
 
-    if (!addressData)
+    if (!addressData){
       return res
-        .status(400)
-        .json({ success: false, message: "Address not available" });
+      .status(400)
+      .json({ success: false, message: "Address not available" });
+    }
 
-    const updatedAddress = addressData.address.filter(
-      (item) => item._id != addressId
-    );
-    addressData.address = updatedAddress;
-    await addressData.save();
+    console.log('address deleted.')
 
     return res.status(200).redirect("/address");
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error deleting address - !!!");
+    next(err);
+  }
 };
 
 const getHome = async (req, res) => {
@@ -678,13 +684,13 @@ const getShopAll = async (req, res) => {
 
 const getAllproducts = async (req, res) => {
   try {
-    console.log('Api call for collect all products data')
+    console.log("Api call for collect all products data");
     const allProducts = await Product.find();
-    if(!allProducts){
-      res.status(400).json({success:false, message:"No products"});
+    if (!allProducts) {
+      res.status(400).json({ success: false, message: "No products" });
     }
-    console.log(allProducts)
-    res.status(200).json({success:true, products:allProducts});
+    console.log(allProducts);
+    res.status(200).json({ success: true, products: allProducts });
   } catch (err) {}
 };
 
@@ -960,14 +966,38 @@ const getOrderHistoryPage = async (req, res) => {
   } catch (err) {}
 };
 
-const getOrders = async (req, res) => {
+const getOrders = async (req, res, next) => {
   try {
     console.log("----- entered get order data api.  -----");
 
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
 
-    const orderData = await Order.findOne({ userId });
+    const orderData = await Order.find({ userId });
+
+    const orderAllResults = [];
+
+    //   orderData.forEach( async (odrData) => {
+    //     let obj = {
+    //       userId: odrData.userId,
+    //       orderId: odrData.orderId,
+    //       addressInfo:odrData.addressInfo,
+    //       paymentInfo:odrData.paymentInfo,
+    //     };
+    //     const prodItems = await odrData.products.map(async prod=>{
+    //       const data = await Product.findOne({_id:prod.productId})
+    //       console.log("hai data : ",data)
+    //       return await data
+    //     })
+    //     await orderAllResults.push({...obj, products:prodItems})
+    //   }
+    // );
+
+    console.log("populate : ", orderAllResults);
+
+    // const products = await Promise.all(orderData.map(odr=>{
+
+    // }))
 
     if (!orderData) {
       return res
@@ -976,18 +1006,20 @@ const getOrders = async (req, res) => {
     }
 
     return res.status(200).json({ success: true, orderData });
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error geting order - !!!");
+    next(err);
+  }
 };
 
-const addOrder = async (req, res) => {
+const addOrder = async (req, res, next) => {
   try {
     //Data required : userId, productId, quantity, price, totalAmount, color, address, paymentType
     console.log("----- entered add order.  -----");
-    console.log("--- order : ", req.body);
 
-    const { porductDetails, addressId, totalAmount } = req.body;
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
+    const { products, addressId } = req.body;
 
     if (!userId) {
       return res
@@ -995,12 +1027,9 @@ const addOrder = async (req, res) => {
         .json({ success: false, message: "User not available" });
     }
 
-    // Find user odrer
-    const userOrder = await Order.findOne({ userId });
-
     // Generating Order ID
     const orderId = `ORD - ${Date.now()}`;
-    const paymentType = "Cash on delivery";
+    const paymentInfo = "Cash on delivery";
 
     // Find User Address
     const userAddresses = await Address.findOne({ userId });
@@ -1011,52 +1040,28 @@ const addOrder = async (req, res) => {
         .json({ success: false, message: "Address is not available" });
     }
 
-    let items = [];
-    porductDetails.forEach((prod) => {
-      const obj = {
-        productId: prod.id,
-        product_name: prod.product_name,
-        quantity: prod.cartQty,
-        price: prod.totalPrice,
-        color: prod.color,
-      };
-      items.push(obj);
-    });
-
     console.log("Order adding...");
 
-    if (userOrder) {
-      const orderData = {
-        orderId,
-        items,
-        totalAmount,
-        address: address[0],
-        paymentType,
-      };
-      userOrder.orders.push(orderData);
-      await userOrder.save();
-    } else {
-      const orderData = {
-        userId,
-        orders: [
-          {
-            orderId,
-            items,
-            totalAmount,
-            address: address[0],
-            paymentType,
-          },
-        ],
-      };
-      const newOrder = await new Order(orderData);
-      await newOrder.save();
-    }
+    const newOrder = await new Order({
+      userId,
+      orderId,
+      products,
+      addressInfo: address[0],
+      paymentInfo,
+    });
+
+    await newOrder.save();
+
     console.log("Order placed");
+
+    // Delete cart
     await Cart.deleteOne({ userId });
     console.log("cart deleted.");
+
     res.status(200).json({ success: true, message: "Order placed" });
   } catch (err) {
-    throw new Error("");
+    console.log("!!! - Error placing order - !!!");
+    next(err);
   }
 };
 

@@ -1,4 +1,4 @@
-const product = require("../../models/productSchema.js");
+// this file for Get Put Delete and Post Products
 const Product = require("../../models/productSchema.js");
 
 module.exports = {

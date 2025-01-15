@@ -1,3 +1,4 @@
+// this file for Get Put Delete and Post Category
 const Category = require("../../models/categorySchema");
 
 module.exports = {

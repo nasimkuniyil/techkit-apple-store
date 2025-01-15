@@ -8,14 +8,13 @@ const passport = require('passport')
 
 const {connectDB} = require('./config/connectDB.js');
 const {sessionMiddleware} = require('./middleware/session.js')
+const errorHandler = require('./middleware/errorHandlingMiddleware.js');
 
 // port
 const port = process.env.PORT || 3000;
 
-app.use((err, req, res, next)=>{
-    if(err)return console.log("--- | MAIN ERROR MESSAGE |--- :",err);
-    next()
-})
+//Error handler middleware
+app.use(errorHandler);
 
 //express configuration
 app.use(express.urlencoded({extended : true}));
