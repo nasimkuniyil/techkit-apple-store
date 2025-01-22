@@ -1,0 +1,426 @@
+/* Include only form-specific styles since common styles are separate */
+.form-container {
+    background-color: var(--primary-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--secondary-bg);
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+textarea.form-input {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.image-upload-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.image-upload-box {
+    border: 2px dashed #e5e5e5;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.image-upload-box:hover {
+    border-color: var(--accent-color);
+}
+
+.image-upload-box i {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.image-upload-box input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-preview {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: none;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--secondary-bg);
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-bg);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* dropdown */
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 0.8rem;
+    padding-right: 2.5rem;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 10.5l4-4-0.8-0.8L8 8.9 4.8 5.7 4 6.5z' fill='%23666'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1rem;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.form-select:hover {
+    border-color: var(--accent-color);
+}
+
+/* Style for options */
+.form-select option {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+}
+
+/* Multiple select specific styles */
+.form-select[multiple] {
+    padding: 0;
+    min-height: 200px;
+    background-image: none;
+}
+
+.form-select[multiple] option {
+    padding: 0.8rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.form-select[multiple] option:last-child {
+    border-bottom: none;
+}
+
+.form-select[multiple] option:checked {
+    background: linear-gradient(0deg, var(--accent-color) 0%, var(--accent-color) 100%);
+    color: white;
+}
+
+.form-select[multiple] option:hover {
+    background-color: var(--secondary-bg);
+}
+
+/* Optional: Style for optgroup if needed */
+.form-select optgroup {
+    font-weight: 600;
+    font-style: normal;
+    padding: 0.5rem;
+    background-color: var(--secondary-bg);
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+
+
+
+/* --- CROPER CSS --- */
+.cropper-modal {
+    opacity: 1 !important;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0, 0.7) !important;
+    z-index: 1000;
+}
+
+.cropper-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 2% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.cropper-modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cropper-modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.close-modal {
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    color: #666;
+}
+
+.cropper-modal-body {
+    padding: 1rem;
+    flex: 1;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cropper-container {
+    flex: 1;
+    background: #f8f9fa;
+    position: relative;
+    min-height: 300px;
+    overflow: hidden;
+}
+
+.cropper-container img {
+    max-width: 100%;
+    display: block;
+}
+
+.cropper-controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.cropper-controls button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cropper-modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Update existing image upload box styles */
+.image-upload-box {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.image-upload-box:hover {
+    border-color: #666;
+}
+
+.image-upload-box input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    display: none;
+}
+
+
+
+/* ---- edit form style ---- */
+
+.existing-images{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.existing-image-box {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 200PX;
+    width: 200PX;
+  }
+
+  .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .remove-existing-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    color: #dc3545;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    transition: all 0.2s ease;
+    opacity: 0;
+    transform: scale(0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .existing-image-box:hover .remove-existing-btn {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .remove-existing-btn:hover {
+    background: #dc3545;
+    color: white;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.4);
+  }

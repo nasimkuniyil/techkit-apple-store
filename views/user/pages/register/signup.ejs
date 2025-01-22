@@ -131,7 +131,7 @@
     <section id="notification"></section>
     <section class="wrapper">
       <div class="signup-container">
-        <h1>Create Apple ID</h1>
+        <h1>Create an Account</h1>
         <form id="signupForm">
           <div class="form-group">
             <input
@@ -184,6 +184,7 @@
                 type="password"
                 id="confirmPassword"
                 placeholder="Confirm password"
+                name="confirmPassword"
               />
               <button
                 type="button"
@@ -196,11 +197,12 @@
           </div>
           <button type="submit" class="btn">Continue</button>
           <div class="links">
-            <a href="/login">Already have an Apple ID?</a>
+            <a href="/login">Already have an account?</a>
           </div>
         </form>
       </div>
     </section>
+    <script src="/tas_user/js/validateInput.js"></script>
     <script src="/tas_user/js/signup.js"></script>
   </body>
 </html>

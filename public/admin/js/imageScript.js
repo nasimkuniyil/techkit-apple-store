@@ -160,6 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    console.log('form data : ', formData)
+
     fetch(url, {
       method: "POST",
       body: formData,

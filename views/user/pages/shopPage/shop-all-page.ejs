@@ -4,6 +4,7 @@
     <%- include('../../../partials/head') %>
     <link rel="stylesheet" href="/apple_styles/shop.css" />
     <link rel="stylesheet" href="/apple_styles/card-style.css" />
+    <link rel="stylesheet" href="/apple_styles/pagination.css" />
   </head>
   <body>
     <header><%- include('../../partials/header.ejs') %></header>
@@ -55,6 +56,29 @@
             </div>
           </div>
         </diV>
+      </section>
+      <section>
+        <div class="pagination-wrapper">
+          <div class="pagination">
+            <button class="pagination-btn prev-btn" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            
+            <div class="pagination-numbers">
+              <%for(let i = 1; i<=pageNumberLimit; i++){%>
+
+                <button class="pagination-number"><%-i%></button>
+                <%}%>
+            </div>
+            <button class="pagination-btn next-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </section>
     </main>
     <footer><%- include('../../partials/footer') %></footer>

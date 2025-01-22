@@ -12,6 +12,7 @@ const Category = require("../models/categorySchema");
 const Cart = require("../models/cartSchema");
 const Address = require("../models/addressSchema");
 const Order = require("../models/orderSchema");
+const Color = require("../models/colorSchema");
 
 const getLogin = async (req, res) => {
   try {
@@ -166,6 +167,11 @@ const postVerifyOTP = async (req, res) => {
         .json({ success: false, message: "User already exist" });
     }
 
+    if(!otpStore[data.email]){
+      console.log("otp verification failed.");
+      return res.status(400).json({ success: false, message: "OTP expired" });
+    }
+
     if (data.otp == otpStore[data.email]) {
       const uId = uuidv4();
 
@@ -188,10 +194,11 @@ const postVerifyOTP = async (req, res) => {
       return res
         .status(200)
         .json({ success: true, message: "OTP sent successfully" });
-    } else {
+    } else if(data.otp != otpStore[data.email]) {
       console.log("otp verification failed.");
       return res.status(400).json({ success: false, message: "Invalid otp" });
     }
+
   } catch (err) {
     console.log("postSignUp error : ", err);
   }
@@ -456,8 +463,11 @@ const getAddressData = async (req, res, next) => {
     const userId = auth.getUserSessionData(uId);
     const address = await Address.find({ userId });
     console.log("address data : ", address);
-    if (!address)
-      return res.status(400).json({ success: false, message: "Add address" });
+    if (!address) {
+      const error = new Error("Add address");
+      error.status = 400;
+      next(error);
+    }
     return res.status(200).json(address);
   } catch (err) {
     console.log("!!! - Error geting address data - !!!");
@@ -476,16 +486,14 @@ const postAddress = async (req, res, next) => {
 
     const newAddress = await new Address({
       userId,
-      address: {
-        name,
-        mobile,
-        address,
-        city,
-        state,
-        country,
-        pincode,
-        landmark,
-      },
+      name,
+      mobile,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      landmark,
     });
 
     newAddress.save();
@@ -509,12 +517,14 @@ const editAddress = async (req, res, next) => {
     const addressData = await Address.findOne({ _id: addressId, userId });
     console.log("address data : ", addressData);
 
-    if (!addressData)
-      return res
-        .status(400)
-        .json({ success: false, message: "Address not available" });
+    if (!addressData) {
+      const error = new Error("Address not found");
+      error.status = 400;
+      next(error);
+    }
 
-    const updatedAddress = (addressData.address = {
+    const updatedData = {
+      userId,
       name,
       mobile,
       address,
@@ -523,9 +533,11 @@ const editAddress = async (req, res, next) => {
       country,
       pincode,
       landmark,
-    });
-    await updatedAddress.save();
-    console.log('address updated successfully.')
+    };
+
+    addressData.set(updatedData);
+    await addressData.save();
+    console.log("address updated successfully.");
 
     return res.status(200).redirect("/address");
   } catch (err) {
@@ -541,15 +553,29 @@ const deleteAddress = async (req, res, next) => {
     const userId = auth.getUserSessionData(uId);
     const { addressId } = req.query;
 
-    const addressData = await Address.findOneAndDelete({ _id:addressId, userId });
+    const usedAddress = await Order.findOne({ addressInfo: addressId });
 
-    if (!addressData){
-      return res
-      .status(400)
-      .json({ success: false, message: "Address not available" });
+    console.log("used address : ", usedAddress);
+    if (usedAddress) {
+      console.log("address is used for order.");
+      const error = new Error("Address is used for order");
+      error.status = 400;
+      next(error);
     }
 
-    console.log('address deleted.')
+    console.log('hellooooo.....')
+    const addressData = await Address.findOneAndDelete({
+      _id: addressId,
+      userId,
+    });
+
+    if (!addressData) {
+      const error = new Error("Address not found");
+      error.status = 400;
+      next(error);
+    }
+
+    console.log("address deleted.");
 
     return res.status(200).redirect("/address");
   } catch (err) {
@@ -615,7 +641,7 @@ const getShop = async (req, res) => {
   }
   try {
     let category = await Category.findOne({
-      category_name: req.params.category,
+      category_name: { $regex: new RegExp(`^${req.params.category}$`, "i") },
     });
     let products = await Product.find({
       category: category?._id,
@@ -634,9 +660,13 @@ const getShop = async (req, res) => {
   }
 };
 
-const getShopAll = async (req, res) => {
+const getShopAll = async (req, res, next) => {
   const sortOption = req.query.sort || "a-z";
   const filterOption = req.query.filter || "";
+  const page = req.query.page || 1;
+
+  const limit = 10;
+  const skipVal = (page - 1) * limit;
 
   let sortCriteria;
 
@@ -662,24 +692,41 @@ const getShopAll = async (req, res) => {
     default:
       sortCriteria = {}; // Default to no sorting
   }
+
   try {
     let category =
       filterOption &&
-      (await Category.findOne({ deleted: false, category_name: filterOption }));
+      (await Category.findOne({
+        deleted: false,
+        category_name: { $regex: new RegExp(`^${filterOption}$`, "i") },
+      }));
 
     const filterCritiria = category
       ? { category: category._id, deleted: false }
       : { deleted: false };
 
-    let products = await Product.find(filterCritiria).sort(sortCriteria);
+    let products = await Product.find(filterCritiria)
+      .sort(sortCriteria)
+      .limit(limit)
+      .skip(skipVal)
     let userSession = req.session.user;
+    
+    let productCount = await Product.find(filterCritiria);
+    
+    console.log('ehie : ', productCount.length)
+
+    const pageNumberLimit = productCount.length/limit;
     res.render("user/pages/shopPage/shop-all-page.ejs", {
       products,
       sortOption,
       filterOption,
+      pageNumberLimit,
       userSession,
     });
-  } catch (err) {}
+  } catch (err) {
+    console.log("!!! - Error editing address - !!!");
+    next(err);
+  }
 };
 
 const getAllproducts = async (req, res) => {
@@ -697,17 +744,22 @@ const getAllproducts = async (req, res) => {
 const getProduct = async (req, res) => {
   try {
     const id = req.query.id;
-    let product = await Product.findOne({ _id: id });
-    let { category_name } = await Category.findOne(
-      { _id: product.category },
-      { _id: 0, category_name: 1 }
-    );
+    let product = await Product.findOne({ _id: id })
+      .populate("category")
+      .populate("color");
+    let availableColors = await Product.find({
+      product_name: product.product_name,
+      category: product.category._id,
+    })
+      .populate("color")
+      .select("_id color");
+
     let recommendedProducts = await Product.find().limit(5);
     let userSession = req.session.user;
 
     res.render("user/pages/productPage/product-details", {
-      category_name,
       product,
+      availableColors,
       recommendedProducts,
       userSession,
     });
@@ -729,8 +781,7 @@ const getCartData = async (req, res) => {
   try {
     const userSession = req.session.user;
     const userId = auth.getUserSessionData(userSession);
-    let cartList = await Cart.findOne({ userId });
-    let cartProductData = [];
+    let cartList = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cartList) {
       console.log("items not available in cart");
@@ -739,36 +790,13 @@ const getCartData = async (req, res) => {
         .json({ success: false, message: "Cart Items not available" });
     }
     //collect cart product details
-    const cartProducts = await Promise.all(
-      cartList.items.map((product) => {
-        return Product.findOne({ _id: product.productId, deleted: false });
-      })
-    );
-
-    cartProducts.forEach((element) => {
-      for (cartElem of cartList.items)
-        if (element._id === cartElem.productId) {
-          const data = {
-            id: element._id,
-            product_name: element.product_name,
-            color: element.color,
-            thumb_image: element.thumb_image[0],
-            price: element.price,
-            category: element.category,
-            quantity: element.quantity,
-            cartQty: cartElem.quantity,
-            totalPrice: cartElem.totalPrice,
-          };
-          cartProductData.push(data);
-        }
-    });
     console.log(
       "---------------------- CART PRODUCT DETAILS START ---------------"
     );
-    console.log(cartProductData);
+    console.log(cartList);
     res.status(200).json({
       success: true,
-      cartProducts: cartProductData,
+      cartProducts: cartList,
       cartId: cartList._id,
     });
   } catch (err) {
@@ -845,8 +873,9 @@ const updateCart = async (req, res) => {
       `product id is -${productId}- | quantity : ${quantity} | deleted : ${deleted}`
     );
 
-    const cartData = await Cart.findOne({ userId: userId });
-    const product = await Product.findOne({ _id: productId });
+    const cartData = await Cart.findOne({ userId: userId }).populate(
+      "items.productId"
+    );
 
     if (!cartData) {
       return res
@@ -854,29 +883,20 @@ const updateCart = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
-    //checking stock
-    if (product.quantity < quantity) {
-      console.log("Stock no more available");
-      return res.status(400).json({
-        success: false,
-        message: "No more available.",
-        prodQty: product.quantity,
-      });
-    }
-
     if (deleted) {
       // If item should be deleted
+      console.log("deleting...");
       cartData.items = cartData.items.filter(
-        (item) => item.productId !== productId
+        (item) => item.productId._id !== productId
       );
     } else {
       // Update quantity and price
       cartData.items = cartData.items.map((item) => {
-        if (item.productId === productId) {
+        if (item.productId._id === productId) {
           return {
             ...item,
             quantity: quantity,
-            totalPrice: quantity * item.price,
+            totalPrice: quantity * item.productId.price,
           };
         }
         return item;
@@ -911,6 +931,13 @@ const removeCart = async (req, res) => {
 
     const cartData = await Cart.findOne({ userId: userId });
 
+    console.log(cartData);
+    console.log(
+      `body id : ${productId}, equals check : ${
+        productId == cartData.items[0].productId
+      }`
+    );
+
     if (!cartData) {
       return res
         .status(404)
@@ -918,8 +945,10 @@ const removeCart = async (req, res) => {
     }
     // If item should be deleted
     cartData.items = cartData.items.filter(
-      (item) => item.productId !== productId
+      (item) => item.productId != productId
     );
+
+    console.log("cart item after : ", cartData);
     await cartData.save();
 
     if (cartData.items.length == 0) {
@@ -966,6 +995,38 @@ const getOrderHistoryPage = async (req, res) => {
   } catch (err) {}
 };
 
+const getOrderDetailsPage = async (req, res) => {
+  try {
+    console.log("----- entered get order history page.  -----");
+
+    const orderId = req.query.id;
+    const uId = req.session.user;
+
+    const order = await Order.findOne({ _id: orderId })
+      .populate("userId")
+      .populate("products.productId")
+      .populate("addressInfo");
+
+    if (!order) {
+      const error = new Error("Order not available");
+      error.status = 400;
+      next(error);
+    }
+
+    const total = order.products.reduce((acc, val) => {
+      acc += val.quantity * val.productId.price;
+      return acc;
+    }, 0);
+
+    order.totalAmount = total;
+
+    return res.status(400).render("user/pages/orderHistoryPage/order-details", {
+      userSession: uId,
+      order,
+    });
+  } catch (err) {}
+};
+
 const getOrders = async (req, res, next) => {
   try {
     console.log("----- entered get order data api.  -----");
@@ -973,9 +1034,13 @@ const getOrders = async (req, res, next) => {
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
 
-    const orderData = await Order.find({ userId });
+    const orderData = await Order.find({ userId })
+      .populate("products.productId")
+      .populate("addressInfo")
+      .sort({createdAt:-1})
+      .limit(5);
 
-    const orderAllResults = [];
+    // const orderAllResults = [];
 
     //   orderData.forEach( async (odrData) => {
     //     let obj = {
@@ -993,13 +1058,13 @@ const getOrders = async (req, res, next) => {
     //   }
     // );
 
-    console.log("populate : ", orderAllResults);
+    console.log("populate : ", orderData);
 
     // const products = await Promise.all(orderData.map(odr=>{
 
     // }))
 
-    if (!orderData) {
+    if (orderData.length == 0) {
       return res
         .status(400)
         .json({ success: false, message: "Order not available" });
@@ -1019,12 +1084,12 @@ const addOrder = async (req, res, next) => {
 
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
-    const { products, addressId } = req.body;
+    const { products, quantity, addressId } = req.body;
 
     if (!userId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not available" });
+      const error = new Error("User not available");
+      error.status = 400;
+      next(error);
     }
 
     // Generating Order ID
@@ -1032,25 +1097,28 @@ const addOrder = async (req, res, next) => {
     const paymentInfo = "Cash on delivery";
 
     // Find User Address
-    const userAddresses = await Address.findOne({ userId });
-    const address = userAddresses.address.filter((add) => add._id == addressId);
-    if (!address) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Address is not available" });
+    if (!(await Address.find({ _id: addressId }))) {
+      const error = new Error("Address not available");
+      error.status = 400;
+      next(error);
     }
 
+    console.log("Products ... : ", products);
     console.log("Order adding...");
 
     const newOrder = await new Order({
       userId,
       orderId,
       products,
-      addressInfo: address[0],
+      addressInfo: addressId,
       paymentInfo,
     });
 
     await newOrder.save();
+
+   products.forEach( async item=>{
+    const prod = await Product.findOneAndUpdate({_id:item.productId},{ $inc: { quantity: -item.quantity } })
+   })
 
     console.log("Order placed");
 
@@ -1064,6 +1132,75 @@ const addOrder = async (req, res, next) => {
     next(err);
   }
 };
+
+const cancelOrder = async (req, res, next)=>{
+  try{
+    console.log('Entered cancel order.')
+    const {id,reason} = req.body;
+    if(!id){
+      console.log('order id is not defined.')
+      const error = new Error('Order id is not defined');
+      error.status = 400;
+      next(error);
+    }
+    
+    if(!reason){
+      console.log('cancel reason is not defined.')
+      const error = new Error('Cancel reason is not defined');
+      error.status = 400;
+      next(error);
+    }
+
+    await Order.findOneAndUpdate({_id:id},{$set:{cancelReason:reason}});
+
+    res.status(200).json({success:true, message:'Requested product cancellation.'})
+
+  }catch(err){
+    next(err)
+  }
+}
+
+
+const cancelProduct = async (req, res, next)=>{
+  console.log('helloooooo...')
+  try{
+    const {id,reason, orderId} = req.body;
+    if(!id){
+      console.log('order id is not defined.')
+      const error = new Error('Order id is not defined');
+      error.status = 400;
+      next(error);
+    }
+    
+    if(!reason){
+      console.log('cancel reason is not defined.')
+      const error = new Error('Cancel reason is not defined');
+      error.status = 400;
+      next(error);
+    }
+
+    const updatedOrder = await Order.findOneAndUpdate(
+      { _id: orderId, 'products.productId': productId }, 
+      {
+        $set: {
+          'products.$.cancelReason': reason,
+        },
+      },
+      { new: true } // Return the updated order
+    );
+
+    if (!updatedOrder) {
+      throw new Error("Order or product not found");
+    }
+
+    console.log("Product cancel reason updated:", updatedOrder);
+
+    res.status(200).json({success:true, message:'Requested product cancellation.'})
+
+  }catch(err){
+    next(err)
+  }
+}
 
 module.exports = {
   getLogin,
@@ -1098,6 +1235,9 @@ module.exports = {
   removeCart,
   getCheckout,
   getOrderHistoryPage,
+  getOrderDetailsPage,
   getOrders,
   addOrder,
+  cancelOrder,
+  cancelProduct
 };

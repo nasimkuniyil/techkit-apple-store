@@ -133,8 +133,8 @@
     border: 2px dashed #dee2e6;
     overflow: hidden;
     transition: all 0.3s ease;
-    height: 230PX;
-    width: 230PX;
+    height: 200PX;
+    width: 200PX;
   }
   
   /* Existing Image Box Styles */

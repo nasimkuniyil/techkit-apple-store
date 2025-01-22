@@ -5,13 +5,16 @@ const sharp = require("sharp");
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
 const Color = require("../../models/colorSchema");
-
+const Order = require("../../models/orderSchema");
 
 // GET ALL PRODUCTS
 const getAllProducts = async (req, res) => {
   try {
-    const allProducts = await Product.find({ deleted: false });
+    const allProducts = await Product.find({ deleted: false }).populate(
+      "color"
+    );
     const deleted = await Product.find({ deleted: true });
+    console.log("---- hello world ---- : ", allProducts);
     res.render("admin/productsList", { allProducts, deleted });
   } catch (err) {
     console.log("getProduct error : ", err);
@@ -22,7 +25,11 @@ const getAllProducts = async (req, res) => {
 const getAddProduct = async (req, res) => {
   try {
     const allCategories = await Category.find({ deleted: false });
-    res.render("admin/productAdd", { categories: allCategories });
+    const allColors = await Color.find({ deleted: false });
+    res.render("admin/productAdd", {
+      categories: allCategories,
+      colors: allColors,
+    });
   } catch (err) {}
 };
 
@@ -30,24 +37,34 @@ const getAddProduct = async (req, res) => {
 const postAddProduct = async (req, res) => {
   try {
     console.log("--- Started add product post method ---");
-    const { product_name, description, color, price, quantity, category } =
-      req.body;
-
     console.log("body data : ", req.body);
     console.log("mage data : ", req.files);
 
-    const _id = req.session.prodId;
+    const { product_name, description, color, price, quantity, category } =
+      req.body;
     const imageFile = req.files;
-    const images = imageFile.map((file) => ({
-      path: file.path,
-      filename: file.filename,
-    }));
 
-    const originalFilePath = req.files[0].destination;
-    const thumbnailPath = path.join(originalFilePath, "thumbnails");
-    let thumb_image = [];
+    const obj = {
+      product_name,
+      description,
+      color,
+      price,
+      quantity,
+      category,
+      images: imageFile.map((file) => {
+        return {
+          data: fs.readFileSync(
+            path.join(__dirname, "../../", "/uploads/", file.filename)
+          ),
+          contentType: "image/jpeg",
+        };
+      }),
+    };
 
-    //Create thumbnail folder
+    const originalFilePath = path.join(__dirname, "../..", "uploads");
+    const thumbnailPath = path.join(__dirname, "../..", "uploads", "thumbnail");
+    let thumb_images = [];
+
     await fs.mkdir(thumbnailPath, { recursive: true }, (err) => {
       if (err) {
         console.log("thumb folder create error : ", err);
@@ -56,99 +73,29 @@ const postAddProduct = async (req, res) => {
       }
     });
 
-    //create thumbnail image
-    await images.forEach(async (obj) => {
-      const thumbnail = path.join(thumbnailPath, `thumb_${obj.filename}`);
-      thumb_image.push(thumbnail);
-      await sharp(obj.path)
-        .resize(200, 150, {
-          fit: "cover",
-        })
-        .toFile(thumbnail);
-    });
-
     console.log("thumbnail image created success");
 
-    console.log("prod id session : ", _id);
-
-    //New product
-    const product = new Product({
-      _id,
-      product_name,
-      description,
-      color,
-      price,
-      quantity,
-      category,
-      images: images.map((file) => file.path),
-      thumb_image,
-    });
+    const product = new Product(obj);
     await product.save();
-
-    req.session.prodId = null;
-
-    res.redirect("/admin/products");
+    res.status(200).redirect("/admin/products");
   } catch (err) {
     console.log("postAddProduct error : ", err);
   }
 };
 
 //EDIT PRODUCT
-// Modified getUpdateProduct function
 const getUpdateProduct = async (req, res) => {
   try {
     const categories = await Category.find({ deleted: false });
+    const colors = await Color.find({ deleted: false });
     const product = await Product.findOne({ _id: req.query.id });
 
-    const imageFile = req.files;
-
-    if (imageFile) {
-      const images = imageFile.map((file) => ({
-        path: file.path,
-        filename: file.filename,
-      }));
-
-      const originalFilePath = req.files[0].destination;
-      const thumbnailPath = path.join(originalFilePath, "thumbnails");
-      let thumb_image = [];
-
-      //Create thumbnail folder
-      await fs.mkdir(thumbnailPath, { recursive: true }, (err) => {
-        if (err) {
-          console.log("thumb folder create error : ", err);
-        } else {
-          console.log("thumbnail folder created");
-        }
-      });
-
-      //create thumbnail image
-      await images.forEach(async (obj) => {
-        const thumbnail = path.join(thumbnailPath, `thumb_${obj.filename}`);
-        thumb_image.push(thumbnail);
-        await sharp(obj.path)
-          .resize(200, 150, {
-            fit: "cover",
-          })
-          .toFile(thumbnail);
-      });
-
-      console.log("thumbnail image created success");
-
-      console.log("prod id session : ", _id);
-    }
-
-    // Map images to include full URLs and IDs
-    const productImages = product.images.map((imgPath, index) => ({
-      path: imgPath,
-      filename: path.basename(imgPath),
-      isMain: index === 0,
-    }));
+    // const imageFile = req.files;
 
     res.render("admin/productEdit", {
       product,
       categories,
-      productImages,
-      maxImages: 4,
+      colors,
     });
   } catch (err) {
     console.log("getUpdateProduct error : ", err);
@@ -157,6 +104,7 @@ const getUpdateProduct = async (req, res) => {
 };
 
 const putUpdateProduct = async (req, res) => {
+  console.log("--- PUT UPDATE PRODUCT IS STARTED ---");
   try {
     const id = req.query.id;
     const {
@@ -166,140 +114,54 @@ const putUpdateProduct = async (req, res) => {
       color,
       category,
       description,
-      removed_images,
-      existing_images,
+      removedImages,
     } = req.body;
 
-    const originalFilePath = path.join("uploads", `product_image_${id}`);
-    const thumbnailPath = path.join(originalFilePath, "thumbnails");
-
-    console.log("del img name : ", removed_images);
-    // 1. Handle deleted images
-    const allFiles = fs.readdirSync(`uploads/product_image_${id}`);
-    const allImages = allFiles.filter((file) => path.extname(file) === ".jpg");
-    // const imagesForDel = allImages.filter(img=>img)
-
-    console.log("all images : ", allImages);
-    console.log("exiting images : ", existing_images);
-    console.log("new images : ", req.body);
-    if (removed_images) {
-      const removedImages = removed_images.map((image) =>
-        image.replace(/\\/g, "/")
-      );
-
-      const delAllImages = allImages.filter((img) =>
-        removedImages.some((item) => item.includes(img))
-      );
-
-      for (const imgName of delAllImages) {
-        // const imageName = decodeURIComponent(imgName);
-        const delFile = `${originalFilePath}/product_image_${id}`;
-
-        console.log("all del img new haha : ", imgName);
-
-        // Remove from filesystem
-        await Promise.all([
-          fs.promises
-            .unlink(originalFilePath + "/" + imgName)
-            .catch((err) =>
-              console.log(`Error deleting original image: ${err}`)
-            ),
-          fs.promises
-            .unlink(thumbnailPath)
-            .catch((err) => console.log(`Error deleting thumbnail: ${err}`)),
-        ]);
-
-        // Remove from database
-        await Product.updateOne(
-          { _id: id },
-          {
-            $pull: {
-              images: originalFilePath + "/" + imgName,
-            },
-          }
-        );
-      }
-    }
-
-    // 2. Handle new images
     const imageFile = req.files;
-    const images = imageFile.map((file) => ({
-      path: file.path,
-      filename: file.filename,
-    }));
 
-    let thumb_image_new = [];
-
-    //Create thumbnail folder
-    await fs.mkdir(thumbnailPath, { recursive: true }, (err) => {
-      if (err) {
-        console.log("thumb folder create error : ", err);
-      } else {
-        console.log("thumbnail folder created");
-      }
-    });
-
-    //create thumbnail image
-    await images.forEach(async (obj) => {
-      const thumbnail = path.join(thumbnailPath, `thumb_${obj.filename}`);
-      thumb_image_new.push(thumbnail);
-      await sharp(obj.path)
-        .resize(200, 150, {
-          fit: "cover",
-        })
-        .toFile(thumbnail);
-    });
-
-    const newImagePaths = images.map((file) => file.path);
-    console.log("path image jjj : ", newImagePaths);
-
-    const prodData = await Product.findOne({ _id: id });
-
-    console.log("prod data put edit : ", prodData.images);
-    console.log("prod data put edit : ", prodData.thumb_image);
-
-    const new_images = [
-      ...(existing_images.filter((img) => img !== "") || []),
-      ...newImagePaths,
-    ]; // Default to empty array if undefined
-    const updated_thumb_image = [
-      ...(prodData.thumb_image || []),
-      ...thumb_image_new,
-    ];
-
-    console.log("req files : ", req.files);
-    // 3. Update product
-    let updateData = {
+    let obj = {
       product_name,
       description,
       color,
       price,
       quantity,
       category,
-      images: new_images,
-      thumb_image: updated_thumb_image,
     };
 
-    // If images and thumb_image arrays are being updated, we can use $push for appending new values
-    if (newImagePaths.length > 0) {
-      updateData.$push = {
-        images: { $each: newImagePaths },
-      };
+    const prodData = await Product.findOne({ _id: id });
+
+    obj.images = prodData.images;
+
+    console.log("req.body : ", req.body);
+    console.log("req.files : ", req.files);
+
+    const beforeObjImg = obj.images;
+
+    //delete removed image data from database
+    if (removedImages) {
+      console.log("image removing...");
+      removedImages.forEach((rmId) => {
+        const data = obj.images.filter((img) => img._id != rmId);
+        obj.images = data;
+      });
+      console.log("image removed success.");
+    }
+    
+    //add new image
+    if (imageFile.length > 0) {
+      console.log("new image adding...");
+      const data = imageFile.map((file) => {
+        return {
+          data: fs.readFileSync(
+            path.join(__dirname, "../../", "/uploads/", file.filename)
+          ),
+          contentType: "image/jpeg",
+        };
+      });
+      obj.images = [...obj.images, ...data];
     }
 
-    if (thumb_image_new.length > 0) {
-      updateData.$push = {
-        thumb_image: { $each: thumb_image_new },
-      };
-    }
-
-    if (removed_images?.length > 0) {
-      updateData.$pull = {
-        images: { $in: removed_images },
-      };
-    }
-
-    await Product.updateOne({ _id: id }, { $set: updateData });
+    await Product.updateOne({ _id: id }, { $set: obj });
 
     return res.status(200).json({ success: true });
   } catch (err) {
@@ -361,6 +223,27 @@ const permenentDeleteProduct = async (req, res) => {
   }
 };
 
+const getRecyclePage = async (req, res) => {
+  try {
+    const products = await Product.find({ deleted: "true" });
+    res.render("admin/recoverPage",{products});
+  } catch (err) {
+    console.log("product permenent delete error : ", err);
+  }
+};
+
+const getRequestPage = async (req, res) => {
+  try {
+    const orders = await Order.find({  cancelReason: { $exists: true, $ne: "" } }).sort({createdAt:-1});
+    console.log('odrs : ',orders)
+    res.render("admin/requests",{orders});
+  } catch (err) {
+    console.log("product permenent delete error : ", err);
+  }
+};
+
+
+
 module.exports = {
   getAllProducts,
   getAddProduct,
@@ -370,4 +253,6 @@ module.exports = {
   deleteProduct,
   unBlockProduct,
   permenentDeleteProduct,
+  getRecyclePage,
+  getRequestPage
 };

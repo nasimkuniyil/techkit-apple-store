@@ -1,0 +1,60 @@
+#confirm-modal {
+    visibility: hidden;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.342);
+}
+
+#confirm-modal.visible{
+    visibility: visible;
+    animation: confirm-anim 0.5s ease-in-out;
+}
+
+.confirm-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+@keyframes confirm-anim {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+.confirm-message-wrapper {
+    margin-bottom: 30px;
+}
+
+.confirm-message {
+    font-size: 18px;
+}
+
+.confirm-button-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.confirm-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.confirm-ok-btn {
+    background-color: rgb(1, 141, 255);
+    color: white;
+}

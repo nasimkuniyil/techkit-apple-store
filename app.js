@@ -45,14 +45,4 @@ app.get("*",(req, res)=>{
     res.render('404');
 });
 
-//500 error middleware
-app.use((err, req, res, next)=>{
-    console.log(err.stack);
-    res.status(500).json({error: "server error"});
-})
-
 app.listen(port,()=>console.log(`Server started on ${port} port`));
-
-
-// ----------- DOUBT --------------//
-// can I separate userController.js (for get data and manipulate) and userPageController.js (for render pages)

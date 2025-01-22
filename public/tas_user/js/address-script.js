@@ -77,12 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
       addressCard.className = "address-card";
       addressCard.innerHTML = `
             <div class="address-card-content">
-                <h3 class="address-name">${item.address.name}</h3>
-                <p class="address-line">${item.address.mobile}</p>
-                <p class="address-line">${item.address.address}</p>
-                <p class="address-line">${item.address.city}, ${item.address.state} ${item.address.country}</p>
-                <p class="address-line">${item.address.pincode}</p>
-                <p class="address-line">${item.address.landmark}</p>
+                <h3 class="address-name">${item.name}</h3>
+                <p class="address-line">${item.mobile}</p>
+                <p class="address-line">${item.address}</p>
+                <p class="address-line">${item.city}, ${item.state} ${item.country}</p>
+                <p class="address-line">${item.pincode}</p>
+                <p class="address-line">${item.landmark}</p>
             </div>
             <div class="address-card-actions">
                 <button class="address-btn-secondary address-edit-btn">Edit</button>
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Add delete functionality
       const deleteBtn = addressCard.querySelector(".address-delete-btn");
       deleteBtn.addEventListener("click", async () => {
-        fetch(`/api/remove-address?addressId=${address._id}`, {
+        fetch(`/api/remove-address?addressId=${item._id}`, {
           method: "DELETE",
         })
           .then((response) => {
@@ -107,14 +107,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const editBtn = addressCard.querySelector(".address-edit-btn");
       editBtn.addEventListener("click", () => {
         addressModal.classList.add("active");
-        document.getElementById("name").value = address.name;
-        document.getElementById("mobile").value = address.mobile;
-        document.getElementById("address").value = address.address;
-        document.getElementById("city").value = address.city;
-        document.getElementById("state").value = address.state;
-        document.getElementById("country").value = address.country;
-        document.getElementById("pincode").value = address.pincode;
-        document.getElementById("landmark").value = address.landmark;
+        document.getElementById("name").value = item.name;
+        document.getElementById("mobile").value = item.mobile;
+        document.getElementById("address").value = item.address;
+        document.getElementById("city").value = item.city;
+        document.getElementById("state").value = item.state;
+        document.getElementById("country").value = item.country;
+        document.getElementById("pincode").value = item.pincode;
+        document.getElementById("landmark").value = item.landmark;
 
         addressForm.addEventListener("submit", (e) => {
           e.preventDefault();
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(addressData),
           };
 
-          const url = `/api/edit-address?addressId=${address._id}`;
+          const url = `/api/edit-address?addressId=${item._id}`;
 
           fetch(url, options)
             .then((response) => {

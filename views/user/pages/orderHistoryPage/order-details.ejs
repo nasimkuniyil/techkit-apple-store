@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/orderDetails.css" />
+  </head>
+  <body>
+    <section id="notification"></section>
+    <header class="main_menu home_menu">
+      <%- include('../../partials/header.ejs') %>
+    </header>
+
+    <!-- Cancellation Modal -->
+    <div id="cancellationModal" class="modal">
+      <div class="modal-content">
+          <h2>Cancel Product</h2>
+          <div class="form-group">
+              <label>Cancellation Reason</label>
+              <select id="cancellationReason" class="form-control">
+                  <option value="">Select a reason</option>
+                  <option value="customer_request">Change color</option>
+                  <option value="price_error">I found better price</option>
+                  <option value="out_of_stock">Reason 1</option>
+                  <option value="damaged">Reason 2</option>
+                  <option value="other">Other</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label>Additional Notes</label>
+              <textarea id="cancellationNotes" class="form-control" rows="3"></textarea>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+              <button class="button" onclick="closeModal()">Cancel</button>
+              <button class="button button-danger" onclick="confirmCancellation()">Confirm Cancellation</button>
+          </div>
+      </div>
+  </div>
+
+
+    <section>
+        <div class="order-container">
+
+            <div class="order-details-header">
+                <h1>Order Details</h1>
+            </div>
+      
+            <div class="order-card">
+              <div class="order-header">
+                <div>
+                  <h1 class="order-title"><%-order.orderId%></h1>
+                <div class="order-date">Ordered on <%-order.createdAt.toISOString().substring(0,10)%></div>
+                </div>
+                <%if(order.orderStatus == 'Cancelled'){%>
+                  <p class="order-cancel-text">Order cancelled</p>
+                  <%}else if(order.cancelReason){%>
+                    <p class="order-cancel-text">Order cancellation requested.</p>
+                <%}else if(order.orderStatus == 'Pending' && !order.cancelReason){%>
+                  <button class="button cancel" onclick="showCancellationModal('<%- order._id %>', 'order')">Cancel order</button>
+                  <%}%>
+              </div>
+      
+              <div class="delivery-progress">
+                <% if(order.orderStatus !== 'Cancelled'){ %>
+                <div class="progress-header">
+                  <div>
+                    <div class="delivery-date">Arriving Tuesday, January 25</div>
+                    <div class="tracking-number">
+                      Tracking Number: 1Z999AA1234567890
+                    </div>
+                  </div>
+                </div>
+                
+                  <div class="progress-bar">
+                    <div class="progress-step <%- order.orderStatus == 'Pending' && 'step-active'%>" id="pending">
+                      <div class="step-dot"></div>
+                      <div class="step-label">Order Placed</div>
+                    </div>
+                    <div class="progress-step <%- order.orderStatus == 'Processing' && 'step-active'%>" id="processing">
+                      <div class="step-dot"></div>
+                      <div class="step-label">Processing</div>
+                    </div>
+                    <div class="progress-step <%- order.orderStatus == 'Shipped' && 'step-active'%>" id="shipped">
+                      <div class="step-dot"></div>
+                      <div class="step-label">Shipped</div>
+                    </div>
+                    <div class="progress-step <%- order.orderStatus == 'Delivered' && 'step-active'%>" id="delivered">
+                      <div class="step-dot"></div>
+                      <div class="step-label">Delivered</div>
+                    </div>
+                  </div>
+                <% }else{ %>
+                  <div class="status-cancelled ">Order Cancelled</div>
+                <% } %>
+               
+              </div>
+      
+              <div class="items-section">
+                <h2 class="section-title">Items in Your Order</h2>
+      
+                <%if(order.products){%>
+                <%order.products.forEach(prod =>{ %>
+                  <div class="item-card">
+                    <div class="item-image">
+                      <img src="data:image/<%=prod.productId.images[0].contentType%>;base64,<%=prod.productId.images[0].data.toString('base64')%>" alt="">
+                    </div>
+                    <div class="item-details">
+                      <div class="item-name">
+                        <%-prod.productId.product_name%> - <%-prod.productId.color%>
+                      </div>
+                      <div class="item-meta">
+                        <span>Qty: <%-prod.quantity%></span>
+                        <span>₹<%-prod.productId.price%></span>
+                      </div>
+                    </div>
+                    <div class="button-container">
+                      <%if(order.orderStatus == 'Pending' && !order.cancelReason){%>
+                        <button class="button cancel" onclick="showCancellationModal('<%- prod.productId._id %>', '<%-order._id%>', 'product')">Cancel</button>
+                        <%}else if(order.orderStatus == 'Delivered'){%>
+                          <button class="button return">Return</button>
+                          <%}%>
+                    </div>                    
+                  </div>
+                <%})%>
+                <%}%>
+              </div>
+      
+              <div class="shipping-card">
+                <h2 class="section-title">Shipping Details</h2>
+                <div class="shipping-details">
+                  <div class="detail-group">
+                    <div class="detail-label">Shipping Address</div>
+                    <div class="detail-value">
+                      <%-order.addressInfo.name%><br />
+                      <%-order.addressInfo.address%><br />
+                      <%-order.addressInfo.city%>, <%-order.addressInfo.landmark%><br />
+                      <%-order.addressInfo.state%>
+                    </div>
+                  </div>
+                  <div class="detail-group">
+                    <div class="detail-label">Shipping Method</div>
+                    <div class="detail-value"><%-order.paymentInfo%></div>
+                  </div>
+                  <div class="detail-group">
+                    <div class="detail-label">Contact Information</div>
+                    <div class="detail-value">
+                      <%-order.userId.email%><br />
+                      <%-order.addressInfo.mobile%>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="price-section">
+                <div class="price-row">
+                  <span>Subtotal</span>
+                  <span>₹ <%-order.totalAmount%></span>
+                </div>
+                <div class="price-row">
+                  <span>Shipping</span>
+                  <span>Free</span>
+                </div>
+                <!-- <div class="price-row">
+                  <span>Tax</span>
+                  <span>$125.82</span> -->
+                <!-- </div> -->
+                <div class="total-row">
+                  <span>Total</span>
+                  <span>₹ <%-order.totalAmount%></span>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+
+    <footer><%- include('../../partials/footer') %></footer>
+    <script defer src="/tas_user/js/orderDetails.js"></script>
+  </body>
+</html>

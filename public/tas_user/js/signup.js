@@ -77,6 +77,7 @@ function formValidate() {
 
   document.querySelectorAll(".form-group input").forEach((item) => {
     if (item.value == "") {
+      validateInput(item, 'text')
       item.style.outline = "1px solid red";
       returnVal = { success: false, message: "Enter required field" };
     } else {

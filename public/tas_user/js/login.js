@@ -7,8 +7,8 @@ const inputField = document.querySelectorAll(".form-group input");
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  document.querySelector('#email').value = 'nsblend999@gmail.com'
-  document.querySelector('#password').value = 10201020
+  // document.querySelector('#email').value = 'nsblend999@gmail.com'
+  // document.querySelector('#password').value = 10201020
 
   const validateResult = formValidate();
 
@@ -74,6 +74,7 @@ function formValidate() {
 
   inputField.forEach((item) => {
     if (item.value == "") {
+      validateInput(item, 'text')
       item.style.outline = "1px solid red";
       returnVal = { success: false, message: "Enter required field" };
     } else {

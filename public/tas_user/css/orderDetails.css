@@ -1,0 +1,367 @@
+
+.order-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem calc(100vw*0.15);
+    min-height: 100vh;
+    background-color: #f5f5f7;
+  }
+
+.order-details-header h1 {
+    color: #1d1d1f;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0066cc;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .order-card {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+  }
+
+  .order-cancel-text{
+    margin: auto 0;
+    background: #ffe1e1;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: red;
+}
+
+  .order-header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e5e5e7;
+  }
+
+  .order-title {
+    font-size: 1.5rem;
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+  }
+
+  .order-date {
+    color: #86868b;
+    font-size: 0.95rem;
+  }
+
+  .delivery-progress {
+    padding: 2rem;
+    background: #f5f5f7;
+    border-radius: 18px;
+    margin: 1.5rem;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .delivery-date {
+    font-size: 1.25rem;
+    color: #1d1d1f;
+    font-weight: 500;
+  }
+
+  .tracking-number {
+    color: #0066cc;
+    font-size: 0.95rem;
+  }
+
+  .progress-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e5e5e7;
+    z-index: 1;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: var(--progress-width, 10%);
+    height: 2px;
+    background: #0066cc;
+    z-index: 2;
+    transition: all ease-out 0.35s;
+  }
+
+  .progress-step {
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 80px;
+    text-align: center;
+  }
+
+  .step-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #e5e5e7;
+  }
+
+  .step-active .step-dot {
+    background: #0066cc;
+    border-color: #0066cc;
+  }
+
+  .step-completed .step-dot {
+    background: #0066cc;
+    border-color: #0066cc;
+  }
+
+  .step-label {
+    font-size: 0.875rem;
+    color: #86868b;
+  }
+
+  .step-active .step-label {
+    color: #1d1d1f;
+    font-weight: 500;
+  }
+
+  .items-section {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    color: #1d1d1f;
+    margin-bottom: 1.5rem;
+  }
+
+  .item-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: #f5f5f7;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .item-image {
+    width: 80px;
+    height: 80px;
+    background: #e5e5e7;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    overflow: hidden;
+  }
+
+  .item-image img{
+    width: 100%;
+  }
+
+  .item-details {
+    flex: 1;
+  }
+
+  .item-name {
+    font-weight: 500;
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-meta {
+    color: #86868b;
+    font-size: 0.95rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .price-section {
+    padding: 1.5rem;
+    border-top: 1px solid #e5e5e7;
+  }
+
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    color: #86868b;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid #e5e5e7;
+    color: #1d1d1f;
+    font-weight: 500;
+  }
+
+  .shipping-card {
+    padding: 1.5rem;
+  }
+
+  .shipping-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .detail-group {
+    line-height: 1.5;
+  }
+
+  .detail-label {
+    color: #86868b;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-value {
+    color: #1d1d1f;
+  }
+
+  .help-card {
+    background: #f5f5f7;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+  }
+
+  .help-title {
+    color: #1d1d1f;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .help-text {
+    color: #86868b;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .help-link {
+    color: #0066cc;
+    text-decoration: none;
+  }
+
+  .help-link:hover {
+    text-decoration: underline;
+  }
+
+
+
+  /* Button style */
+  .button-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: auto;
+  }
+  
+  .button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    margin: auto 0;
+  }
+  
+  .cancel {
+    background-color: #f2f2f7; /* Apple light gray */
+    color: #1d1d1f; /* Dark text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .return {
+    background-color: #0071e3; /* Apple blue */
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+
+  /* cancellation modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}

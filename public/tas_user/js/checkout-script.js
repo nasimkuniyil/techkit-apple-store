@@ -28,7 +28,9 @@ async function fetchAddresses() {
       throw new Error(error.message);
     }
     const data = await response.json();
-    const updatedAdd = data.address.map((add) => {
+    console.log('address data : ', data)
+    const updatedAdd = data.map((add) => {
+      console.log(' address one : ', add)
       const { _id } = add;
       let id = _id.toString();
       return { ...add, _id: id };
@@ -62,8 +64,8 @@ async function fetchCartData() {
     const data = await response.json();
     if (data.cartProducts) {
       console.log("data:", data.cartProducts);
-      porductDetails.push(...data.cartProducts);
-      createCartItem(data.cartProducts);
+      porductDetails.push(...data.cartProducts.items);
+      createCartItem(data.cartProducts.items);
     }
   } catch (err) {
     console.error("Error fetching cart:", err);
@@ -134,7 +136,9 @@ window.addEventListener("click", (e) => {
 function renderAddresses() {
   addressList.innerHTML = addresses
     .map(
-      (address) => `
+      (address) => {
+        console.log('print address : ', address)
+        return `
           <div class="address-card" data-id="${address._id}" onclick="selectAddress('${address._id}')">
               <strong>${address.name}</strong><br>
               ${address.address}<br>
@@ -148,6 +152,7 @@ function renderAddresses() {
               </div>
           </div>
       `
+      }
     )
     .join("");
 }
@@ -243,6 +248,8 @@ placeOrderBtn.addEventListener("click", async () => {
       total: total,
     };
 
+    addOrder(orderData)
+
     // You can add API call here to place order
     // const response = await fetch('/api/orders', {
     //   method: 'POST',
@@ -250,7 +257,6 @@ placeOrderBtn.addEventListener("click", async () => {
     //   body: JSON.stringify(orderData)
     // });
 
-    showOrderConfirmation(orderData);
   } catch (error) {
     showFlashMessage({ success: false, message: error.message });
   }
@@ -270,28 +276,32 @@ function showOrderConfirmation(orderData) {
   const confirmationContent = document.querySelector(
     "#orderConfirmModal .modal-content"
   );
-  confirmationContent.innerHTML = `
-    <h2>Order Confirmation</h2>
-    <p>Your order has been placed successfully!</p>
-    <div class="order-details">
-        <p><strong>Delivery Address:</strong></p>
-        <p>${selectedAddress.name}<br>
-           ${selectedAddress.address}<br>
-           ${selectedAddress.city}, ${selectedAddress.state} ${
-    selectedAddress.pincode
-  }<br>
-           ${selectedAddress.country}<br>
-           ${selectedAddress.landmark}</p>
-        <p><strong>Payment Method:</strong> Cash on Delivery</p>
-        <p><strong>Amount to be paid:</strong> ₹ ${totalAmount.toLocaleString(
-          "en-US",
-          { minimumFractionDigits: 2 }
-        )}</p>
-        <p>Please keep cash ready at the time of delivery.</p>
-    </div>
-    <button class="checkout-btn-primary" onclick="addOrder()">Continue Shopping</button>
-  `;
 
+
+
+
+
+
+confirmationContent.innerHTML = `<div class="success-container">
+  <div class="success-content">
+    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+      <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+      <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+    </svg>
+    
+    <h1>Thank you for your order.</h1>
+    <p class="order-number">Order #2458712</p>
+    <p class="message">We'll send you a shipping confirmation email when your order ships.</p>
+    
+    <div class="delivery-info">
+      <p class="delivery-date">Arrives by Wed, Jan 24</p>
+      <p class="delivery-address"><p>${selectedAddress.address},${selectedAddress.city},${selectedAddress.state} ${selectedAddress.pincode
+  }<br></p>
+    </div>
+    
+    <a href="/orders" class="continue-btn">Continue Shopping</a>
+  </div>
+</div>`
   orderConfirmModal.classList.add("active");
 }
 
@@ -342,7 +352,6 @@ function removeElem(div) {
 function createCartItem(products) {
   const summeryItemsContainer = document.querySelector(".summary-items");
   const subtotalSpan = document.querySelector("#subtotal");
-  const taxSpan = document.querySelector("#tax");
   const shippingSpan = document.querySelector("#shipping");
   const totalSpan = document.querySelector("#total");
 
@@ -353,10 +362,10 @@ function createCartItem(products) {
   products.forEach((prod) => {
     console.log('prod : sum : ',  prod)
     summeryItemsContainer.innerHTML += `<div class="summary-item">
-              <img src="${prod.thumb_image}" alt="Product" />
+              <img src=data:"image/${prod.productId.images[0].contentType};base64,${prod.productId.images[0].toString('base64')}" alt="Product" />
               <div class="item-details">
-                <h3>${prod.product_name}</h3>
-                <p>Color: ${prod.color}</p>
+                <h3>${prod.productId.product_name}</h3>
+                <p>Color: ${prod.productId.color}</p>
                 <p>Quantity: ${prod.cartQty}</p>
               </div>
               <div class="item-price">₹ ${prod.totalPrice}</div>
@@ -366,8 +375,7 @@ function createCartItem(products) {
   });
 
   shipping = subtotal >= 50000 ? 0 : 800;
-  tax = (subtotal + shipping) * 0.18;
-  totalAmount = subtotal + tax;
+  totalAmount = subtotal;
 
   subtotalSpan.textContent = subtotal.toLocaleString("en-US", {
     style: "currency",
@@ -375,11 +383,6 @@ function createCartItem(products) {
     minimumFractionDigits: 2,
   });
   shippingSpan.textContent = shipping;
-  taxSpan.textContent = tax.toLocaleString("en-US", {
-    style: "currency",
-    currency: "INR",
-    minimumFractionDigits: 2,
-  });
   totalSpan.textContent = totalAmount.toLocaleString("en-US", {
     style: "currency",
     currency: "INR",
@@ -389,17 +392,17 @@ function createCartItem(products) {
 }
 
 // Add order
-function addOrder() {
+function addOrder(orderData) {
 
   let products = [];
 
   porductDetails.forEach(prod =>{
-    const obj = {
-      productId:prod.id,
-      quantity:prod.cartQty,
+    const data = {
+      productId:prod.productId._id,
+      quantity:prod.quantity,
       price:prod.price
     }
-    products.push(obj)
+    products.push(data)
   })
 
   const url = `/api/add-order`;
@@ -416,9 +419,44 @@ function addOrder() {
   fetch(url, options)
     .then((response) => {
       console.log("add order res : ", response);
-      window.location.href = "/orders";
+      showOrderConfirmation(orderData);
     })
     .catch((err) => console.log("add order error : ", err));
 }
 
 console.log("details : ", porductDetails);
+
+
+
+
+
+
+
+
+
+// Backup
+
+
+
+  
+// confirmationContent.innerHTML = `
+// <h2>Order Confirmation</h2>
+// <p>Your order has been placed successfully!</p>
+// <div class="order-details">
+//     <p><strong>Delivery Address:</strong></p>
+//     <p>${selectedAddress.name}<br>
+//        ${selectedAddress.address}<br>
+//        ${selectedAddress.city}, ${selectedAddress.state} ${
+// selectedAddress.pincode
+// }<br>
+//        ${selectedAddress.country}<br>
+//        ${selectedAddress.landmark}</p>
+//     <p><strong>Payment Method:</strong> Cash on Delivery</p>
+//     <p><strong>Amount to be paid:</strong> ₹ ${totalAmount.toLocaleString(
+//       "en-US",
+//       { minimumFractionDigits: 2 }
+//     )}</p>
+//     <p>Please keep cash ready at the time of delivery.</p>
+// </div>
+// <a class="checkout-btn-primary" href="/orders">Continue Shopping</a>
+// `;

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/admin/css/ordersStyle.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Include Sidebar -->
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
+      </div>
+
+      <main class="main-content">
+        <!-- Include Header -->
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="products-header">
+          <h1>Orders Requests</h1>
+          <!-- Rest of your page content -->
+          <div class="orders-container">
+            <!-- Order card start -->
+            <% if(orders){ %> <% orders.forEach( (order) => { %>
+            <a href="/admin/order/view?id=<%-order._id%>">
+              <div class="order-card">
+                <div class="order-header">
+                  <span class="order-number"><%- order.orderId %></span>
+                  <span
+                    class="order-status status-<%-order.orderStatus.toLowerCase()%>"
+                    ><%-order.orderStatus%></span
+                  >
+                </div>
+
+                <div class="order-info">
+                  <%if(order.cancelReason){%>
+                    <div>
+                      <p>Request for cancel order</p>
+                    <p>Reason : <%-order.cancelReason%></p>
+                    </div>
+                  <%}else if(order.returnReason){%>
+                    <p><%-order.returnReason%></p>
+                  <%}%>
+                </div>
+
+                <div class="order-total"></div>
+              </div>
+            </a>
+            <% }) %> <% } %>
+            <!-- Order card end -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Common Scripts -->
+    <script src="common/scripts.js"></script>
+    <!-- Page Specific Scripts -->
+    <script src="js/products.js"></script>
+    <!-- Load Common Components -->
+  </body>
+</html>

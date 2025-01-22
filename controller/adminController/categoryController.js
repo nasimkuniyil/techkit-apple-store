@@ -1,14 +1,12 @@
 const Category = require("../../models/categorySchema");
 
-
 //GET CATEGORIES
 const getAllCategories = async (req, res) => {
   try {
     // const totalCount = await Category.find().countDocuments();
-    const categoryObj = await Category.find({ deleted: false });
-    const deleted = await Category.find({ deleted: true });
+    const categoryObj = await Category.find();
 
-    res.render("admin/categoryList", { categoryObj, deleted });
+    res.render("admin/categoryList", { categoryObj });
   } catch (er) {
     console.log("getCategories error : ",er);
   }
@@ -24,8 +22,16 @@ const getAddCategory = (req,res)=>{
 
 const postAddCategory = async (req,res)=>{
   try{
-    const category_name = req.body.category_name;
-    const new_category = new Category({category_name});
+    const {category_name,description} = req.body;
+    console.log('body data : ', req.body)
+    const isAvailable = await Category.findOne({category_name})
+    if(isAvailable){
+      res.status(400).json({success:false,message:'category allready exist'})
+    }
+
+    if(!category_name){ res.status(400).json({success:false,message:'Enter category name'})}
+    if(!description){ res.status(400).json({success:false,message:'Add category description'})}
+    const new_category = new Category({category_name,description});
     await new_category.save()
 
     res.redirect('/admin/category');
@@ -46,8 +52,8 @@ const getUpdateCategory = async (req,res)=>{
   try{
     const id = req.query.id;
     const category = await Category.findOne({_id:id})
-    console.log(category.category_name)
-    res.render('admin/categoryEdit',{category : category.category_name, message : "hello"});
+    console.log(category)
+    res.render('admin/categoryEdit',{category});
   }catch(err){
     console.log('getUpdateCategory error : ', err);
   }
@@ -56,9 +62,9 @@ const getUpdateCategory = async (req,res)=>{
 const putUpdateCategory = async (req,res)=>{
   try{
     const id = req.query.id;
-    const category_name = req.body.category_name;
-    console.log(req.query.id)
-    const new_category = await Category.updateOne({_id:id},{$set:{category_name}});
+    const {category_name, description} = req.body;
+    console.log('id: ',req.query)
+    const category = await Category.updateOne({_id:id},{$set:{category_name,description}});
     res.redirect('/admin/category');
   }catch(err){
     console.log('putUpdateCategory error : ', err);

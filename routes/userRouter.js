@@ -40,8 +40,11 @@ router.put("/api/update-cart", authMiddlewares.isAuthenticated, userController.u
 router.delete("/api/remove-cart", authMiddlewares.isAuthenticated, userController.removeCart);
 
 router.get('/orders',authMiddlewares.isAuthenticated, userController.getOrderHistoryPage);
+router.get('/order/view',authMiddlewares.isAuthenticated, userController.getOrderDetailsPage);
 router.get('/api/order', authMiddlewares.isAuthenticated, userController.getOrders);
 router.post('/api/add-order', authMiddlewares.isAuthenticated, userController.addOrder);
+router.post('/api/cancel-order', authMiddlewares.isAuthenticated, userController.cancelOrder);
+router.post('/api/cancel-product', authMiddlewares.isAuthenticated, userController.cancelProduct);
 
 router.get('/profile', authMiddlewares.isAuthenticated, userController.getProfile);
 router.get('/api/profile', authMiddlewares.isAuthenticated, userController.getProfileData);

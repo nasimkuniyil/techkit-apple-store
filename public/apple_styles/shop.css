@@ -74,3 +74,40 @@ select:focus {
 select {
     transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+
+
+
+/* pagination style */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  .page-num {
+    padding: 0 8px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    color: #0071e3;
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  
+  .page-num.active {
+    border-color: #0071e3;
+    border: 2px solid;
+  }
+  
+  .page-num:hover {
+    background-color: #f2f2f7; /* Light gray hover effect */
+    border-color: #d1d1d6; /* Light border on hover */
+  }
+  
+  .page-num:active {
+    background-color: #d1d1d6; /* Darker gray when clicked */
+    transform: translateY(2px); /* Slightly pressed effect */
+  }
+  

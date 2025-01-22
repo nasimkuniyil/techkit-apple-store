@@ -1,364 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <title>DASHMIN - Bootstrap Admin Template</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta content="" name="keywords" />
-    <meta content="" name="description" />
-
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon" />
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
     />
-
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
-    <link
-      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
-      rel="stylesheet"
-    />
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet" />
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/admin/css/product.css" />
   </head>
-
   <body>
-    <div class="container-xxl position-relative bg-white d-flex p-0">
-      <!-- Spinner Start -->
-      <div
-        id="spinner"
-        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"
-      >
-        <div
-          class="spinner-border text-primary"
-          style="width: 3rem; height: 3rem"
-          role="status"
-        >
-          <span class="sr-only">Loading...</span>
-        </div>
+    <div class="container">
+      <!-- Include Sidebar -->
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
       </div>
-      <!-- Spinner End -->
 
-      <!-- Sidebar Start -->
-      <div class="sidebar pe-4 pb-3">
-        <nav class="navbar bg-light navbar-light">
-          <a href="index.html" class="navbar-brand mx-4 mb-3">
-            <h3 class="text-primary">
-              TechKit Admin
-            </h3>
-          </a>
-          <div class="d-flex align-items-center ms-4 mb-4">
-            <div class="position-relative">
-              <img
-                class="rounded-circle"
-                src="img/user.jpg"
-                alt=""
-                style="width: 40px; height: 40px"
-              />
-              <div
-                class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"
-              ></div>
+      <main class="main-content">
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
             </div>
-            <div class="ms-3">
-              <h6 class="mb-0">Nasim K</h6>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
               <span>Admin</span>
             </div>
           </div>
-          <div class="navbar-nav w-100">
-            <a href="/admin" class="nav-item nav-link"
-              ><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a
-            >
-            <a href="/admin/users" class="nav-item nav-link"
-              ><i class="fa fa-users me-2"></i>Users</a
-            >
-            <a href="/admin/products" class="nav-item nav-link active"
-              ><i class="fa fa-th me-2"></i>Products</a
-            >
-            <a href="/admin/category" class="nav-item nav-link"
-              ><i class="fa fa-list me-2"></i>Category</a
-            >
-            <a href="/admin/orders" class="nav-item nav-link"
-              ><i class="fa fa-list me-2"></i>Orders</a
-            >
-            <a href="/admin/logout" class="nav-item nav-link text-danger">Logout</a>
-          </div>
-        </nav>
-      </div>
-      <!-- Sidebar End -->
 
-      <!-- Content Start -->
-      <div class="content">
-        <!-- Navbar Start -->
-        <nav
-          class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0"
-        >
-          <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-            <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-          </a>
-          <a href="#" class="sidebar-toggler flex-shrink-0">
-            <i class="fa fa-bars"></i>
-          </a>
-          <form class="d-none d-md-flex ms-4">
+          <div class="products-header">
+            <h1>Products</h1>
+            <a href="product/add" class="add-product-btn">
+              <i class="fas fa-plus"></i>
+              Add New Product
+            </a>
+          </div>
+          <div class="search-bar">
             <input
-              class="form-control border-0"
-              type="search"
-              placeholder="Search"
+              type="text"
+              class="search-input"
+              placeholder="Search products..."
             />
-          </form>
-          <div class="navbar-nav align-items-center ms-auto">
-            <div class="nav-item dropdown">
-              <a
-                href="#"
-                class="nav-link dropdown-toggle"
-                data-bs-toggle="dropdown"
-              >
-                <i class="fa fa-envelope me-lg-2"></i>
-                <span class="d-none d-lg-inline-flex">Message</span>
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0"
-              >
-                <a href="#" class="dropdown-item">
-                  <div class="d-flex align-items-center">
-                    <img
-                      class="rounded-circle"
-                      src="img/user.jpg"
-                      alt=""
-                      style="width: 40px; height: 40px"
-                    />
-                    <div class="ms-2">
-                      <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                      <small>15 minutes ago</small>
-                    </div>
-                  </div>
-                </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item">
-                  <div class="d-flex align-items-center">
-                    <img
-                      class="rounded-circle"
-                      src="img/user.jpg"
-                      alt=""
-                      style="width: 40px; height: 40px"
-                    />
-                    <div class="ms-2">
-                      <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                      <small>15 minutes ago</small>
-                    </div>
-                  </div>
-                </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item">
-                  <div class="d-flex align-items-center">
-                    <img
-                      class="rounded-circle"
-                      src="img/user.jpg"
-                      alt=""
-                      style="width: 40px; height: 40px"
-                    />
-                    <div class="ms-2">
-                      <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                      <small>15 minutes ago</small>
-                    </div>
-                  </div>
-                </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item text-center"
-                  >See all message</a
+            <select class="filter-select">
+              <option value="">All Categories</option>
+              <option value="electronics">Electronics</option>
+              <option value="clothing">Clothing</option>
+              <option value="accessories">Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="products-grid">
+          <!-- Product Card 1 -->
+          <% if(allProducts.length > 0){ %> <% allProducts.forEach( (prod) =>
+          {%>
+          <div class="product-card">
+            <div class="product-image">
+              <img
+                src="data:image/<%=prod.images[0].contentType%>;base64,
+                    <%=prod.images[0].data.toString('base64')%>"
+              />
+            </div>
+            <div class="product-details">
+              <div class="product-title"><%- prod.product_name %></div>
+              <div class="product-color">
+                <div
+                  class="color-circle"
+                  style="background-color: #<%- prod.color.color_code %>"
+                ></div>
+                <p><%- prod.color.color_name %></p>
+              </div>
+              <div class="product-price">₹ <%- prod.price %></div>
+              <div class="product-stock">
+                In Stock: <%- prod.quantity %> units
+              </div>
+              <div class="product-actions">
+                <a
+                  href="/admin/product/edit?id=<%- prod._id %>"
+                  class="action-btn edit-btn"
                 >
-              </div>
-            </div>
-            <div class="nav-item dropdown">
-              <a
-                href="#"
-                class="nav-link dropdown-toggle"
-                data-bs-toggle="dropdown"
-              >
-                <i class="fa fa-bell me-lg-2"></i>
-                <span class="d-none d-lg-inline-flex">Notificatin</span>
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0"
-              >
-                <a href="#" class="dropdown-item">
-                  <h6 class="fw-normal mb-0">Profile updated</h6>
-                  <small>15 minutes ago</small>
+                  <i class="fas fa-edit"></i>
+                  Edit
                 </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item">
-                  <h6 class="fw-normal mb-0">New user added</h6>
-                  <small>15 minutes ago</small>
-                </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item">
-                  <h6 class="fw-normal mb-0">Password changed</h6>
-                  <small>15 minutes ago</small>
-                </a>
-                <hr class="dropdown-divider" />
-                <a href="#" class="dropdown-item text-center"
-                  >See all notifications</a
+                <button
+                  class="action-btn delete-btn"
+                  onclick="deleteProduct(event, '<%- prod._id %>')"
                 >
+                  <i class="fas fa-trash"></i>
+                  Delete
+                </button>
               </div>
             </div>
           </div>
-        </nav>
-        <!-- Navbar End -->
-
-        <!-- Buttons Add and Recover Start -->
-        <div class="container-fluid pt-4 px-4">
-          <div class="row">
-            <div class="col-12">
-              <a href="/admin/product/add" class="btn btn-primary m-2">Add</a>
-              <button type="button" class="btn btn-outline-secondary m-2" data-bs-toggle="modal" data-bs-target="#recoverModel" >
-                Recover
-              </button>
-            </div>
-          </div>
+          <% }) %> <% } %>
         </div>
-
-        <!-- Recover Modal -->
-        <div class="modal fade" id="recoverModel" tabindex="-1" aria-labelledby="recoverModalLabel" aria-hidden="true" >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="recoverModalLabel">Recover Product</h1>
-                <button  type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close" ></button>
-              </div>
-              <% if (deleted.length > 0){ %>
-                <%deleted.forEach( item => { %>
-                  <div class="modal-body"><a href="/admin/product/unblock?id=<%- item._id %>"><i class="fa-solid fa-arrow-rotate-left text-primary"> </i></a> <%- item.product_name %> </div>
-                <% }) %>
-                <div class="modal-footer">
-                  <button  type="button" class="btn btn-danger" id="permenent-delete-items" data-bs-dismiss="modal" >Delete All</button>
-                </div>
-              <%}else{%>
-                <div class="modal-body">No items</div>
-              <%}%>
-            </div>
-          </div>
-        </div>
-        <!-- Recover Modal end -->
-        <!-- Buttons Add and Recover End -->
-
-        <!-- Table Start -->
-        <div class="container-fluid pt-4 px-4" style="min-height: 100vh">
-          <div class="row g-4">
-            <div class="col-12">
-              <div class="bg-light rounded h-100 p-4">
-                <h4 class="mb-4">Product mangement</h4>
-                <div class="table-responsive">
-                  <table class="table align-middle">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Product Name</th>
-                        <th scope="col">Stock</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Offer</th>
-                        <th scope="col">Rating</th>
-                        <th scope="col">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% allProducts.forEach( (product, index) => { %>
-                      <tr>
-                        <th scope="row"><%- index+1 %></th>
-                        <td>
-                          <img
-                            src="../../<%- product.thumb_image[0] %>"
-                            alt=""
-                            style="width: 30px; height: 30px; object-fit: cover;"
-                          />
-                        </td>
-                        <td><%-product.product_name %></td>
-                        <td><%- product.quantity %></td>
-                        <td><%-product.price %></td>
-                        <td><a href="#">add offer</a></td>
-                        <td>4.2</td>
-                        <td>
-                          <a href="/admin/product/edit?id=<%-product._id%>" class="btn btn-sm btn-sm-square btn-outline-primary m-2" >
-                            <i class="fa fa-pen"></i>
-                          </a>
-                          <button type="button" class="btn btn-sm btn-sm-square btn-outline-danger m-2" data-bs-toggle="modal" data-bs-target="#deleteProductModel<%-product._id%>">
-                            <i class="fa fa-trash"></i>
-                          </button>
-                          <!-- Delete Modal Start -->
-                          <div class="modal fade" id="deleteProductModel<%-product._id%>" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true" >
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h1 class="modal-title fs-5" id="deleteProductModalLabel">Delete <span class="text-danger">"<%-product.product_name%>"</span></h1>
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                  <a href="/admin/product/delete?id=<%-product._id%>" class="btn btn-danger delete-item-button" data-bs-dismiss="modal">Delete</a>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <!-- Delete Modal End -->
-                        </td>
-                      </tr>
-                      <% }) %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Table End -->
-
-       <!-- Footer Start -->
-       <div class="container-fluid pt-4 px-4">
-        <div class="bg-light rounded-top p-4">
-            <div class="row">
-                <div class="col-12 text-center text-sm-start">
-                    &copy; <a href="#">TechKit</a>, All Right Reserved. 
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Footer End -->
-      </div>
-      <!-- Content End -->
-
-      <!-- Back to Top -->
-      <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
-        ><i class="bi bi-arrow-up"></i
-      ></a>
+      </main>
     </div>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/chart/chart.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
-
-    <!-- My script -->
-    <script src="js/delete.js"></script>
+    <!-- Common Scripts -->
+    <script src="/admin/common/scripts.js"></script>
+    <!-- Page Specific Scripts -->
+    <script src="/admin/js/products.js"></script>
   </body>
 </html>

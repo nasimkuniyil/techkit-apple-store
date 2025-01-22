@@ -15,22 +15,22 @@ async function fetchCartData() {
     });
 
     if (!response.ok) {
-      const message = document.createElement('h3');
-      message.style.textAlign = 'center';
+      const message = document.createElement("h3");
+      message.style.textAlign = "center";
       message.textContent = `Cart items not available.`;
-      document.querySelector('.cart-items').appendChild(message)
-      document.querySelector('.cart-summary').style.visibility = 'hidden';
+      document.querySelector(".cart-items").appendChild(message);
+      document.querySelector(".cart-summary").style.visibility = "hidden";
       throw new Error("Failed to fetch cart");
     }
-  
+
     const data = await response.json();
     if (data.cartProducts) {
-      cartProducts = data.cartProducts;
-      console.log("data:", data.cartProducts);
+      cartProducts = data.cartProducts.items;
+      console.log("data:", cartProducts);
       cartId = data.cartId;
       createCartItem(cartProducts);
       attachEventListeners(cartProducts);
-      updateCartSummery()
+      updateCartSummery();
     }
   } catch (err) {
     console.error("Error fetching cart:", err);
@@ -88,7 +88,7 @@ async function removeItemFromCart(productId) {
     // if (cartItem) {
     //   cartItem.remove();
     // }
-    window.location.href = '/cart'
+    window.location.href = "/cart";
   } catch (err) {
     console.error("Error removing item:", err);
     alert("An error occurred while removing the item");
@@ -108,39 +108,45 @@ function updateButtonStates(container, quantity, stock) {
 
 function createCartItem(products) {
   const cartItems = products
-    .map(
-      (product) => `
-    <div class="cart-item" id="${product.id}" data-stock="${product.quantity}">
+    .map((product) => {
+      // const imgSrc = "data:image/"+product.productId.images[0].contentType+"; base64,"+product.productId.images[0].data.toString('base64') ;
+      // console.log('hey : ', imgSrc)
+    const imageData = product.productId.images[0].data; 
+    const contentType = product.productId.images[0].contentType; 
+    let imgSrc =`data:image/${contentType};base64,${imageData.toString('base64')}`;
+    
+      return `
+    <div class="cart-item" id="${product.productId._id}" data-stock="${product.productId.quantity}">
       <img
-        src="../../../../${product.thumb_image.replace(/\\/g, "/")}"
+        src="${imgSrc}"
         alt="Product"
         class="item-image"
       />
       <div class="item-details">
-        <h3 class="item-name">${product.product_name}</h3>
-        <p class="item-single-price">${product.price}</p>
+        <h3 class="item-name">${product.productId.product_name}</h3>
+        <p class="item-single-price">${product.productId.price}</p>
         <div class="quantity-selector">
           <button class="quantity-btn decrease" ${
-            product.cartQty <= 1 ? "disabled" : ""
+            product.quantity <= 1 ? "disabled" : ""
           }>−</button>
-          <span class="quantity">${product.cartQty}</span>
+          <span class="quantity">${product.quantity}</span>
           <button class="quantity-btn increase" ${
-            product.cartQty >= Math.min(5, product.stock) ? "disabled" : ""
+            product.quantity >= 5 ? "disabled" : ""
           }>+</button>
         </div>
         ${
-          product.stock < 5
-            ? `<p class="stock-info">Stock: ${product.stock}</p>`
+          product.productId.quantity < 5
+            ? `<p class="stock-info">Stock: ${product.productId.quantity}</p>`
             : ""
         }
       </div>
       <div class="item-price">
         <p class="price">${product.totalPrice}</p>
-        <button class="remove-btn">Remove</button>
+        <button class="remove-btn" onClick="${()=>removeCartItem(product.productId._id)}" >Remove</button>
       </div>
     </div>
-  `
-    )
+  `;
+    })
     .join("");
 
   cartItem.innerHTML = cartItems;
@@ -175,14 +181,14 @@ function attachEventListeners() {
         } else {
           return;
         }
-        
+
         // Update UI first
         qtyDisplay.textContent = newQty;
         currentQty = newQty;
         totalPrice.textContent = newQty * singlePrice.textContent;
         updateButtonStates(cartItemElement, newQty, stock);
         updateCartSummery();
-        
+
         // Then update server
         try {
           await updateCart({
@@ -205,9 +211,9 @@ function attachEventListeners() {
       });
   });
 
-  document.querySelector('.checkout-btn').addEventListener('click', (e)=>{
-    window.location.href = `/checkout?id=${cartId}`
-  })
+  document.querySelector(".checkout-btn").addEventListener("click", (e) => {
+    window.location.href = `/checkout?id=${cartId}`;
+  });
 }
 
 // Add styles
@@ -260,9 +266,28 @@ function updateCartSummery() {
   const totalElem = document.querySelector("#total");
 
   let subtotal = 0;
-  pricesElem.forEach(p =>{
-    subtotal += parseInt(p.textContent)
-  })
+  pricesElem.forEach((p) => {
+    subtotal += parseInt(p.textContent);
+  });
   subtotalElem.textContent = subtotal;
   totalElem.textContent = subtotal;
+}
+
+
+// Remove cart item
+function removeCartItem(id){
+  const url =  `/api/remove-cart`;
+  const options = {
+    method:'DELETE',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({productId : id})
+  }
+  fetch(url, options).then(response=>{
+    if(!response.ok){
+      throw new Error('something went wrong');
+    }
+    window.location.href = '/admin/cart'
+  }).catch(err=> alert(err.message))
 }

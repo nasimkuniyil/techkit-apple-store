@@ -20,7 +20,7 @@
         <nav class="breadcrumb">
           <a href="/">Home</a>
           <span class="separator">›</span>
-          <a href="/shop/<%- category_name %>"><%- category_name %></a>
+          <a href="/shop/<%- product.category.category_name %>"><%- product.category.category_name %></a>
           <span class="separator">›</span>
           <span><%- product.product_name %></span>
         </nav>
@@ -31,19 +31,19 @@
           <div class="image-gallery">
             <div class="main-image">
               <img
-                src="../../../../<%- product.images[0] %>"
+                src="data:image/<%=product.images[0].contentType%>;base64,<%=product.images[0].data.toString('base64')%>"
                 alt="Product Main Image"
                 id="mainImage"
               />
               <div id="zoomPane"></div>
             </div>
             <div class="thumbnail-container">
-              <%product.thumb_image.forEach( (img,index) => { %>
+              <%product.images.forEach( (img,index) => { %>
               <div class="thumbnail active">
                 <img
-                  src="../../../../<%- product.thumb_image[index] %>"
+                  src="data:image/<%=img.contentType%>;base64,<%=img.data.toString('base64')%>"
                   alt="Product Thumbnail 1"
-                  data-src="../../../../<%- product.images[index] %>"
+                  data-src="data:image/<%=img.contentType%>;base64,<%=img.data.toString('base64')%>"
                 />
               </div>
               <% }) %>
@@ -60,8 +60,15 @@
             </div>
 
             <div class="color-options">
-              <p>Color : <span><%- product.color %></span></p>
+              <% availableColors.forEach( item => { %>
+                <a href="/product-details?id=<%- item._id %>" class="product-color <%= ( product._id.toString() == item._id.toString() ) ? 'active' : '' %>" style="background-color: #<%- item.color.color_code %>;"></a>
+              <% }) %>
             </div>
+            <p class="product-category">
+              <a href="/shop/<%- product.category.category_name %>">
+              <%- product.category.category_name %>
+              </a>
+            </p>
 
             <% if(product.quantity > 0){ %>
 
@@ -69,11 +76,17 @@
               <%- product.quantity < 10 ? "Only few products are left" : "" %>
             </p>
             <div class="quantity-selector">
-              <button class="quantity-btn" onclick="updateQuantity({change:-1, prodQuantity:'<%= product.quantity %>'})">
+              <button
+                class="quantity-btn"
+                onclick="updateQuantity({change:-1, prodQuantity:'<%= product.quantity %>'})"
+              >
                 -
               </button>
               <span class="quantity-display" id="quantity">1</span>
-              <button class="quantity-btn" onclick="updateQuantity({change:1, prodQuantity:'<%= product.quantity %>'})">
+              <button
+                class="quantity-btn"
+                onclick="updateQuantity({change:1, prodQuantity:'<%= product.quantity %>'})"
+              >
                 +
               </button>
             </div>
@@ -91,7 +104,10 @@
               >
                 Add to Cart
               </button>
-              <button class="add-to-wishlist" onclick="addToWishlist('<%= product._id %>')">
+              <button
+                class="add-to-wishlist"
+                onclick="addToWishlist('<%= product._id %>')"
+              >
                 <i class="far fa-heart"></i>
               </button>
             </div>
