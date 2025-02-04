@@ -133,7 +133,7 @@ function handleProfileUpdate(event) {
     body: JSON.stringify(updatedUserData),
   };
 
-  fetch("/edit-profile", options).then(response => window.location.href = response.url).catch(err=>alert(err.message));
+  fetch("/api/edit-profile", options).then(response => window.location.href = response.url).catch(err=>alert(err.message));
 
   // Update display
   updateDisplayValues();

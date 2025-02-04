@@ -10,16 +10,12 @@ const productSchema = new Schema({
   price: { type: Number, required: true },
   thumb_image: [
     {
-      data: Buffer,
-      contentType: String,
-      
+     url:String 
     },
   ],
   images: [
     {
-      data: Buffer,
-      contentType: String,
-      
+      url:String 
     },
   ],
   category: { type: ObjectId, ref: "Category", required: true },

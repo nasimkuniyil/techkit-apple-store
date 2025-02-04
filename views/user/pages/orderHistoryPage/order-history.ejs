@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('../../../partials/head') %>
-    <link rel="stylesheet" href="/tas_user/css/order.css">
-</head>
-<body>
-    <section id="notification"></section>
+    <link rel="stylesheet" href="/apple_styles/pagination.css" />
+    <link rel="stylesheet" href="/tas_user/css/order.css" />
+  </head>
+  <body>
     <header class="main_menu home_menu">
-        <%- include('../../partials/header.ejs') %>
-      </header>
+      <%- include('../../partials/header.ejs') %>
+    </header>
     <div class="order-history-page">
-        <div class="order-history-container">
-            <div class="order-history-header">
-                <h1>Order History</h1>
-            </div>
-
-            <div class="order-filter">
-                <div class="order-search">
-                    <input type="text" placeholder="Search orders..." id="orderSearch">
-                </div>
-                <select class="order-filter-select" id="orderFilter">
-                    <option value="all">All Orders</option>
-                    <option value="6months">--</option>
-                </select>
-            </div>
-
-            <div id="ordersList">
-                <!-- Orders will be populated by JavaScript -->
-            </div>
-
-            <!-- <button class="load-more" id="loadMoreBtn">Load More Orders</button> -->
+      <div class="order-history-container">
+        <div class="order-history-header">
+          <h1>Order History</h1>
         </div>
+
+        <div class="order-filter">
+          <div class="order-search">
+            <input
+              type="text"
+              placeholder="Search orders..."
+              id="orderSearch"
+            />
+          </div>
+          <select class="order-filter-select" id="orderFilter">
+            <option value="all">All Orders</option>
+            <option value="6months">--</option>
+          </select>
+        </div>
+
+        <div id="ordersList">
+          <!-- Orders will be populated by JavaScript -->
+        </div>
+
+        <!-- Pagination -->
+        <section class="pagination-section">
+          <nav>
+            <ul class="pagination"></ul>
+          </nav>
+        </section>
+
+        <!-- <button class="load-more" id="loadMoreBtn">Load More Orders</button> -->
+      </div>
     </div>
 
     <footer><%- include('../../partials/footer') %></footer>
 
+    <script src="/flashMessage.js"></script>
     <script src="/tas_user/js/order.js"></script>
-</body>
+    <script src="/pagination.js"></script>
+  </body>
 </html>

@@ -26,63 +26,54 @@
             <div class="filter-group">
               <label for="sort">Sort</label>
               <select id="sort">
-                <option value="a-z" <%= sortOption === 'a-z' ? 'selected' : '' %>>A-Z</option>
-                <option value="z-a" <%= sortOption === 'z-a' ? 'selected' : '' %>>Z-A</option>
-                <option value="low-high" <%= sortOption === 'low-high' ? 'selected' : '' %>>Low - High</option>
-                <option value="high-low" <%= sortOption === 'high-low' ? 'selected' : '' %>>High - Low</option>
-                <option value="latest" <%= sortOption === 'latest' ? 'selected' : '' %>>Latest</option>
-                <option value="popular" <%= sortOption === 'popular' ? 'selected' : '' %>>Popular</option>
+                <option value="a-z">A-Z</option>
+                <option value="z-a">Z-A</option>
+                <option value="low-high">Low - High</option>
+                <option value="high-low">High - Low</option>
+                <option value="latest">Latest</option>
+                <option value="popular">Popular</option>
               </select>
             </div>
             <div class="filter-group">
               <label for="filter">Filter</label>
               <select id="filter">
-                <option value="" <%= filterOption === '' ? 'selected' : '' %>>All</option>
-                <option value="mac" <%= filterOption === 'mac' ? 'selected' : '' %>>Mac</option>
-                <option value="iphone" <%= filterOption === 'iphone' ? 'selected' : '' %>>iPhone</option>
-                <option value="ipad" <%= filterOption === 'ipad' ? 'selected' : '' %>>iPad</option>
-                <option value="watch" <%= filterOption === 'watch' ? 'selected' : '' %>>Watch</option>
-                <option value="accessories" <%= filterOption === 'accessories' ? 'selected' : '' %>>Accessories</option>
+                <option value="">All</option>
+                <option value="mac">Mac</option>
+                <option value="iphone">iPhone</option>
+                <option value="ipad">iPad</option>
+                <option value="watch">Watch</option>
+                <option value="accessories">Accessories</option>
               </select>
             </div>
           </div>
         </div>
       </section>
+
+      <!-- Product section -->
       <section>
         <diV class="card-container">
           <div class="content-wrapper">
             <div class="card-list shop">
-              <%- include('../../partials/card-item', {products:products}) %>
+              <!-- prod skelton -->
+              <div class="card-skelton"></div>
+              <div class="card-skelton"></div>
+              <div class="card-skelton"></div>
             </div>
           </div>
         </diV>
       </section>
-      <section>
-        <div class="pagination-wrapper">
-          <div class="pagination">
-            <button class="pagination-btn prev-btn" disabled>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-            
-            <div class="pagination-numbers">
-              <%for(let i = 1; i<=pageNumberLimit; i++){%>
 
-                <button class="pagination-number"><%-i%></button>
-                <%}%>
-            </div>
-            <button class="pagination-btn next-btn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
-        </div>
+      <!-- Pagination -->
+      <section class="pagination-section">
+        <nav>
+          <ul class="pagination"></ul>
+        </nav>
       </section>
     </main>
     <footer><%- include('../../partials/footer') %></footer>
-    <script defer src="/tas_user/js/shopAll.js"></script>
+    <script defer src="/tas_user/js/shop-page.js"></script>
+    <script src="/pagination.js"></script>
     <%- include('../../../partials/scripts') %>
+    <script src="/tas_user/js/searchProduct.js"></script>
   </body>
 </html>

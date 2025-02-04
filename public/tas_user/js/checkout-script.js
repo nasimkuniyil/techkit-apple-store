@@ -6,6 +6,7 @@ const cancelAddressBtn = document.getElementById("cancelAddress");
 const addressForm = document.getElementById("addressForm");
 const addressList = document.getElementById("addressList");
 const placeOrderBtn = document.getElementById("placeOrderBtn");
+const paymentOption = document.querySelector(".payment-method");
 
 // Sample addresses (Replace with your data storage solution)
 let addresses = [];
@@ -13,11 +14,21 @@ let addresses = [];
 let porductDetails = [];
 
 let selectedAddressId = null;
+let selectedPaymentMethod = null;
 let totalAmount = 0;
 
 // Initial load
 fetchAddresses();
 fetchCartData();
+fetchCoupon();
+
+paymentOption.addEventListener("input", (e) => {
+  if (e.target.checked) {
+    console.log("hello, payment ", e.target.id);
+    selectedPaymentMethod = e.target.id;
+  }
+  // console.log('event id : ',e.target.id)
+});
 
 // Fetch addresses from API
 async function fetchAddresses() {
@@ -28,9 +39,9 @@ async function fetchAddresses() {
       throw new Error(error.message);
     }
     const data = await response.json();
-    console.log('address data : ', data)
+    console.log("address data : ", data);
     const updatedAdd = data.map((add) => {
-      console.log(' address one : ', add)
+      console.log(" address one : ", add);
       const { _id } = add;
       let id = _id.toString();
       return { ...add, _id: id };
@@ -73,8 +84,20 @@ async function fetchCartData() {
   }
 }
 
+async function fetchCoupon() {
+  // const url = "/api/random-coupon";
+
+  try {
+    console.log("fetch coupon.");
+  } catch (err) {
+    console.error("Error fetching coupon:", err);
+    alert("An error occurred while fetching the coupon");
+  }
+}
+
 // Event Listeners
 addAddressBtn.addEventListener("click", () => {
+  addressForm.addEventListener("submit", saveAddress);
   addressModal.classList.add("active");
 });
 
@@ -83,9 +106,9 @@ cancelAddressBtn.addEventListener("click", () => {
   addressForm.reset();
 });
 
-// Handle address form submission
-addressForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// handle address form submit
+async function saveAddress(event) {
+  event.preventDefault();
 
   const newAddress = {
     name: document.getElementById("name").value,
@@ -99,46 +122,35 @@ addressForm.addEventListener("submit", async (e) => {
   };
 
   try {
-    // add API call here to save address
-    const response = await fetch("/api/add-address", {
+    const url = "/api/add-address";
+    const options = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(newAddress),
-    });
+    };
+    // add API call here to save address
+    const response = await fetch(url, options);
 
     addresses.push(newAddress);
-    renderAddresses();
+    fetchAddresses();
 
     addressModal.classList.remove("active");
     addressForm.reset();
-
-    selectedAddressId = newAddress._id;
-    updateSelectedAddress();
 
     showFlashMessage({ success: true, message: "Address added successfully!" });
   } catch (error) {
     showFlashMessage({ success: false, message: error.message });
   }
-});
-
-// Close modals if clicking outside
-window.addEventListener("click", (e) => {
-  if (e.target === addressModal) {
-    addressModal.classList.remove("active");
-    addressForm.reset();
-  }
-  if (e.target === orderConfirmModal) {
-    orderConfirmModal.classList.remove("active");
-  }
-});
+}
 
 // Render addresses
 function renderAddresses() {
   addressList.innerHTML = addresses
-    .map(
-      (address) => {
-        console.log('print address : ', address)
-        return `
+    .map((address) => {
+      console.log("print address : ", address);
+      return `
           <div class="address-card" data-id="${address._id}" onclick="selectAddress('${address._id}')">
               <strong>${address.name}</strong><br>
               ${address.address}<br>
@@ -151,9 +163,8 @@ function renderAddresses() {
                   <button onclick="deleteAddress('${address._id}', event)" class="checkout-btn-secondary">Delete</button>
               </div>
           </div>
-      `
-      }
-    )
+      `;
+    })
     .join("");
 }
 
@@ -177,11 +188,12 @@ function updateSelectedAddress() {
 }
 
 // Edit address
-async function editAddress(_id, event) {
+function editAddress(_id, event) {
   event.stopPropagation();
   const address = addresses.find((addr) => addr._id === _id);
   if (!address) return;
 
+  document.getElementById("address-modal-title").textContent = "Edit address";
   document.getElementById("name").value = address.name;
   document.getElementById("mobile").value = address.mobile;
   document.getElementById("address").value = address.address;
@@ -190,9 +202,46 @@ async function editAddress(_id, event) {
   document.getElementById("pincode").value = address.pincode;
   document.getElementById("country").value = address.country;
   document.getElementById("landmark").value = address.landmark;
+  document.getElementById("addressForm").addEventListener("submit", (event) => submitEditAddress(event, _id));
 
   addressModal.classList.add("active");
-  addresses = addresses.filter((addr) => addr._id !== _id);
+}
+
+// Submit edit address
+function submitEditAddress(event, _id) {
+  event.stopPropagation();
+  const editedAddress = {
+    name: document.getElementById("name").value,
+    mobile: document.getElementById("mobile").value,
+    address: document.getElementById("address").value,
+    city: document.getElementById("city").value,
+    state: document.getElementById("state").value,
+    country: document.getElementById("country").value,
+    pincode: document.getElementById("pincode").value,
+    landmark: document.getElementById("landmark").value,
+  };
+  const url = `/api/edit-address?addressId=${_id}`;
+  const options = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(editedAddress),
+  };
+
+  fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json()
+    })
+    .then(data=>{
+      // console.log('data === ',data)
+      // fetchAddresses(data);
+      // showFlashMessage()
+    })
+    .catch((err) => showFlashMessage({ success: false, message: err.message }));
 }
 
 // Delete address
@@ -200,18 +249,20 @@ async function deleteAddress(_id, event) {
   event.stopPropagation();
   if (confirm("Are you sure you want to delete this address?")) {
     try {
-      // You can add API call here to delete address
-      // await fetch(`/api/address/${_id}`, { method: 'DELETE' });
-
-      addresses = addresses.filter((addr) => addr._id !== _id);
-      if (selectedAddressId === _id) {
-        selectedAddressId = addresses.length > 0 ? addresses[0]._id : null;
-      }
-      renderAddresses();
-      showFlashMessage({
-        success: true,
-        message: "Address deleted successfully!",
+      const response = await fetch(`/api/remove-address?addressId=${_id}`, {
+        method: "DELETE",
       });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+
+      console.log("==== DATA : ", data);
+      showFlashMessage(data);
+
+      fetchAddresses();
     } catch (error) {
       showFlashMessage({ success: false, message: error.message });
     }
@@ -231,7 +282,65 @@ function validateZipCode(pincode) {
 }
 
 // Place Order
-placeOrderBtn.addEventListener("click", async () => {
+placeOrderBtn.addEventListener("click", placeOrderFunc);
+
+function placeOrderFunc() {
+  if (selectedPaymentMethod == "cashOnDelivery") {
+    placeOrderWithCOD();
+  } else {
+    payNow();
+  }
+}
+
+// razorpay function
+async function payNow() {
+  let products = [];
+
+  porductDetails.forEach((prod) => {
+    const data = {
+      productId: prod.productId._id,
+      quantity: prod.quantity,
+      price: prod.price,
+    };
+    products.push(data);
+    console.log("products : ", products);
+  });
+
+  window.localStorage.setItem("products", JSON.stringify(products));
+  window.localStorage.setItem("addressId", selectedAddressId);
+  window.localStorage.setItem("paymentInfo", selectedPaymentMethod);
+  console.log("local storage : ", window.localStorage);
+
+  // Create order by calling the server endpoint
+  const response = await fetch("/api/online-payment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      totalAmount,
+      currency: "INR",
+      receipt: "receipt#1",
+      notes: {},
+    }),
+  });
+
+  const order = await response.json();
+
+  // Open Razorpay Checkout
+  const options = {
+    key: "rzp_test_hGYKC7nv8aVuxX", // Replace with your Razorpay key_id
+    amount: totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    order_id: order.id, // This is the order_id created in the backend
+    callback_url: "http://localhost:3000/api/online-payment/success",
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+async function placeOrderWithCOD() {
   if (!selectedAddressId) {
     showFlashMessage({
       success: false,
@@ -240,15 +349,22 @@ placeOrderBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (!selectedPaymentMethod) {
+    showFlashMessage({
+      success: false,
+      message: "Please select a payment method",
+    });
+    return false;
+  }
+
   try {
     const orderData = {
       addressId: selectedAddressId,
-      paymentMethod: "cashOnDelivery",
       items: [],
       total: total,
     };
 
-    addOrder(orderData)
+    addOrder(orderData);
 
     // You can add API call here to place order
     // const response = await fetch('/api/orders', {
@@ -256,15 +372,14 @@ placeOrderBtn.addEventListener("click", async () => {
     //   headers: { 'Content-Type': 'application/json' },
     //   body: JSON.stringify(orderData)
     // });
-
   } catch (error) {
     showFlashMessage({ success: false, message: error.message });
   }
-});
+}
 
 // Show order confirmation
 function showOrderConfirmation(orderData) {
-  console.log('order data : ', orderData)
+  console.log("order data : ", orderData);
   const selectedAddress = addresses.find(
     (addr) => addr._id === orderData.addressId
   );
@@ -277,12 +392,7 @@ function showOrderConfirmation(orderData) {
     "#orderConfirmModal .modal-content"
   );
 
-
-
-
-
-
-confirmationContent.innerHTML = `<div class="success-container">
+  confirmationContent.innerHTML = `<div class="success-container">
   <div class="success-content">
     <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
       <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
@@ -295,13 +405,12 @@ confirmationContent.innerHTML = `<div class="success-container">
     
     <div class="delivery-info">
       <p class="delivery-date">Arrives by Wed, Jan 24</p>
-      <p class="delivery-address"><p>${selectedAddress.address},${selectedAddress.city},${selectedAddress.state} ${selectedAddress.pincode
-  }<br></p>
+      <p class="delivery-address"><p>${selectedAddress.address},${selectedAddress.city},${selectedAddress.state} ${selectedAddress.pincode}<br></p>
     </div>
     
     <a href="/orders" class="continue-btn">Continue Shopping</a>
   </div>
-</div>`
+</div>`;
   orderConfirmModal.classList.add("active");
 }
 
@@ -324,30 +433,6 @@ document.getElementById("pincode").addEventListener("input", function () {
   }
 });
 
-// Flash message functionality
-function showFlashMessage({ success, message }) {
-  const notification = document.getElementById("notification");
-
-  const messagePopup = document.createElement("div");
-  messagePopup.id = "popup-message";
-  messagePopup.className = success ? "success" : "failed";
-  messagePopup.textContent = message;
-
-  notification.appendChild(messagePopup);
-  removeElem(messagePopup);
-}
-
-function removeElem(div) {
-  let timeout;
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    div.classList.add("hide");
-    setTimeout(() => {
-      clearTimeout(timeout);
-      div.remove();
-    }, 500);
-  }, 2500);
-}
 
 function createCartItem(products) {
   const summeryItemsContainer = document.querySelector(".summary-items");
@@ -360,13 +445,13 @@ function createCartItem(products) {
   let tax;
 
   products.forEach((prod) => {
-    console.log('prod : sum : ',  prod)
+    console.log("prod : sum : ", prod);
     summeryItemsContainer.innerHTML += `<div class="summary-item">
-              <img src=data:"image/${prod.productId.images[0].contentType};base64,${prod.productId.images[0].toString('base64')}" alt="Product" />
+              <img src="${prod.productId.images[0].url}" alt="Product" />
               <div class="item-details">
                 <h3>${prod.productId.product_name}</h3>
                 <p>Color: ${prod.productId.color}</p>
-                <p>Quantity: ${prod.cartQty}</p>
+                <p>Quantity: ${prod.quantity}</p>
               </div>
               <div class="item-price">₹ ${prod.totalPrice}</div>
             </div>`;
@@ -393,17 +478,16 @@ function createCartItem(products) {
 
 // Add order
 function addOrder(orderData) {
-
   let products = [];
 
-  porductDetails.forEach(prod =>{
+  porductDetails.forEach((prod) => {
     const data = {
-      productId:prod.productId._id,
-      quantity:prod.quantity,
-      price:prod.price
-    }
-    products.push(data)
-  })
+      productId: prod.productId._id,
+      quantity: prod.quantity,
+      price: prod.price,
+    };
+    products.push(data);
+  });
 
   const url = `/api/add-order`;
   const options = {
@@ -414,6 +498,7 @@ function addOrder(orderData) {
     body: JSON.stringify({
       products,
       addressId: selectedAddressId,
+      paymentInfo: selectedPaymentMethod,
     }),
   };
   fetch(url, options)
@@ -426,19 +511,8 @@ function addOrder(orderData) {
 
 console.log("details : ", porductDetails);
 
-
-
-
-
-
-
-
-
 // Backup
 
-
-
-  
 // confirmationContent.innerHTML = `
 // <h2>Order Confirmation</h2>
 // <p>Your order has been placed successfully!</p>

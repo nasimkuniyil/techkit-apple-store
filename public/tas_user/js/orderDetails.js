@@ -31,7 +31,7 @@ function showCancellationModal(productId, cancelType) {
   document.getElementById("cancellationModal").style.display = "flex";
 }
 
-function closeModal() {
+function closeCancelModal() {
   document.getElementById("cancellationModal").style.display = "none";
   document.getElementById("cancellationReason").value = "";
   document.getElementById("cancellationNotes").value = "";
@@ -61,5 +61,44 @@ function confirmCancellation() {
     }
   })
   .catch(err=>alert('somethin error occured.'))
-  closeModal();
+  closeCancelModal();
+}
+
+// return
+
+function showReturnModal(productId, orderId) {
+  document.getElementById('return-order-btn').addEventListener('click', ()=> confirmReturn(productId, orderId))
+  document.getElementById("returnModal").style.display = "flex";
+}
+function closeReturnModal() {
+  document.getElementById("returnModal").style.display = "none";
+  document.getElementById("returnReason").value = "";
+  document.getElementById("returnNotes").value = "";
+}
+
+function confirmReturn(productId, orderId) {
+  const reason = document.getElementById("returnReason").value;
+  if (!reason) {
+    alert("Please select a return reason");
+    return;
+  }
+
+  const url = `/api/return-order`
+  const options = {
+    method : 'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({orderId, productId,reason})
+  }
+  fetch(url,options)
+  .then(response => {
+    if(response.ok){
+      window.location.href = `/order/view?id=${id}`
+    }else{
+      console.log(response.json())
+    }
+  })
+  .catch(err=>alert('somethin error occured.'))
+  closeReturnModal();
 }

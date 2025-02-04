@@ -42,32 +42,61 @@
           <!-- Rest of your page content -->
           <div class="orders-container">
             <!-- Order card start -->
-            <% if(orders){ %> <% orders.forEach( (order) => { %>
-            <a href="/admin/order/view?id=<%-order._id%>">
-              <div class="order-card">
-                <div class="order-header">
-                  <span class="order-number"><%- order.orderId %></span>
-                  <span
-                    class="order-status status-<%-order.orderStatus.toLowerCase()%>"
-                    ><%-order.orderStatus%></span
-                  >
-                </div>
-
-                <div class="order-info">
-                  <%if(order.cancelReason){%>
+            <% if(cancelOrders){ %> <% cancelOrders.forEach( (order) => { %>
+              <a href="/admin/order/view?id=<%-order._id%>">
+                <div class="order-card">
+                  <div class="order-header">
+                    <span class="order-number"><%- order.orderId %></span>
+                    <button
+                      class="cancel-btn"
+                      onclick="cancellOrder(event, '<%- order._id %>')"
+                    >
+                      Cancel order
+                    </button>
+                  </div>
+  
+                  <div class="order-info">
                     <div>
-                      <p>Request for cancel order</p>
-                    <p>Reason : <%-order.cancelReason%></p>
+                      <p>Requested for order cancellation</p>
                     </div>
-                  <%}else if(order.returnReason){%>
-                    <p><%-order.returnReason%></p>
-                  <%}%>
+                    <div>
+                      <p>Reason : <%-order.cancelReason%></p>
+                    </div>
+                  </div>
+                  <div class="order-total"></div>
                 </div>
+              </a>
+              <% }) %> <% } %>
 
-                <div class="order-total"></div>
-              </div>
-            </a>
-            <% }) %> <% } %>
+              <% if(returnOrders){ %> <% returnOrders.forEach( (order) => { %>
+                <% order.products.forEach(prod=>{ %>
+                  <a href="/admin/order/view?id=<%-order._id%>">
+                    <div class="order-card">
+                      <div class="order-header">
+                        <span class="order-number"><%- order.orderId %></span>
+                        <button
+                          class="return-btn"
+                          onclick="returnOrder(event, '<%- order._id %>',  '<%- prod._id %>')"
+                        >
+                          Return order
+                        </button>
+                      </div>
+      
+                      <div class="order-info">
+                        <div>
+                          <p>Requested for order return</p>
+                          <p>Reason : <%-prod?.returnReason%></p>
+                        </div>
+                        <div>
+                          <p>Product name : <%- prod.productId.product_name %></p>
+                        </div>
+                      </div>
+      
+                      <div class="order-total"></div>
+                    </div>
+                  </a>
+                <%})%>
+                <% }) %> <% } %>
             <!-- Order card end -->
           </div>
         </div>
@@ -77,7 +106,7 @@
     <!-- Common Scripts -->
     <script src="common/scripts.js"></script>
     <!-- Page Specific Scripts -->
-    <script src="js/products.js"></script>
+    <script src="js/request.js"></script>
     <!-- Load Common Components -->
   </body>
 </html>

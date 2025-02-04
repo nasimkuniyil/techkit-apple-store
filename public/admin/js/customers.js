@@ -11,7 +11,7 @@ function blockUser(id) {
 
 //Unblock user
 function unblockUser(id) {
-  if (confirmInput("Block this user ?")) {
+  if (confirm("Block this user ?")) {
     const url = `/admin//user/unblock?id=${id}`;
     const options = { method: "PUT" };
     fetch(url, options)

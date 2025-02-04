@@ -40,7 +40,7 @@
         <div class="products-header">
           <h1>Order Details</h1>
           <!-- Rest of your page content -->
-          <div class="order-detail-container">
+          <div class="order-detail-container <%= (orderData.orderStatus == 'Cancelled') ? 'cancelled-order' : ''%>">
 
             <div class="detail-header">
               <div class="header-content">
@@ -73,89 +73,19 @@
                           <th>Product</th>
                           <th>Quantity</th>
                           <th>Price</th>
-                          <th>Current Status</th>
-                          <th>Actions</th>
                       </tr>
                   </thead>
                   <tbody>
-                      <tr>
+                      <%orderData.products.forEach(prod =>{%>
+                        <tr>
                           <td>
-                              <div class="product-name">iPhone 15 Pro Max</div>
-                              <div class="product-delivery">Estimated delivery: Jan 17, 2025</div>
-                              <a href="#" class="tracking-info">Track Package - UPS #1234567890</a>
+                              <div class="product-name"><%- prod.productId.product_name %></div>
                           </td>
-                          <td>1</td>
-                          <td>$1,199</td>
-                          <td class="status-cell">
-                              <span class="product-status status-shipped">Shipped</span>
-                              <select class="status-dropdown">
-                                  <option value="pending">Pending</option>
-                                  <option value="processing">Processing</option>
-                                  <option value="shipped" selected>Shipped</option>
-                                  <option value="delivered">Delivered</option>
-                                  <option value="cancelled">Cancelled</option>
-                              </select>
-                              <button class="save-status-btn">Update Status</button>
-                              <button class="status-history-btn">
-                                  <span>View Status History</span>
-                                  <span>↓</span>
-                              </button>
-                          </td>
-                          <td>
-                              <button class="cancel-item-btn" disabled>Cancel Item</button>
-                          </td>
+                          <td><%- prod.quantity %></td>
+                          <td>₹ <%- prod.productId.price * prod.quantity %></td>
                       </tr>
-                      <tr>
-                          <td>
-                              <div class="product-name">AppleCare+</div>
-                              <div class="product-delivery">Digital Delivery</div>
-                          </td>
-                          <td>1</td>
-                          <td>$199</td>
-                          <td class="status-cell">
-                              <span class="product-status status-delivered">Delivered</span>
-                              <select class="status-dropdown">
-                                  <option value="pending">Pending</option>
-                                  <option value="processing">Processing</option>
-                                  <option value="delivered" selected>Delivered</option>
-                                  <option value="cancelled">Cancelled</option>
-                              </select>
-                              <button class="save-status-btn" disabled>Update Status</button>
-                              <button class="status-history-btn">
-                                  <span>View Status History</span>
-                                  <span>↓</span>
-                              </button>
-                          </td>
-                          <td>
-                              <button class="cancel-item-btn" disabled>Cancel Item</button>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td>
-                              <div class="product-name">iPhone 15 Pro Max Case</div>
-                              <div class="product-delivery">Estimated delivery: Jan 20, 2025</div>
-                          </td>
-                          <td>1</td>
-                          <td>$49</td>
-                          <td class="status-cell">
-                              <span class="product-status status-processing">Processing</span>
-                              <select class="status-dropdown">
-                                  <option value="pending">Pending</option>
-                                  <option value="processing" selected>Processing</option>
-                                  <option value="shipped">Shipped</option>
-                                  <option value="delivered">Delivered</option>
-                                  <option value="cancelled">Cancelled</option>
-                              </select>
-                              <button class="save-status-btn">Update Status</button>
-                              <button class="status-history-btn">
-                                  <span>View Status History</span>
-                                  <span>↓</span>
-                              </button>
-                          </td>
-                          <td>
-                              <button class="cancel-item-btn">Cancel Item</button>
-                          </td>
-                      </tr>
+                      <%})%>
+                      
                   </tbody>
               </table>
 

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/admin/css/category.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Include Sidebar -->
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
+      </div>
+
+      <main class="main-content">
+        <!-- Include Header -->
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="products-header">
+          <div class="header-section">
+            <h1 class="page-title">Coupons</h1>
+            <a href="/admin/coupon/add" class="add-category-btn"
+              >+ Add Coupon</a
+            >
+          </div>
+          <!-- Rest of your page content -->
+          <div class="category-container">
+            <div class="category-card">
+              <table class="category-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Code</th>
+                    <th>Quantity</th>
+                    <th>Discount</th>
+                    <th>Created</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if( coupons ){ %> <% coupons.forEach((coupon,index) => { %>
+                  <tr>
+                    <td>
+                      <span class="category-id"><%- index+1 %></span>
+                    </td>
+                    <td>
+                      <div
+                        style="display: flex; align-items: center; gap: 1rem"
+                      >
+                        <span><%- coupon.code %></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="products-count"><%- coupon.usageLimit %></span>
+                    </td>
+                    <td>
+                        <%-coupon.discountValue %>
+                        <%-coupon.discountType=='percentage' ? '%' : '₹' %>
+                    </td>
+                    <td><%-coupon.createdAt.toISOString().substring(0,10) %></td>
+                    <td><%-coupon.expirationDate.toISOString().substring(0,10) %></td>
+                    <td>
+                      <span
+                        class="status-badge <%= coupon.deleted ?'status-inactive ':'status-active' %>"
+                        ><%= coupon.deleted ? 'inactive' : 'active' %></span
+                      >
+                    </td>
+                    <td>
+                      <%if(coupon.deleted){%>
+                      <div class="action-cell">
+                        <a
+                          href="/admin/category/edit?id=<%- coupon._id %>"
+                          class="action-btn edit-btn"
+                          >Edit</a
+                        >
+                        <button
+                          class="action-btn delete-btn"
+                          id="category-del-btn"
+                          onclick="unblockCategory(event, '<%- coupon._id %>')"
+                        >
+                          Unblock
+                        </button>
+                      </div>
+                      <%}else{%>
+                      <div class="action-cell">
+                        <a
+                          href="/admin/category/edit?id=<%- coupon._id %>"
+                          class="action-btn edit-btn"
+                          >Edit</a
+                        >
+                        <button
+                          class="action-btn delete-btn"
+                          id="category-del-btn"
+                          onclick="blockCategory(event, '<%- coupon._id %>')"
+                        >
+                          Block
+                        </button>
+                      </div>
+                      <%}%>
+                    </td>
+                  </tr>
+                  <% }) %> <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Common Scripts -->
+    <script src="/admin/common/scripts.js"></script>
+    <!-- Page Specific Scripts -->
+    <script src="/admin/js/category.js"></script>
+  </body>
+</html>

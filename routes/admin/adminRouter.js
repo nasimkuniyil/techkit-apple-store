@@ -2,15 +2,16 @@ const express = require("express");
 const adminRouter = express.Router();
 const flash = require('connect-flash');
 
-const upload = require("../middleware/uploads");
-const adminAuth = require("../middleware/adminAuth");
+const upload = require("../../middleware/uploads");
+const adminAuth = require("../../middleware/adminAuth");
 
-const categoryController = require("../controller/adminController/categoryController");
-const colorController = require("../controller/adminController/colorController");
-const productController = require("../controller/adminController/productController");
-const userController = require("../controller/adminController/userController");
-const commonController = require("../controller/adminController/commonController");
-const orderController = require("../controller/adminController/orderController");
+const categoryController = require("../../controller/adminController/categoryController");
+const colorController = require("../../controller/adminController/colorController");
+const productController = require("../../controller/adminController/productController");
+const userController = require("../../controller/adminController/userController");
+const commonController = require("../../controller/adminController/commonController");
+const orderController = require("../../controller/adminController/orderController");
+const couponController = require("../../controller/adminController/couponController");
 
 
 adminRouter.use(flash())
@@ -21,8 +22,10 @@ adminRouter.use((req, res, next) => {
 });
 
 
+
 //Login page
 adminRouter.get('/',adminAuth.isAdmin, commonController.getDashboard);
+adminRouter.get('/api/get-order-data', adminAuth.isAdmin, commonController.getSalesData);
 adminRouter.get('/login', adminAuth.notAdmin , commonController.getLogin);
 adminRouter.post('/login',adminAuth.notAdmin, commonController.postLogin);
 adminRouter.get('/logout',adminAuth.isAdmin, commonController.getLogout);
@@ -35,7 +38,7 @@ adminRouter.put("/user/unblock", adminAuth.isAdmin, userController.unblockUser);
 //Product Management
 adminRouter.get("/products",adminAuth.isAdmin,  productController.getAllProducts);
 adminRouter.get("/product/add",adminAuth.isAdmin,  productController.getAddProduct);
-adminRouter.post("/product/add",adminAuth.isAdmin, upload.array("images", 4), productController.postAddProduct);
+adminRouter.post("/product/add",adminAuth.isAdmin, upload.array("images", 4) , productController.postAddProduct);
 adminRouter.get('/product/edit',adminAuth.isAdmin, productController.getUpdateProduct)
 adminRouter.put('/product/edit',adminAuth.isAdmin, upload.array("images", 4), productController.putUpdateProduct)
 adminRouter.delete("/product/delete",adminAuth.isAdmin, productController.deleteProduct);
@@ -70,5 +73,11 @@ adminRouter.get("/orders", adminAuth.isAdmin,  orderController.getOrdersPage);
 adminRouter.get("/order/view", adminAuth.isAdmin,  orderController.viewOrderDetails);
 adminRouter.get("/api/orders",adminAuth.isAdmin,  orderController.getOrdersData);
 adminRouter.put("/api/order/:status",adminAuth.isAdmin,  orderController.changeStatus);
+adminRouter.put("/api/prodcut/return",adminAuth.isAdmin,  orderController.changeProductStatus);
+
+//Coupon Management
+adminRouter.get('/coupons', adminAuth.isAdmin, couponController.getCouponPage);
+adminRouter.get('/coupon/add', adminAuth.isAdmin, couponController.getCouponAddPage);
+adminRouter.post('/api/add-coupon', adminAuth.isAdmin, couponController.AddCoupon);
 
 module.exports = adminRouter;

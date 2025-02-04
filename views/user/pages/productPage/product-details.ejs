@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/apple_styles/product-details.css" />
     <link rel="stylesheet" href="/apple_styles/breadcrumb.css" />
     <link rel="stylesheet" href="/apple_styles/card-style.css" />
+    <link rel="stylesheet" href="/tas_user/css/product-details.css" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -20,7 +21,9 @@
         <nav class="breadcrumb">
           <a href="/">Home</a>
           <span class="separator">›</span>
-          <a href="/shop/<%- product.category.category_name %>"><%- product.category.category_name %></a>
+          <a href="/shop/<%- product.category.category_name %>"
+            ><%- product.category.category_name %></a
+          >
           <span class="separator">›</span>
           <span><%- product.product_name %></span>
         </nav>
@@ -31,7 +34,7 @@
           <div class="image-gallery">
             <div class="main-image">
               <img
-                src="data:image/<%=product.images[0].contentType%>;base64,<%=product.images[0].data.toString('base64')%>"
+                src="<%=product.images[0].url%>"
                 alt="Product Main Image"
                 id="mainImage"
               />
@@ -41,9 +44,9 @@
               <%product.images.forEach( (img,index) => { %>
               <div class="thumbnail active">
                 <img
-                  src="data:image/<%=img.contentType%>;base64,<%=img.data.toString('base64')%>"
+                  src="<%=img.url%>"
                   alt="Product Thumbnail 1"
-                  data-src="data:image/<%=img.contentType%>;base64,<%=img.data.toString('base64')%>"
+                  data-src="<%=img.url%>"
                 />
               </div>
               <% }) %>
@@ -53,6 +56,7 @@
           <!-- Product Info Section -->
           <div class="product-info">
             <h1 class="product-title"><%- product.product_name %></h1>
+            <h3>₹ <%- product.price %></h3>
 
             <div class="rating">
               ★★★★☆
@@ -61,12 +65,16 @@
 
             <div class="color-options">
               <% availableColors.forEach( item => { %>
-                <a href="/product-details?id=<%- item._id %>" class="product-color <%= ( product._id.toString() == item._id.toString() ) ? 'active' : '' %>" style="background-color: #<%- item.color.color_code %>;"></a>
+              <a
+                href="/product-details?id=<%- item._id %>"
+                class="product-color <%= ( product._id.toString() == item._id.toString() ) ? 'active' : '' %>"
+                style="background-color: #<%- item.color.color_code %>"
+              ></a>
               <% }) %>
             </div>
             <p class="product-category">
               <a href="/shop/<%- product.category.category_name %>">
-              <%- product.category.category_name %>
+                <%- product.category.category_name %>
               </a>
             </p>
 
@@ -98,18 +106,23 @@
             <% } %>
 
             <div class="action-buttons">
+              <%if(product.quantity > 0){%>
               <button
                 class="add-to-cart"
                 onclick="addToCart('<%= product._id %>')"
               >
                 Add to Cart
               </button>
-              <button
-                class="add-to-wishlist"
-                onclick="addToWishlist('<%= product._id %>')"
-              >
-                <i class="far fa-heart"></i>
-              </button>
+              <%}%>
+              
+              <% if(userSession) { %>
+                <button
+                  class="add-to-wishlist"
+                  onclick="addToWishlist('<%= product._id %>')"
+                >
+                  <i class="far fa-heart"></i>
+                </button>
+              <% } %>
             </div>
           </div>
         </div>

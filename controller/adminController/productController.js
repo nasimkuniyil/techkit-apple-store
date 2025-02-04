@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const sharp = require("sharp");
+const cloudinary = require("../../middleware/cloudinary");
 
 const Product = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
@@ -38,11 +39,37 @@ const postAddProduct = async (req, res) => {
   try {
     console.log("--- Started add product post method ---");
     console.log("body data : ", req.body);
-    console.log("mage data : ", req.files);
+    console.log("image data : ", req.files);
 
     const { product_name, description, color, price, quantity, category } =
       req.body;
     const imageFile = req.files;
+
+    const images = [];
+
+    if (imageFile && imageFile.length > 0) {
+      for (const file of imageFile) {
+        const image = file.path;
+        const result = await cloudinary.uploader.upload(image, {
+          folder: "products",
+        });
+        console.log("cloudinary img : ", result);
+        images.push({ url: result.secure_url, public_id: result.public_id });
+        // fs.unlinkSync(image);
+        setTimeout(() => {
+          let rmImage = image
+          fs.unlink(rmImage,  (err) => {
+            if (err) {
+              console.error("Error deleting file:", err);
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }, 3000);
+      }
+    } else {
+      console.log("No file uploaded");
+    }
 
     const obj = {
       product_name,
@@ -51,29 +78,8 @@ const postAddProduct = async (req, res) => {
       price,
       quantity,
       category,
-      images: imageFile.map((file) => {
-        return {
-          data: fs.readFileSync(
-            path.join(__dirname, "../../", "/uploads/", file.filename)
-          ),
-          contentType: "image/jpeg",
-        };
-      }),
+      images,
     };
-
-    const originalFilePath = path.join(__dirname, "../..", "uploads");
-    const thumbnailPath = path.join(__dirname, "../..", "uploads", "thumbnail");
-    let thumb_images = [];
-
-    await fs.mkdir(thumbnailPath, { recursive: true }, (err) => {
-      if (err) {
-        console.log("thumb folder create error : ", err);
-      } else {
-        console.log("thumbnail folder created");
-      }
-    });
-
-    console.log("thumbnail image created success");
 
     const product = new Product(obj);
     await product.save();
@@ -130,6 +136,8 @@ const putUpdateProduct = async (req, res) => {
 
     const prodData = await Product.findOne({ _id: id });
 
+    // const images = [];
+
     obj.images = prodData.images;
 
     console.log("req.body : ", req.body);
@@ -146,19 +154,30 @@ const putUpdateProduct = async (req, res) => {
       });
       console.log("image removed success.");
     }
-    
+
     //add new image
-    if (imageFile.length > 0) {
-      console.log("new image adding...");
-      const data = imageFile.map((file) => {
-        return {
-          data: fs.readFileSync(
-            path.join(__dirname, "../../", "/uploads/", file.filename)
-          ),
-          contentType: "image/jpeg",
-        };
-      });
-      obj.images = [...obj.images, ...data];
+    if (imageFile && imageFile.length > 0) {
+      for (const file of imageFile) {
+        const image = file.path;
+        const result = await cloudinary.uploader.upload(image, {
+          folder: "products",
+        });
+        console.log("cloudinary img : ", result);
+        obj.images.push({ url: result.secure_url, public_id: result.public_id });
+        // fs.unlinkSync(image);
+        setTimeout(() => {
+          let rmImage = image
+          fs.unlink(rmImage,  (err) => {
+            if (err) {
+              console.error("Error deleting file:", err);
+            } else {
+              console.log("File deleted successfully.");
+            }
+          });
+        }, 3000);
+      }
+    } else {
+      console.log("No file uploaded");
     }
 
     await Product.updateOne({ _id: id }, { $set: obj });
@@ -226,7 +245,7 @@ const permenentDeleteProduct = async (req, res) => {
 const getRecyclePage = async (req, res) => {
   try {
     const products = await Product.find({ deleted: "true" });
-    res.render("admin/recoverPage",{products});
+    res.render("admin/recoverPage", { products });
   } catch (err) {
     console.log("product permenent delete error : ", err);
   }
@@ -234,15 +253,28 @@ const getRecyclePage = async (req, res) => {
 
 const getRequestPage = async (req, res) => {
   try {
-    const orders = await Order.find({  cancelReason: { $exists: true, $ne: "" } }).sort({createdAt:-1});
-    console.log('odrs : ',orders)
-    res.render("admin/requests",{orders});
+    // Fetching cancelled orders with cancelReason set
+    const cancelOrders = await Order.find({
+      cancelReason: { $exists: true, $ne: "" },
+      orderStatus: { $ne: "Cancelled" },
+    }).sort({ createdAt: -1 });
+
+    // Fetching return orders with products having a returnReason and excluding cancelled orders
+    const returnOrders = await Order.find({
+      "products.returnReason": { $exists: true, $ne: "" }, // Look for products with returnReason
+      orderStatus: { $ne: "Cancelled" }, // Exclude cancelled orders
+    }).sort({ createdAt: -1 }).populate('products.productId');
+
+    console.log("cancelOrders: ", cancelOrders);
+    console.log("returnOrders: ", returnOrders);
+
+    // Render the admin/requests page, passing the cancelOrders and returnOrders data
+    res.render("admin/requests", { cancelOrders, returnOrders });
   } catch (err) {
-    console.log("product permenent delete error : ", err);
+    console.log("Error fetching orders: ", err);
+    res.status(500).send("Server error");
   }
 };
-
-
 
 module.exports = {
   getAllProducts,
@@ -254,5 +286,5 @@ module.exports = {
   unBlockProduct,
   permenentDeleteProduct,
   getRecyclePage,
-  getRequestPage
+  getRequestPage,
 };

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/order.css">
+    <link rel="stylesheet" href="/tas_user/css/wishlist.css">
+</head>
+<body>
+    <header class="main_menu home_menu">
+        <%- include('../../partials/header.ejs') %>
+      </header>
+    <div class="order-history-page">
+        <div class="order-history-container">
+            <div class="order-history-header">
+                <h1>Wishlist</h1>
+            </div>
+
+            <div class="order-filter">
+                <div class="order-search">
+                    <input type="text" placeholder="Search orders..." id="orderSearch">
+                </div>
+                <select class="order-filter-select" id="orderFilter">
+                    <option value="all">All Orders</option>
+                    <option value="6months">--</option>
+                </select>
+            </div>
+
+            <div id="ordersList">
+                <!-- Orders will be populated by JavaScript -->
+                <div class="wishlist-container">
+                    <div class="wishlist-grid">
+                      <!-- Items -->
+                      <div class="wishlist-item">
+                        <div class="wishlist-image">
+                          <img src="/api/placeholder/200/200" alt="Product 1">
+                          <button class="remove-btn" aria-label="Remove from wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M18 6L6 18M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="wishlist-content">
+                          <h3>MacBook Pro 14"</h3>
+                          <p class="price">$1,999</p>
+                          <p class="stock-status in-stock">In Stock</p>
+                          <button class="add-to-cart-btn">Add to Bag</button>
+                        </div>
+                      </div>
+                  
+                      <!-- Item 2 -->
+                      <!-- <div class="wishlist-item">
+                        <div class="wishlist-image">
+                          <img src="/api/placeholder/200/200" alt="Product 2">
+                          <button class="remove-btn" aria-label="Remove from wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M18 6L6 18M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="wishlist-content">
+                          <h3>AirPods Pro</h3>
+                          <p class="price">$249</p>
+                          <p class="stock-status low-stock">Low Stock</p>
+                          <button class="add-to-cart-btn">Add to Bag</button>
+                        </div>
+                      </div> -->
+                  
+                      <!-- Item 3 -->
+                      <!-- <div class="wishlist-item">
+                        <div class="wishlist-image">
+                          <img src="/api/placeholder/200/200" alt="Product 3">
+                          <button class="remove-btn" aria-label="Remove from wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M18 6L6 18M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="wishlist-content">
+                          <h3>Apple Watch Ultra</h3>
+                          <p class="price">$799</p>
+                          <p class="stock-status out-stock">Out of Stock</p>
+                          <button class="add-to-cart-btn" disabled>Add to Bag</button>
+                        </div>
+                      </div> -->
+                  
+                      <!-- Item 4 -->
+                      <!-- <div class="wishlist-item">
+                        <div class="wishlist-image">
+                          <img src="/api/placeholder/200/200" alt="Product 4">
+                          <button class="remove-btn" aria-label="Remove from wishlist">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M18 6L6 18M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="wishlist-content">
+                          <h3>iPhone 15 Pro</h3>
+                          <p class="price">$999</p>
+                          <p class="stock-status in-stock">In Stock</p>
+                          <button class="add-to-cart-btn">Add to Bag</button>
+                        </div>
+                      </div>
+                    </div> -->
+                  
+                    <!-- Empty State -->
+                    <div class="empty-wishlist" style="display: none;">
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                      <h2>Your Wishlist is Empty</h2>
+                      <p>Save items you'd like to buy later</p>
+                      <button class="continue-shopping-btn">Continue Shopping</button>
+                    </div>
+                  </div>
+            </div>
+
+            <!-- <button class="load-more" id="loadMoreBtn">Load More Orders</button> -->
+        </div>
+    </div>
+
+    <footer><%- include('../../partials/footer') %></footer>
+
+    <script src="/flashMessage.js"></script>
+<!-- 
+    <script src="/tas_user/js/order.js"></script> -->
+    <script src="tas_user/js/wishlist.js"></script>
+</body>
+</html>

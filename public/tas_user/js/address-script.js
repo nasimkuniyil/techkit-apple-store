@@ -3,24 +3,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const addressAddBtn = document.getElementById("address-add-btn");
   const addressCancelBtn = document.getElementById("address-cancel-btn");
   const addressForm = document.getElementById("address-form");
-  const addressList = document.getElementById("address-list");
 
   //Get address
-  fetch("/api/address")
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((err) => {
-          throw new Error(err.message);
-        });
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log(data);
-      addAddressCard(data);
-      console.log("address data :", data);
-    })
-    .catch((error) => console.log("error : ", error));
+  fetchAddress();
+  function fetchAddress() {
+    fetch("/api/address")
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((err) => {
+            throw new Error(err.message);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        addAddressCard(data);
+        console.log("address data :", data);
+      })
+      .catch((error) => console.log("error : ", error));
+  }
 
   // Open modal and add event listener for form
   addressAddBtn.addEventListener("click", () => {
@@ -52,13 +54,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
       fetch(url, options)
         .then((response) => {
-          window.location.href = response.url;
+          if (!response.ok) {
+            console.log("response :", response);
+            throw new Error(response.statusText);
+          }
+          return response.json();
         })
-        .catch((error) => console.log("error : ", error));
+        .then((data) => {
+          addressModal.classList.remove("active");
+          addressForm.reset();
+          showFlashMessage(data);
+          fetchAddress();
+        })
+        .catch((error) => {
+          console.log("add address error : ", error.message);
+        });
 
-      addAddressCard(addressData);
-      addressModal.classList.remove("active");
-      addressForm.reset();
+      // addAddressCard(addressData);
     });
   });
 
@@ -72,6 +84,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add new address card
   function addAddressCard(data) {
+    const addressList = document.getElementById("address-list");
+    addressList.innerHTML = "";
     data.forEach((item) => {
       const addressCard = document.createElement("div");
       addressCard.className = "address-card";
@@ -97,8 +111,14 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "DELETE",
         })
           .then((response) => {
-            // alert('removed success')
-            return (window.location.href = response.url);
+            if (!response.ok) {
+              throw new Error(response.statusText);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            showFlashMessage(data);
+            fetchAddress();
           })
           .catch((err) => console.log("delete error : ", err));
       });
@@ -130,6 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
             landmark: document.getElementById("landmark").value,
           };
 
+          const url = `/api/edit-address?addressId=${item._id}`;
+
           const options = {
             method: "PUT",
             headers: {
@@ -138,13 +160,20 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(addressData),
           };
 
-          const url = `/api/edit-address?addressId=${item._id}`;
-
           fetch(url, options)
             .then((response) => {
-              window.location.href = response.url;
+              if (!response.ok) {
+                throw new Error(response.statusText);
+              }
+              return response.json();
             })
-            .catch((error) => console.log("error : ", error));
+            .then((data) => {
+              addressModal.classList.remove("active");
+              addressForm.reset();
+              showFlashMessage(data);
+              fetchAddress();
+            })
+            .catch((error) => console.log("edit address error : ", error));
 
           addressForm.reset();
         });

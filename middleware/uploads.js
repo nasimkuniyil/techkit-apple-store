@@ -2,6 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { randomUUID } = require("crypto");
+const { v4:uuidv4} = require('uuid')
 
 //setting storage for file
 const storage = multer.diskStorage({
@@ -9,7 +10,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads');
   },
   filename: (req, file, cb) => {
-    cb(null, `${file.fieldname}-${Date.now()}`);
+    cb(null, `product_image-${uuidv4()}.jpg`);
   },
 });
 

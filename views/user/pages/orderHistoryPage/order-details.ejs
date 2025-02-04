@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="/tas_user/css/orderDetails.css" />
   </head>
   <body>
-    <section id="notification"></section>
     <header class="main_menu home_menu">
       <%- include('../../partials/header.ejs') %>
     </header>
@@ -30,8 +29,33 @@
               <textarea id="cancellationNotes" class="form-control" rows="3"></textarea>
           </div>
           <div style="display: flex; gap: 10px; justify-content: flex-end;">
-              <button class="button" onclick="closeModal()">Cancel</button>
+              <button class="button" onclick="closeCancelModal()">Cancel</button>
               <button class="button button-danger" onclick="confirmCancellation()">Confirm Cancellation</button>
+          </div>
+      </div>
+  </div>
+    <!-- Return Modal -->
+    <div id="returnModal" class="modal">
+      <div class="modal-content">
+          <h2>Return Product</h2>
+          <div class="form-group">
+              <label>Return Reason</label>
+              <select id="returnReason" class="form-control">
+                  <option value="">Select a reason</option>
+                  <option value="customer_request">Change color</option>
+                  <option value="price_error">I found better price</option>
+                  <option value="out_of_stock">Reason 1</option>
+                  <option value="damaged">Reason 2</option>
+                  <option value="other">Other</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label>Additional Notes</label>
+              <textarea id="returnNotes" class="form-control" rows="3"></textarea>
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+              <button class="button" onclick="closeReturnModal()">Cancel</button>
+              <button class="button button-danger" id="return-order-btn">Confirm Cancellation</button>
           </div>
       </div>
   </div>
@@ -101,7 +125,7 @@
                 <%order.products.forEach(prod =>{ %>
                   <div class="item-card">
                     <div class="item-image">
-                      <img src="data:image/<%=prod.productId.images[0].contentType%>;base64,<%=prod.productId.images[0].data.toString('base64')%>" alt="">
+                      <img src="<%=prod.productId.images[0].url%>" alt="">
                     </div>
                     <div class="item-details">
                       <div class="item-name">
@@ -116,7 +140,7 @@
                       <%if(order.orderStatus == 'Pending' && !order.cancelReason){%>
                         <button class="button cancel" onclick="showCancellationModal('<%- prod.productId._id %>', '<%-order._id%>', 'product')">Cancel</button>
                         <%}else if(order.orderStatus == 'Delivered'){%>
-                          <button class="button return">Return</button>
+                          <button class="button return" onclick="showReturnModal('<%-prod.productId._id%>', '<%-order._id%>')">Return</button>
                           <%}%>
                     </div>                    
                   </div>
@@ -173,6 +197,8 @@
     </section>
 
     <footer><%- include('../../partials/footer') %></footer>
+
+    <script src="/flashMessage.js"></script>
     <script defer src="/tas_user/js/orderDetails.js"></script>
   </body>
 </html>

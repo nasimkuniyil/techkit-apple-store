@@ -1,5 +1,11 @@
+// Add this seciont in html page
+// 
+const notification = document.createElement("section");
+notification.id = 'notification'
+document.querySelector('body').appendChild(notification);
 function showFlashMessage({success, message}) {
-  const notification = document.getElementById("notification");
+
+  notification.innerHTML=""
 
   const messagePopup = document.createElement("div");
 
@@ -22,5 +28,3 @@ function removeElem(div) {
     }, 500);
   }, 2500);
 }
-
-export default showFlashMessage;

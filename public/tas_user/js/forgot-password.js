@@ -33,7 +33,7 @@ function emailValidation() {
 }
 
 function sendOTP() {
-  emailForm.addEventListener("submit", (e) => {
+  emailForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const validateEmail = emailValidation();
@@ -55,22 +55,28 @@ function sendOTP() {
       body: JSON.stringify({ email: email.value }),
     };
 
-    fetch("/api/send-otp", options)
-      .then((response) => {
-        if (response.ok) {
-          emailSubmitBtn.textContent = "Done";
-          otpTimer.classList.remove("hide");
-          otp.removeAttribute("disabled");
-          otpSubmitBtn.removeAttribute("disabled");
-          startTimer();
-        }
-      })
-      .catch((err) => {
-        showFlashMessage({ success: false, message: err.message });
-        emailSubmitBtn.textContent = "Try again";
-        emailSubmitBtn.removeAttribute("disabled");
-        email.removeAttribute("disabled");
-      });
+    try {
+      const response = await fetch("/api/send-otp", options);
+      const data = await response.json();
+      console.log("data : ", data);
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      showFlashMessage(data);
+      emailSubmitBtn.textContent = "Done";
+      otpTimer.classList.remove("hide");
+      otp.removeAttribute("disabled");
+      otpSubmitBtn.removeAttribute("disabled");
+      startTimer();
+
+    } catch (err) {
+      console.log("errr : ", err);
+      showFlashMessage({success:false, message:err.message});
+      emailSubmitBtn.textContent = "Try again";
+      emailSubmitBtn.removeAttribute("disabled");
+      email.removeAttribute("disabled");
+    }
   });
 }
 
@@ -142,39 +148,13 @@ function otpFormReset() {
   email.removeAttribute("disabled");
 }
 
-//flash message
-function showFlashMessage({ success, message }) {
-  const notification = document.getElementById("notification");
-
-  const messagePopup = document.createElement("div");
-
-  messagePopup.id = "popup-message";
-  messagePopup.className = "";
-  messagePopup.classList.add(success ? "success" : "failed");
-  messagePopup.textContent = message;
-  notification.appendChild(messagePopup);
-  removeElem(messagePopup);
-}
-
-function removeElem(div) {
-  let timeout;
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    div.classList.add("hide");
-    setTimeout(() => {
-      clearTimeout(timeout);
-      div.remove();
-    }, 500);
-  }, 2500);
-}
-
 // --- CHANGE PASSWORD MODAL SCRIPT ---//
 
 // Event Listeners for modal actions
 function attachEventListeners() {
   changePasswordClose.addEventListener("click", closeChangePasswordModal);
   changePasswordCancel.addEventListener("click", closeChangePasswordModal);
-  updatePasswordBtn.addEventListener('click', handlePasswordUpdate)
+  updatePasswordBtn.addEventListener("click", handlePasswordUpdate);
 
   // Close modals when clicking outside
   window.addEventListener("click", handleOutsideClick);
@@ -214,7 +194,7 @@ function handlePasswordUpdate(event) {
   const options = {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ newPassword, otp:otp.value}),
+    body: JSON.stringify({ newPassword, otp: otp.value }),
   };
 
   fetch(url, options)
@@ -222,12 +202,15 @@ function handlePasswordUpdate(event) {
       if (response.ok) {
         closeChangePasswordModal();
         otpFormReset();
-        window.location.href = '/'
+        window.location.href = "/";
       }
     })
     .catch((err) => {
       console.log("Password update error:", err);
-      showFlashMessage({success:false, message:"Failed to update password, Error!"});
+      showFlashMessage({
+        success: false,
+        message: "Failed to update password, Error!",
+      });
     });
 }
 

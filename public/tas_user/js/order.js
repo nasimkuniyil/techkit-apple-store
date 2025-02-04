@@ -1,33 +1,31 @@
 var orderData = [];
 
+const url = new URL(`${window.location.host}/api/order`);
 fetchOrderData();
 
 async function fetchOrderData() {
-  const url = "/api/order";
-  try {
-    const response = await fetch(url);
 
+  
+  const fetchUrl = url.toString().split('3000')[1];
+  try {
+    const response = await fetch(fetchUrl);
+    
     if (!response.ok) {
       const result = await response.json();
       console.log("res :", result);
       showFlashMessage(result);
     } else {
       const result = await response.json();
-      if (result?.orderData) {
-        console.log("hello ; ", result.orderData);
 
+      if (result?.orderData) {
+        console.log("hello ; ", result);
+        orderData.length = 0
         result.orderData.forEach((odrData) => {
-          console.log(
-            " - = - : ",
-            odrData.products.reduce((acc, item) => {
-              acc += item.productId.price * item.quantity;
-              return acc;
-            }, 0)
-          );
           const orderDataObj = CreateOrderOng(odrData);
           orderData.push(orderDataObj);
         });
 
+        setupPagination(result.totalPage, result.page).addEventListener('click', (event)=> paginationFunc(event, url, fetchOrderData));
         displayOrders();
       }
     }
@@ -46,6 +44,7 @@ function formatCurrency(amount) {
 }
 
 function formatDate(dateString) {
+  console.log("date : ", dateString);
   var options = { year: "numeric", month: "long", day: "numeric" };
   return new Date(dateString).toLocaleDateString("en-US", options);
 }
@@ -110,7 +109,7 @@ function createOrderCard(order) {
     order.status.charAt(0).toUpperCase() +
     order.status.slice(1) +
     "</span>" +
-  '<span class="order-total">' +
+    '<span class="order-total">' +
     formatCurrency(order.total) +
     "</span>" +
     "</div>";
@@ -123,7 +122,7 @@ function createOrderCard(order) {
 }
 
 function displayOrders() {
-  var ordersList = document.getElementById("ordersList");
+  let ordersList = document.getElementById("ordersList");
   ordersList.innerHTML = "";
 
   orderData.forEach(function (order) {
@@ -156,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
   initializeSearch();
 
   // Load more button functionality
-  document.getElementById("loadMoreBtn").addEventListener("click", function () {
-    // In a real application, this would load more orders from the server
-    alert("fetching order....");
-  });
+  // document.getElementById("loadMoreBtn").addEventListener("click", function () {
+  //   // In a real application, this would load more orders from the server
+  //   alert("fetching order....");
+  // });
 
   // Filter functionality
   document
@@ -173,38 +172,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// SHOW FLASH MESSAGE
-function showFlashMessage({ success, message }) {
-  const notification = document.getElementById("notification");
-
-  const messagePopup = document.createElement("div");
-
-  messagePopup.id = "popup-message";
-  messagePopup.className = "";
-  messagePopup.classList.add(success ? "success" : "failed");
-  messagePopup.textContent = message;
-  notification.appendChild(messagePopup);
-  removeElem(messagePopup);
-}
-
-function removeElem(div) {
-  let timeout;
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    div.classList.add("hide");
-    setTimeout(() => {
-      clearTimeout(timeout);
-      div.remove();
-    }, 500);
-  }, 2500);
-}
 
 // Function for create Order Object
 function CreateOrderOng(data) {
   return {
     _id: data._id,
     orderId: data.orderId,
-    orderDate: data.orderDate,
+    orderDate: data.createdAt,
     items: data.products,
     status: data.orderStatus,
     total: data.products.reduce((acc, item) => {

@@ -70,7 +70,7 @@ function updateStockStatus() {
 
 // Cart and Wishlist Functions
 function addToCart(id) {
-  const url = window.location.origin + "/add-cart";
+  const url = window.location.origin + "/api/add-cart";
   const options = {
     method: "POST",
     headers: {
@@ -95,11 +95,45 @@ function addToCart(id) {
     });
 }
 
-function addToWishlist() {
+function addToWishlist(productId) {
   const wishlistBtn = document.querySelector(".add-to-wishlist i");
   wishlistBtn.classList.toggle("far");
   wishlistBtn.classList.toggle("fas");
-  alert("Added to your wishlist");
+
+  let url;
+  let options;
+  
+ if(wishlistBtn.className.includes('fas')){
+  url = '/api/wishlist/add',
+  options = {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({productId})
+  }
+ }else if(wishlistBtn.className.includes('far')){
+  url = '/api/wishlist/remove',
+  options = {
+    method:'PUT',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({productId})
+  }
+ }
+
+  fetch(url, options).then(response=>{
+    if(!response.ok){
+      console.log('error message log : ',response);
+      throw new Error('something error.');
+    }
+    return response.json();
+  })
+  .then(data =>{
+    console.log('success data : ', data);
+  })
+  .catch(err => console.log('error : ', err));
   // Here you would typically make an API call to add to wishlist
 }
 

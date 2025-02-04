@@ -6,6 +6,7 @@ const cancelBtn = document.querySelector('.confirm-cancel-btn');
 
 function openPopup() {
     confirmModal.classList.add('visible');  
+    okBtn.addEventListener('click', ()=>)
 }
 
 function closePopup() {

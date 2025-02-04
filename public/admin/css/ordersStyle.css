@@ -70,6 +70,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
+  grid-template-columns: 2fr 1fr;
   margin-bottom: 1.5rem;
 }
 
@@ -138,4 +139,27 @@
   font-size: 1.25rem;
   color: #1d1d1f;
   font-weight: 600;
+}
+
+.cancelled-order{
+  opacity: 0.55;
+}
+
+.cancel-btn {
+  color: #fee2e2;
+  background-color: #dc2626;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+}
+.return-btn { 
+  color: #e3f2fd;
+  background-color: #1976d2;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
 }

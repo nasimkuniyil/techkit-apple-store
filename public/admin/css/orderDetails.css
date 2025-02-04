@@ -356,3 +356,8 @@
   font-weight: 600;
   font-size: 1.1rem;
 }
+
+.order-detail-container.cancelled-order{
+  opacity: 0.55;
+  pointer-events: none;
+}

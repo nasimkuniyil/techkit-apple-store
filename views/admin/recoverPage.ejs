@@ -48,8 +48,7 @@
               <div class="customer-card">
                 <div class="product-image">
                   <img
-                    src="data:image/<%=prod.images[0].contentType%>;base64,
-                        <%=prod.images[0].data.toString('base64')%>"
+                    src="<%=prod.images[0].url%>"
                   />
                 </div>
                 <div>
@@ -62,6 +61,7 @@
                 
                 
                 <button class="block-btn blocked" onclick="unblockUser('<%- prod._id %>')">Recover</button>
+              </div>
               </div>
             <%})%>
            <%}%> 

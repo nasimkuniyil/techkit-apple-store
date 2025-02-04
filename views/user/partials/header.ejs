@@ -20,23 +20,9 @@
           <li class="header-nav-item">
             <a href="/" class="header-nav-link">Home</a>
           </li>
-          
-          <!-- Shop Dropdown -->
-          <li class="header-nav-item header-dropdown">
-            <a href="/shop-all" class="header-nav-link">
-              Shop
-              <svg class="header-dropdown-icon" width="10" height="6" viewBox="0 0 10 6">
-                <path d="M1 1l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.5"/>
-              </svg>
-            </a>
-            <ul class="header-dropdown-content">
-              <li><a href="/shop-all">All</a></li>
-              <li><a href="/shop/mac">Mac</a></li>
-              <li><a href="/shop/iphone">iPhone</a></li>
-              <li><a href="/shop/ipad">iPad</a></li>
-              <li><a href="/shop/watch">Apple Watch</a></li>
-              <li><a href="/shop/accessories">Accessories</a></li>
-            </ul>
+
+          <li class="header-nav-item">
+            <a href="/shop" class="header-nav-link">Shop</a>
           </li>
 
           <li class="header-nav-item">
@@ -60,7 +46,8 @@
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/wishlist">Wishlist</a></li>
                 <li><a href="/orders">Orders</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/wallet">Wallet</a></li>
+                <li><a href="/api/logout">Logout</a></li>
               <% } else { %>
                 <li><a href="/login">Login</a></li>
               <% } %>

@@ -1,0 +1,84 @@
+function validateForm(event) {
+  event.preventDefault();
+  let isValid = true;
+
+  // Reset errors
+  document
+    .querySelectorAll(".error")
+    .forEach((error) => (error.style.display = "none"));
+
+  // Validate coupon code
+  const code = document.getElementById("couponCode").value;
+  if (!/^[A-Z0-9_-]{4,16}$/.test(code)) {
+    document.getElementById("codeError").textContent =
+      "Coupon code must be 4-16 characters long and contain only uppercase letters, numbers, underscores, or hyphens";
+    document.getElementById("codeError").style.display = "block";
+    isValid = false;
+  }
+
+  // Validate discount value
+  const type = document.getElementById("discountType").value;
+  const value = parseFloat(document.getElementById("discountValue").value);
+  if (type === "percentage" && (value < 1 || value > 100)) {
+    document.getElementById("valueError").textContent =
+      "Percentage discount must be between 1 and 100";
+    document.getElementById("valueError").style.display = "block";
+    isValid = false;
+  }
+
+  // Validate expiration date
+  const expDate = new Date(document.getElementById("expirationDate").value);
+  if (expDate <= new Date()) {
+    document.getElementById("dateError").textContent =
+      "Expiration date must be in the future";
+    document.getElementById("dateError").style.display = "block";
+    isValid = false;
+  }
+
+  // Validate usage limit
+  const limit = parseInt(document.getElementById("usageLimit").value);
+  if (limit < 1) {
+    document.getElementById("limitError").textContent =
+      "Usage limit must be at least 1";
+    document.getElementById("limitError").style.display = "block";
+    isValid = false;
+  }
+  
+  const minimumPurchase = parseInt(document.getElementById('minPurchase').value);
+  if(minimumPurchase < 200){
+    document.getElementById("minPurchaseError").textContent =
+      "Usage minimum purchase must be at least 200.";
+    document.getElementById("minPurchaseError").style.display = "block";
+    isValid = false;
+    
+  }
+
+  if (isValid) {
+    // Here you would typically submit the form to your backend
+    console.log("HELLO WORLD");
+    const url = "/admin/api/add-coupon";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code, type, value, expDate, limit, minimumPurchase}),
+    };
+
+    fetch(url, options)
+      .then(response => {
+        if(!response.ok){
+          throw new Error("Error happened.")
+        }
+        window.location.href = '/admin/coupons'
+      })
+      .catch((err) => console.error("error message : ", err));
+  }
+}
+
+// Set minimum date for expiration field to tomorrow
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+document.getElementById("expirationDate").min = tomorrow
+  .toISOString()
+  .slice(0, 16);

@@ -43,7 +43,7 @@
           <div class="orders-container">
             <!-- Order card start -->
             <% if(orders){ %> <% orders.forEach( (order) => { %>
-            <a href="/admin/order/view?id=<%-order._id%>">
+            <a href="/admin/order/view?id=<%-order._id%>" class="<%= (order.orderStatus == 'Cancelled') ? 'cancelled-order' : ''%>">
               <div class="order-card">
                 <div class="order-header">
                   <span class="order-number"><%- order.orderId %></span>

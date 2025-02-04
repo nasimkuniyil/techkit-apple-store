@@ -9,7 +9,6 @@
       <%- include('../../partials/header.ejs') %>
     </header>
     <div class="checkout-container">
-      <section id="notification"></section>
       <!-- Header Section -->
       <header class="checkout-header">
         <h1>Checkout</h1>
@@ -37,13 +36,28 @@
                 type="radio"
                 id="cashOnDelivery"
                 name="paymentMethod"
-                checked
+                
               />
               <label for="cashOnDelivery" class="payment-label">
                 <div class="payment-icon">💵</div>
                 <div class="payment-details">
                   <h3>Cash on Delivery</h3>
                   <p>Pay with cash when your order arrives</p>
+                </div>
+              </label>
+            </div>
+            <div class="payment-option">
+              <input
+                type="radio"
+                id="onlinePayment"
+                name="paymentMethod"
+                
+              />
+              <label for="onlinePayment" class="payment-label">
+                <div class="payment-icon">💳</div>
+                <div class="payment-details">
+                  <h3>Online Payment</h3>
+                  <p>Online payment with razorpay.</p>
                 </div>
               </label>
             </div>
@@ -83,7 +97,7 @@
     <!-- Address Modal -->
     <div class="modal" id="addressModal">
       <div class="modal-content">
-        <h2>Add New Address</h2>
+        <h2 id="address-modal-title">Add New Address</h2>
         <form id="addressForm">
           <div class="form-group">
             <input type="text" id="name" required placeholder="Full Name" />
@@ -135,6 +149,9 @@
       </div>
     </div>
     <footer><%- include('../../partials/footer') %></footer>
+
+    <script src="/flashMessage.js"></script>
     <script src="/tas_user/js/checkout-script.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </body>
 </html>

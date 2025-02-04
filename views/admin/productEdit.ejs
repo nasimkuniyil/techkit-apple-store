@@ -184,7 +184,7 @@
               <div class="existing-images d-flex flex-wrap gap-3">
                 <% product.images.forEach((image, index) => { %>
                   <div class="existing-image-box" id='img-<%- index %>'>
-                    <img src="data:image/<%=image?.contentType%>;base64,<%=image?.data.toString('base64')%>" alt="Product Image" class="preview-image">
+                    <img src="<%-image.url%>" alt="Product Image" class="preview-image">
                     <input type="hidden" name="existing_images" value="<%= image._id %>">
                     <button type="button" class="remove-existing-btn" onclick="removeExistingImage(event,'<%- image._id %>', '<%- index %>')">×</button>
                     <% if(index === 0) { %>

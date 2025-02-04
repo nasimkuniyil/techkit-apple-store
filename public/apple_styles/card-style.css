@@ -26,7 +26,7 @@
 .card-list.shop {
   flex-wrap: wrap;
   overflow: unset;
-  justify-content: space-around;
+  justify-content: start;
 }
 
 .card-item {

@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cloudinary": "^2.5.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
@@ -24,6 +25,7 @@
     "nodemailer": "^6.9.14",
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
+    "razorpay": "^2.9.5",
     "sharp": "^0.33.4",
     "uuid": "^10.0.0"
   }

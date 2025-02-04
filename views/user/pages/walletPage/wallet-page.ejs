@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../../../partials/head') %>
+    <link rel="stylesheet" href="/tas_user/css/order.css">
+    <link rel="stylesheet" href="/tas_user/css/wallet-style.css">
+</head>
+<body>
+    <header class="main_menu home_menu">
+        <%- include('../../partials/header.ejs') %>
+      </header>
+    <div class="order-history-page">
+        <div class="order-history-container">
+          <div class="wallet-header">
+            <h1 class="wallet-title">Wallet</h1>
+            <div class="wallet-balance">
+              <div class="balance-label">Available Balance</div>
+              <div class="balance-amount">$245.50</div>
+            </div>
+          </div>
+
+            <div id="ordersList">
+                <!-- Orders will be populated by JavaScript -->
+                <div class="wallet-container">
+                  
+                
+                  <div class="transaction-filters">
+                    <button class="filter-btn active">All Transactions</button>
+                    <button class="filter-btn">Refunds</button>
+                    <button class="filter-btn">Withdrawals</button>
+                  </div>
+                
+                  <div class="transaction-list">
+                    <div class="transaction-item">
+                      <div class="transaction-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                          <path d="M2 17L12 22L22 17"></path>
+                          <path d="M2 12L12 17L22 12"></path>
+                        </svg>
+                      </div>
+                      <div class="transaction-details">
+                        <div class="transaction-title">Order #12345 Refund</div>
+                        <div class="transaction-date">Jan 25, 2025</div>
+                      </div>
+                      <div class="transaction-amount refund">+$125.00</div>
+                    </div>
+                
+                    <div class="transaction-item">
+                      <div class="transaction-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                          <path d="M2 17L12 22L22 17"></path>
+                          <path d="M2 12L12 17L22 12"></path>
+                        </svg>
+                      </div>
+                      <div class="transaction-details">
+                        <div class="transaction-title">Order #12346 Refund</div>
+                        <div class="transaction-date">Jan 24, 2025</div>
+                      </div>
+                      <div class="transaction-amount refund">+$89.50</div>
+                    </div>
+                
+                    <div class="transaction-item">
+                      <div class="transaction-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                      </div>
+                      <div class="transaction-details">
+                        <div class="transaction-title">Withdrawal to Bank Account</div>
+                        <div class="transaction-date">Jan 22, 2025</div>
+                      </div>
+                      <div class="transaction-amount">-$200.00</div>
+                    </div>
+                  </div>
+                
+                  <div style="text-align: center; margin-top: 2rem;">
+                    <button class="withdraw-btn">Withdraw to Bank Account</button>
+                  </div>
+                </div>
+                
+            </div>
+
+            <!-- <button class="load-more" id="loadMoreBtn">Load More Orders</button> -->
+        </div>
+    </div>
+
+    <footer><%- include('../../partials/footer') %></footer>
+
+    <script src="/flashMessage.js"></script>
+<!-- 
+    <script src="/tas_user/js/order.js"></script> -->
+</body>
+</html>

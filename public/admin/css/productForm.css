@@ -114,6 +114,12 @@
 }
 
 
+#add-product:disabled{
+  opacity: 0.5;
+  user-select: none;
+}
+
+
 /* ---------------------- EDIT PAGE STYLES ------------------- */
 /* Image Upload Section Styles */
 .upload-section {
