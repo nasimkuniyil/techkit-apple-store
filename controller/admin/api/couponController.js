@@ -1,6 +1,7 @@
 // CHANGE COMPLETED --
 
 const Coupon = require("../../../models/couponSchema");
+const User = require("../../../models/userSchema");
 
 // COUPON ADD API
 const couponAdd = async (req, res, next) => {
@@ -9,7 +10,6 @@ const couponAdd = async (req, res, next) => {
       console.log('req.body : ',req.body)
     const {
       code,
-      type:discountType,
       value:discountValue,
       expDate:expirationDate,
       limit:usageLimit,
@@ -21,13 +21,6 @@ const couponAdd = async (req, res, next) => {
     const existingCoupon = await Coupon.findOne({ code });
     if (existingCoupon) {
       const error = new Error("Coupon code already exists.");
-      error.status = 400;
-      return next(error);
-    }
-
-    // Check discountType
-    if (!discountType ) {
-      const error = new Error("Discount type is required");
       error.status = 400;
       return next(error);
     }
@@ -53,14 +46,8 @@ const couponAdd = async (req, res, next) => {
       return next(error);
     }
 
-    // Validate discount value if price
-    if (discountValue < 500 && discountType.toLowerCase() == "price") {
-      const error = new Error("Discount must be at least 500");
-      error.status = 400;
-      return next(error);
-    }
     // Validate discount value if percentage
-    if (discountValue > 90 && discountType.toLowerCase() == "percentage") {
+    if (discountValue > 90) {
       const error = new Error("Max discount is 90%");
       error.status = 400;
       return next(error);
@@ -69,7 +56,6 @@ const couponAdd = async (req, res, next) => {
     // Create a new coupon
     const coupon = new Coupon({
       code,
-      discountType,
       discountValue,
       expirationDate,
       minimumPurchase,
@@ -94,7 +80,6 @@ const couponEdit = async (req, res, next) => {
       console.log('req.body : ',req.body);
       const id = req.query.id;
     const {
-      discountType,
       discountValue,
       expirationDate,
       usageLimit,
@@ -103,13 +88,6 @@ const couponEdit = async (req, res, next) => {
 
     console.log('coupon edited data : ', req.body)
 
-
-    // Check discountType
-    if (!discountType ) {
-      const error = new Error("Discount type is required");
-      error.status = 400;
-      return next(error);
-    }
 
     // Check discountValue
     if (!discountValue ) {
@@ -132,14 +110,9 @@ const couponEdit = async (req, res, next) => {
       return next(error);
     }
 
-    // Validate discount value if price
-    if (discountValue < 500 && discountType.toLowerCase() == "price") {
-      const error = new Error("Discount must be at least 500");
-      error.status = 400;
-      return next(error);
-    }
+
     // Validate discount value if percentage
-    if (discountValue > 90 && discountType.toLowerCase() == "percentage") {
+    if (discountValue > 90 ) {
       const error = new Error("Max discount is 90%");
       error.status = 400;
       return next(error);
@@ -147,7 +120,6 @@ const couponEdit = async (req, res, next) => {
 
     // Update coupon
      const coupon = await Coupon.findOneAndUpdate({_id:id}, {$set:{
-      discountType,
       discountValue,
       expirationDate,
       minimumPurchase,
@@ -177,7 +149,6 @@ const couponBlock = async (req, res, next) => {
 
     console.log('coupon id : ', couponId);
 
-    // Check discountType
     if (!couponId) {
       const error = new Error("Coupon id is not defined");
       error.status = 400;
@@ -210,7 +181,6 @@ const couponUnblock = async (req, res, next) => {
 
     console.log('coupon id : ', couponId)
 
-    // Check discountType
     if (!couponId) {
       const error = new Error("Coupon id is not defined");
       error.status = 400;
@@ -235,9 +205,64 @@ const couponUnblock = async (req, res, next) => {
   }
 };
 
+// COUPON PROVIDE TO USER
+const couponProvide = async (req, res, next) => {
+  try {
+      console.log('------- provide coupon api started.....');
+    const {userId,couponId} = req.query;
+
+    console.log('coupon id : ', couponId)
+
+    if (!couponId) {
+      const error = new Error("Coupon id is not defined");
+      error.status = 400;
+      return next(error);
+    }
+
+    const user = await User.findOne({_id:userId});
+    
+    if (!user) {
+      console.log('user not found')
+      const error = new Error("User not found");
+      error.status = 400;
+      return next(error);
+    }
+
+    const coupon = await Coupon.findOne({_id:couponId});
+    if (!coupon) {
+      console.log('coupon not found')
+      const error = new Error("Coupon not found");
+      error.status = 400;
+      return next(error);
+    }
+
+    // const validationResult = await coupon.isValidCouponFunc();
+    // if(!validationResult){
+    //   const error = new Error('coupon not valide');
+    //   error.status = 400;
+    //   return next(error);
+    // }
+
+    coupon.usedCount += 1;
+    coupon.save();
+
+    user.coupon = couponId;
+    await user.save();
+    console.log('coupon added to user');
+
+    res.status(200).json({ success:true,message: "Coupon provided to user"});
+  } catch (err) {
+    console.log("coupon provide api error");
+    next(err);
+  }
+};
+
+
+
 module.exports = {
   couponAdd,
   couponEdit,
   couponBlock,
-  couponUnblock
+  couponUnblock,
+  couponProvide
 };

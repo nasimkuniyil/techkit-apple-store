@@ -17,11 +17,10 @@ function validateForm(event) {
   }
 
   // Validate discount value
-  const type = document.getElementById("discountType").value;
   const value = parseFloat(document.getElementById("discountValue").value);
-  if (type === "percentage" && (value < 1 || value > 100)) {
+  if (value < 1 || value > 90) {
     document.getElementById("valueError").textContent =
-      "Percentage discount must be between 1 and 100";
+      "Percentage discount must be between 1 and 90";
     document.getElementById("valueError").style.display = "block";
     isValid = false;
   }
@@ -57,7 +56,7 @@ function validateForm(event) {
     // Here you would typically submit the form to your backend
     console.log("HELLO WORLD");
     const url = "/admin/api/coupon/add";
-    const data = { code, type, value, expDate, limit, minimumPurchase}
+    const data = { code, value, expDate, limit, minimumPurchase}
 
     axios.post(url, data)
       .then(response => {

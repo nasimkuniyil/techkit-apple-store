@@ -79,8 +79,7 @@
                       <span class="products-count"><%- coupon.usageLimit %></span>
                     </td>
                     <td>
-                        <%-coupon.discountValue %>
-                        <%-coupon.discountType=='percentage' ? '%' : '₹' %>
+                        <%-coupon.discountValue %> %
                     </td>
                     <td><%-coupon.createdAt.toISOString().substring(0,10) %></td>
                     <td><%-coupon.expirationDate.toISOString().substring(0,10) %></td>

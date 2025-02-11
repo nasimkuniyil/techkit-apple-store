@@ -62,6 +62,7 @@ adminRouter.post('/coupon/add', adminAuth.isAdmin, couponController.couponAdd);
 adminRouter.put('/coupon/edit', adminAuth.isAdmin, couponController.couponEdit);
 adminRouter.put('/coupon/block', adminAuth.isAdmin, couponController.couponBlock);
 adminRouter.put('/coupon/unblock', adminAuth.isAdmin, couponController.couponUnblock);
+adminRouter.post('/coupon/provide', adminAuth.isAdmin, couponController.couponProvide);
 
 adminRouter.post('/offer/add/:type', adminAuth.isAdmin, offerController.offerAdd);
 adminRouter.put('/offer/edit', adminAuth.isAdmin, offerController.offerEdit);

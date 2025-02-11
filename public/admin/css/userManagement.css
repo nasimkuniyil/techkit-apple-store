@@ -81,3 +81,140 @@
 .block-btn.blocked:hover {
   background-color: #dc2626;
 }
+
+/* coupon add modal */
+:root {
+  --apple-gray: #f5f5f7;
+  --apple-blue: #0071e3;
+  --apple-text: #1d1d1f;
+}
+/* Modal Background */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 14px;
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Coupon List */
+.coupon-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 20px 0;
+}
+
+.coupon-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  margin: 8px 0;
+  background: var(--apple-gray);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.coupon-item:hover {
+  background: #e8e8ed;
+}
+
+.coupon-radio {
+  margin-right: 12px;
+}
+
+.coupon-details {
+  flex: 1;
+}
+
+.coupon-code {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.coupon-description {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Buttons */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-coupon {
+  padding: 12px 24px;
+  border-radius: 5pxpx;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: var(--apple-gray);
+  color: var(--apple-text);
+}
+
+.btn-cancel:hover {
+  background: #e8e8ed;
+}
+
+.btn-apply {
+  background: var(--apple-blue);
+  color: white;
+}
+
+.btn-apply:hover {
+  background: #0077ed;
+}
+
+/* Trigger Button */
+.trigger-btn {
+  background: var(--apple-blue);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.coupon-code-exist-msg{
+  text-align: center;
+  padding: 10px;
+  color: #1cc61c;
+}

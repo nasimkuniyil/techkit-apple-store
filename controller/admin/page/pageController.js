@@ -1,3 +1,4 @@
+const Coupon = require("../../../models/couponSchema");
 const User = require("../../../models/userSchema");
 
 // LOGIN PAGE
@@ -33,8 +34,12 @@ const reportPage = async (req, res, next) => {
 // USER MANAGEMENT PAGE
 const userPage = async (req, res, next) => {
   try {
-    const users = await User.find();
-    res.render("admin/usersList",{users});
+    const users = await User.find().populate('coupon');
+    const coupons = await Coupon.find({
+      blocked: false,  
+      expirationDate: { $gte: new Date() }
+    });
+    res.render("admin/usersList",{users, coupons});
   } catch (err) {
     console.log("Users page error");
     next(err);

@@ -433,3 +433,19 @@ input[type="text"]:focus {
       stroke-dashoffset: 0;
     }
   }
+
+  .coupon-show-container{
+    position: fixed;
+    padding: 10px;
+    width: 100%;
+    height: fit-content;
+    top: 25px;
+    z-index: 1000;
+  }
+
+  .coupon-show-section{
+    background-color: rgb(219, 255, 219);
+    color: green;
+    text-align: center;
+    width: 100%;
+  }

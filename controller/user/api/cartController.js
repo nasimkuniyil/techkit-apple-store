@@ -48,6 +48,8 @@ const cartAdd = async (req, res, next) => {
       return next(error);
     }
 
+    let cartTotalAmount = cart?.cartTotalAmount || 0;
+
     console.log("product before : ", product);
     
     let discountPrice ;
@@ -60,6 +62,8 @@ const cartAdd = async (req, res, next) => {
       totalPrice = discountPrice * quantity;
     }
     
+    cartTotalAmount += totalPrice;
+
     console.log("product after : ", product);
     
     const price = product.price;
@@ -90,6 +94,7 @@ const cartAdd = async (req, res, next) => {
             discountPrice
           },
         ],
+        cartTotalAmount
       });
     }
     await cart.save();
@@ -137,9 +142,10 @@ const cartEdit = async (req, res, next) => {
           if (item.productId._id == productId) {
             console.log("product found.");
             item.quantity = updatedQuantity;
-            item.totalPrice = updatedQuantity * item.discountPrice || item.productId.price;
+            item.totalPrice = item.discountPrice  ? updatedQuantity * item.discountPrice : updatedQuantity * item.productId.price;
             return item;
           }
+          
           return item;
         });
         console.log("items : ", items);

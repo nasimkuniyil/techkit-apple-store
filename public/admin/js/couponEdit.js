@@ -1,7 +1,6 @@
 
 function couponEdit(){
     const data  = {
-        discountType:document.getElementById('discountType').value,
         discountValue:document.getElementById('discountValue').value,
         expirationDate:document.getElementById('expirationDate').value,
         minimumPurchase:document.getElementById('minPurchase').value,

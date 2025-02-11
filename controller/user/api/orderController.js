@@ -2,6 +2,7 @@ const Address = require("../../../models/addressSchema");
 const Cart = require("../../../models/cartSchema");
 const Order = require("../../../models/orderSchema");
 const Product = require("../../../models/productSchema");
+const User = require("../../../models/userSchema");
 const auth = require("../../sessionController");
 
 
@@ -161,16 +162,25 @@ const orderAdd = async (req, res, next) => {
 
     console.log("Order adding...");
 
+    const user = await User.findOne({_id:userId}).populate('coupon');
+
+    const couponDiscountPrice = totalAmount * (user.coupon.discountValue/100);
+    console.log('total amount  : ', totalAmount)
+    console.log('coupondiscount price : ', couponDiscountPrice)
+
     const newOrder = new Order({
       userId,
       orderId,
       products:prodDetails, 
       addressInfo: addressId,
       paymentInfo,
-      totalAmount, 
+      totalAmount : totalAmount - couponDiscountPrice, 
     });
 
     await newOrder.save();
+
+    user.coupon = null;
+    await user.save();
 
     // Deduct product stock
     for (const item of products) {

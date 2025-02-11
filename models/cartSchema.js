@@ -18,6 +18,7 @@ const cartSchema = new Schema(
         discountPrice: {type:Number}
       },
     ],
+  cartTotalAmount:{type:Number, required:true}
   },
   { timestamps: true }
 );

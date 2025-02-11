@@ -63,6 +63,12 @@
                 </div>
                 </div>
                 
+                <% if(user.coupon){ %>
+                    <p class="coupon-code-exist-msg">Coupon code : <%- user.coupon.code + " " + user.coupon.discountValue+"%" %></p>
+                  <% }else{ %>
+                    <button class="trigger-btn" onclick="openCouponModal('<%- user._id %>')">Add coupon</button>
+                <% } %>
+
                 <% if(user.isBlocked){ %>
                   <button class="block-btn blocked" onclick="unblockUser('<%- user._id %>')">Unblock Customer</button>
                   <% }else{ %>
@@ -76,6 +82,46 @@
         </div>
       </main>
     </div>
+
+     <!-- Modal Overlay -->
+     <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+          <div class="modal-header">
+              <h2 class="modal-title">Add Coupon</h2>
+          </div>
+          
+          <div class="coupon-list">
+              <!-- Coupon Items -->
+               <% if(coupons) { %>
+                <% coupons.forEach(cpn => { %>
+                  <div class="coupon-item">
+                    <input type="radio" name="coupon" class="coupon-radio" id="coupon1" value="<%-cpn._id%>">
+                    <div class="coupon-details">
+                        <div class="coupon-code"><%- cpn.code %></div>
+                        <div class="coupon-description"><%- cpn.discountValue %>% off on your purchase</div>
+                    </div>
+                  </div>
+                <%  }) %>
+                <% } else { %>
+                  <p>Coupon not available.</p>
+                <% } %>
+              
+<!-- 
+              <div class="coupon-item">
+                  <input type="radio" name="coupon" class="coupon-radio" id="coupon3">
+                  <div class="coupon-details">
+                      <div class="coupon-code">WELCOME10</div>
+                      <div class="coupon-description">$10 off for new users</div>
+                  </div>
+              </div> -->
+          </div>
+
+          <div class="modal-footer">
+              <button class="btn-coupon btn-cancel" onclick="closeCouponModal()">Cancel</button>
+              <button class="btn-coupon btn-apply" onclick="applyCoupon()">Apply Coupon</button>
+          </div>
+      </div>
+  </div>
 
     
     <script src="/confirmModal.js"></script>

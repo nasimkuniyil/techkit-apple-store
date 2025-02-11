@@ -10,6 +10,7 @@ const cartController = require('../../controller/user/api/cartController')
 const orderController = require('../../controller/user/api/orderController')
 const paymentController = require('../../controller/user/api/paymentController')
 const wishlistController = require('../../controller/user/api/wishlistController');
+const couponController = require("../../controller/user/api/couponController");
 
 const authMiddlewares = require("../../middleware/authMiddlewares");
 const checkCart = require("../../middleware/checkCart");
@@ -64,6 +65,8 @@ router.get('/wishlist',authMiddlewares.isAuthenticated, authMiddlewares.isBlocke
 router.post('/wishlist/add',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.addData);
 router.put('/wishlist/remove',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.removeData);
 
+router.get('/coupon',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, couponController.getCoupon);
+// router.get('/coupon/apply',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, couponController.applyCoupon);
 
 module.exports = router;
 

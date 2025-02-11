@@ -15,12 +15,13 @@ let porductDetails = [];
 
 let selectedAddressId = null;
 let selectedPaymentMethod = null;
+let couponDiscountPercentage;
 let totalAmount = 0;
 
 // Initial load
+fetchCoupon();
 fetchAddresses();
 fetchCartData();
-fetchCoupon();
 
 paymentOption.addEventListener("input", (e) => {
   if (e.target.checked) {
@@ -85,10 +86,25 @@ async function fetchCartData() {
 }
 
 async function fetchCoupon() {
-  // const url = "/api/random-coupon";
+  const url = "/api/coupon";
 
   try {
+
     console.log("fetch coupon.");
+    fetch(url)
+    .then(response =>{
+      if(!response.ok){
+        throw new Error(response.textContent);
+      }
+      return response.json()
+    })
+    .then(data =>{
+      if(data.coupon){
+          showFlashMessage({success:true, message:'Coupon applied'})
+          document.querySelector('#coupon').textContent = "-"+data.coupon.discountValue+"%";
+          couponDiscountPercentage = data.coupon.discountValue/100;
+      }
+    })
   } catch (err) {
     console.error("Error fetching coupon:", err);
     alert("An error occurred while fetching the coupon");
@@ -460,7 +476,7 @@ function createCartItem(products) {
   });
 
   shipping = subtotal >= 50000 ? 0 : 800;
-  totalAmount = subtotal;
+  totalAmount = subtotal - (subtotal * couponDiscountPercentage);
 
   subtotalSpan.textContent = subtotal.toLocaleString("en-US", {
     style: "currency",
