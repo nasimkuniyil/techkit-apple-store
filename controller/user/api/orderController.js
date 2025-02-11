@@ -6,7 +6,7 @@ const auth = require("../../sessionController");
 
 
 // GET ORDER DATA
-const orderData = async (req, res, next) => {
+const ordersData = async (req, res, next) => {
     try {
       console.log("----- entered get order data api.  -----");
   
@@ -49,75 +49,164 @@ const orderData = async (req, res, next) => {
     }
   };
 
-
-//  ORDER ADD
-const orderAdd = async (req, res, next) => {
+const orderView = async (req, res, next) => {
     try {
-      //Data required : userId, productId, quantity, price, totalAmount, color, address, paymentType
-      console.log("----- entered add order.  -----");
+      console.log("----- entered get order data api.  -----");
+
+      const orderId = req.query.id;
   
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
-      let { products, addressId, paymentInfo } = req.body;
   
-      console.log("body data : ", req.body);
+      const order = await Order.findOne({ _id: orderId })
+      .populate("userId")
+      .populate({
+        path:"products.productId",
+        populate:{
+          path:"offer"
+        }
+      })
+      .populate("addressInfo");
+
+    if (!order) {
+      const error = new Error("Order not available");
+      error.status = 400;
+      next(error);
+    }
+
+    const total = order.products.reduce((acc, val) => {
+      if(val.productId.offer && val.productId.offer.discountValue && new Date( val.productId.offer.endDate) >= new Date() && ! val.productId.offer.blocked){
+        const discountPrice = val.productId.price - (val.productId.price * val.productId.offer.discountValue / 100);
+        acc+=discountPrice;
+        return acc;
+      }
+      acc += val.quantity * val.productId.price;
+      return acc;
+    }, 0);
+
+    order.totalAmount = total;  
   
-      if (!userId) {
-        const error = new Error("User not available");
-        error.status = 400;
-        next(error);
+      console.log("populate : ", order);
+  
+  
+      if (order.length == 0) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Order not available" });
       }
   
-      products = JSON.parse(products);
-  
-      const prod = await Promise.all(
-        products.map((prod) => Product.findById(prod.productId))
-      );
-  
-      console.log("prod hahaha ... : ", prod);
-  
-      // Generating Order ID
-      const orderId = `ORD - ${Date.now()}`;
-  
-      // Find User Address
-      if (!(await Address.find({ _id: addressId }))) {
-        const error = new Error("Address not available");
-        error.status = 400;
-        next(error);
-      }
-  
-      console.log("Products ... : ", products);
-      console.log("Order adding...");
-  
-      const newOrder = await new Order({
-        userId,
-        orderId,
-        products,
-        addressInfo: addressId,
-        paymentInfo,
-      });
-  
-      await newOrder.save();
-  
-      products.forEach(async (item) => {
-        const prod = await Product.findOneAndUpdate(
-          { _id: item.productId },
-          { $inc: { quantity: -item.quantity } }
-        );
-      });
-  
-      console.log("Order placed");
-  
-      // Delete cart
-      await Cart.deleteOne({ userId });
-      console.log("cart deleted.");
-  
-      res.status(200).json({ success: true, message: "Order placed" });
+      return res.status(200).json({ success: true, order});
     } catch (err) {
-      console.log("!!! - Error placing order - !!!");
+      console.log("!!! - Error geting order - !!!");
       next(err);
     }
   };
+
+
+//  ORDER ADD
+const orderAdd = async (req, res, next) => {
+  try {
+    console.log("----- entered add order.  -----");
+
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+    let { products, addressId, paymentInfo } = req.body;
+
+    console.log("body data : ", req.body);
+
+    if (!userId) {
+      return next(new Error("User not available"));
+    }
+
+    console.log('convert')
+    products = JSON.parse(products);
+
+    // Fetch product details and calculate discount
+    const prodDetails = await Promise.all(
+      products.map(async (prod) => {
+        const product = await Product.findById(prod.productId).populate("offer");
+
+        let discountPrice = product.price; // Default price (no discount)
+
+        if (
+          product.offer &&
+          product.offer.discountValue &&
+          new Date(product.offer.endDate) >= new Date() &&
+          !product.offer.blocked
+        ) {
+          discountPrice = product.price - (product.price * product.offer.discountValue) / 100;
+        }
+
+        return {
+          ...prod,
+          price: discountPrice, // Store the final discounted price
+          discountPrice,
+        };
+      })
+    );
+
+    // Calculate total amount using discounted price
+    const totalAmount = prodDetails.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+    console.log("Total amount calculated (with discount): ", totalAmount);
+
+    // Generating Order ID
+    const orderId = `ORD - ${Date.now()}`;
+
+    // Validate Address
+    const addressExists = await Address.exists({ _id: addressId });
+    if (!addressExists) {
+      return next(new Error("Address not available"));
+    }
+
+    console.log("Order adding...");
+
+    const newOrder = new Order({
+      userId,
+      orderId,
+      products:prodDetails, 
+      addressInfo: addressId,
+      paymentInfo,
+      totalAmount, 
+    });
+
+    await newOrder.save();
+
+    // Deduct product stock
+    for (const item of products) {
+      await Product.findByIdAndUpdate(item.productId, { $inc: { quantity: -item.quantity } });
+    }
+
+    console.log("Order placed successfully!");
+
+    // Delete cart after order placement
+    await Cart.deleteOne({ userId });
+    console.log("Cart cleared.");
+
+    
+    const responseProducts = prodDetails.map((prod) => ({
+      ...prod, 
+      discountPrice: prod.discountPrice, 
+    }));
+    
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Order placed", 
+      totalAmount, 
+      products: prodDetails.map((prod) => ({
+        ...prod, 
+        discountPrice: prod.discountPrice, 
+      }))
+    });
+    
+  } catch (err) {
+    console.log("!!! - Error placing order - !!!");
+    next(err);
+  }
+};
+
+
 
 
 //   ORDER CANCEL
@@ -206,7 +295,8 @@ const orderReturn = async (req, res, next) => {
   };
 
   module.exports = {
-    orderData,
+    ordersData,
+    orderView,
     orderAdd,
     orderCancel,
     orderReturn

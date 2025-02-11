@@ -10,7 +10,9 @@ const couponSchema = new Schema(
    discountType : {type:String, enum:['percentage', 'fixed', 'free_shipping'], required:true}, //"percentage", "fixed", "free shipping"
    discountValue : {type:Number, required:true},
    expirationDate : {type:Date, required:true},
+   minimumPurchase : {type:Number, required:true},
    usageLimit : {type:Number, required:true},
+   blocked:{type:Boolean, default:false}
   },
   { timestamps: true }
 );

@@ -15,6 +15,7 @@ const cartSchema = new Schema(
         quantity: { type: Number },
         totalPrice: { type: Number },
         price: { type: Number },
+        discountPrice: {type:Number}
       },
     ],
   },

@@ -56,23 +56,20 @@ function validateForm(event) {
   if (isValid) {
     // Here you would typically submit the form to your backend
     console.log("HELLO WORLD");
-    const url = "/admin/api/add-coupon";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code, type, value, expDate, limit, minimumPurchase}),
-    };
+    const url = "/admin/api/coupon/add";
+    const data = { code, type, value, expDate, limit, minimumPurchase}
 
-    fetch(url, options)
+    axios.post(url, data)
       .then(response => {
-        if(!response.ok){
-          throw new Error("Error happened.")
-        }
-        window.location.href = '/admin/coupons'
+        console.log('response : ', response)
+        showFlashMessage(response.data)
+        // window.location.href = '/admin/coupons'
       })
-      .catch((err) => console.error("error message : ", err));
+      .catch((err) => {
+        console.error("error message : ", err)
+        showFlashMessage(err.response.data)
+
+      });
   }
 }
 

@@ -71,126 +71,30 @@
             <div class="order-card">
               <div class="order-header">
                 <div>
-                  <h1 class="order-title"><%-order.orderId%></h1>
-                <div class="order-date">Ordered on <%-order.createdAt.toISOString().substring(0,10)%></div>
+                  <h1 class="order-title">ODR-0000</h1>
+                <div class="order-date">Ordered on -- -- --</div>
                 </div>
-                <%if(order.orderStatus == 'Cancelled'){%>
-                  <p class="order-cancel-text">Order cancelled</p>
-                  <%}else if(order.cancelReason){%>
-                    <p class="order-cancel-text">Order cancellation requested.</p>
-                <%}else if(order.orderStatus == 'Pending' && !order.cancelReason){%>
-                  <button class="button cancel" onclick="showCancellationModal('<%- order._id %>', 'order')">Cancel order</button>
-                  <%}%>
+                <!-- order cancellation section -->
               </div>
       
               <div class="delivery-progress">
-                <% if(order.orderStatus !== 'Cancelled'){ %>
-                <div class="progress-header">
-                  <div>
-                    <div class="delivery-date">Arriving Tuesday, January 25</div>
-                    <div class="tracking-number">
-                      Tracking Number: 1Z999AA1234567890
-                    </div>
-                  </div>
-                </div>
-                
-                  <div class="progress-bar">
-                    <div class="progress-step <%- order.orderStatus == 'Pending' && 'step-active'%>" id="pending">
-                      <div class="step-dot"></div>
-                      <div class="step-label">Order Placed</div>
-                    </div>
-                    <div class="progress-step <%- order.orderStatus == 'Processing' && 'step-active'%>" id="processing">
-                      <div class="step-dot"></div>
-                      <div class="step-label">Processing</div>
-                    </div>
-                    <div class="progress-step <%- order.orderStatus == 'Shipped' && 'step-active'%>" id="shipped">
-                      <div class="step-dot"></div>
-                      <div class="step-label">Shipped</div>
-                    </div>
-                    <div class="progress-step <%- order.orderStatus == 'Delivered' && 'step-active'%>" id="delivered">
-                      <div class="step-dot"></div>
-                      <div class="step-label">Delivered</div>
-                    </div>
-                  </div>
-                <% }else{ %>
-                  <div class="status-cancelled ">Order Cancelled</div>
-                <% } %>
-               
-              </div>
+                <!-- progress details... -->
+               </div>
       
               <div class="items-section">
                 <h2 class="section-title">Items in Your Order</h2>
-      
-                <%if(order.products){%>
-                <%order.products.forEach(prod =>{ %>
-                  <div class="item-card">
-                    <div class="item-image">
-                      <img src="<%=prod.productId.images[0].url%>" alt="">
-                    </div>
-                    <div class="item-details">
-                      <div class="item-name">
-                        <%-prod.productId.product_name%> - <%-prod.productId.color%>
-                      </div>
-                      <div class="item-meta">
-                        <span>Qty: <%-prod.quantity%></span>
-                        <span>₹<%-prod.productId.price%></span>
-                      </div>
-                    </div>
-                    <div class="button-container">
-                      <%if(order.orderStatus == 'Pending' && !order.cancelReason){%>
-                        <button class="button cancel" onclick="showCancellationModal('<%- prod.productId._id %>', '<%-order._id%>', 'product')">Cancel</button>
-                        <%}else if(order.orderStatus == 'Delivered'){%>
-                          <button class="button return" onclick="showReturnModal('<%-prod.productId._id%>', '<%-order._id%>')">Return</button>
-                          <%}%>
-                    </div>                    
-                  </div>
-                <%})%>
-                <%}%>
+                <!-- item card -->
               </div>
       
               <div class="shipping-card">
                 <h2 class="section-title">Shipping Details</h2>
                 <div class="shipping-details">
-                  <div class="detail-group">
-                    <div class="detail-label">Shipping Address</div>
-                    <div class="detail-value">
-                      <%-order.addressInfo.name%><br />
-                      <%-order.addressInfo.address%><br />
-                      <%-order.addressInfo.city%>, <%-order.addressInfo.landmark%><br />
-                      <%-order.addressInfo.state%>
-                    </div>
-                  </div>
-                  <div class="detail-group">
-                    <div class="detail-label">Shipping Method</div>
-                    <div class="detail-value"><%-order.paymentInfo%></div>
-                  </div>
-                  <div class="detail-group">
-                    <div class="detail-label">Contact Information</div>
-                    <div class="detail-value">
-                      <%-order.userId.email%><br />
-                      <%-order.addressInfo.mobile%>
-                    </div>
-                  </div>
+                  <!-- shipping details -->
                 </div>
               </div>
       
               <div class="price-section">
-                <div class="price-row">
-                  <span>Subtotal</span>
-                  <span>₹ <%-order.totalAmount%></span>
-                </div>
-                <div class="price-row">
-                  <span>Shipping</span>
-                  <span>Free</span>
-                </div>
-                <!-- <div class="price-row">
-                  <span>Tax</span>
-                  <span>$125.82</span> -->
-                <!-- </div> -->
-                <div class="total-row">
-                  <span>Total</span>
-                  <span>₹ <%-order.totalAmount%></span>
-                </div>
+                <!-- price section -->
               </div>
             </div>
           </div>
@@ -200,5 +104,7 @@
 
     <script src="/flashMessage.js"></script>
     <script defer src="/tas_user/js/orderDetails.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
   </body>
 </html>

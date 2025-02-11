@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/admin/css/report.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
+      </div>
+
+      <main class="main-content">
+        <!-- Include Header -->
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="products-header">
+          <div class="header-section">
+            <h1 class="page-title">Dashboard</h1>
+          </div>
+          <div class="dashboard">
+            <div class="controls">
+              <select class="time-select">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom</option>
+              </select>
+              
+              <div class="custom-date" style="display: none;">
+                <input type="date" class="date-input">
+                <span>to</span>
+                <input type="date" class="date-input">
+              </div>
+          
+              <button class="download-btn" onclick="generatePDF()">Download Report</button>
+            </div>
+          
+            <!-- Added Summary Cards -->
+            <div class="summary-cards">
+              <div class="summary-card">
+                <div class="card-label">Total Orders</div>
+                <div class="card-value">1,234</div>
+                <!-- <div class="card-trend positive">↑ 12.3% vs last period</div> -->
+              </div>
+              <div class="summary-card">
+                <div class="card-label">Total Revenue</div>
+                <div class="card-value">$45,678</div>
+                <!-- <div class="card-trend positive">↑ 8.7% vs last period</div> -->
+              </div>
+              <div class="summary-card">
+                <div class="card-label">Total Products Sold</div>
+                <div class="card-value">26</div>
+                <!-- <div class="card-trend positive">↑ 8.7% vs last period</div> -->
+              </div>
+            </div>
+          
+            <div class="table-container">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <!-- <th>Status</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#12345</td>
+                    <td>2024-02-10</td>
+                    <td>John Doe</td>
+                    <td>3</td>
+                    <td>$299.99</td>
+                    <!-- <td><span class="status completed">Completed</span></td> -->
+                  </tr>
+                  <tr>
+                    <td>#12346</td>
+                    <td>2024-02-10</td>
+                    <td>Jane Smith</td>
+                    <td>1</td>
+                    <td>$129.99</td>
+                    <!-- <td><span class="status processing">Processing</span></td> -->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Common Scripts -->
+    <script src="/admin/common/scripts.js"></script>
+    <!-- Page Specific Scripts -->
+    <script src="/admin/js/report.js"></script>
+
+    <!-- jspdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+  
+  </body>
+</html>

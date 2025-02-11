@@ -1,10 +1,10 @@
-const User = require('../../models/userSchema')
-const Address = require('../../models/addressSchema')
+const User = require('../../../models/userSchema')
+const Address = require('../../../models/addressSchema')
 
-const getUsers = async (req, res) => {
+const userData = async (req, res) => {
     try{
         const users = await User.find({isAdmin : false});
-        res.render('admin/usersList',{users});
+        res.status(200).json(users);
     }catch(err){
         console.log('getUsers error :',err);
     }
@@ -36,7 +36,7 @@ const unblockUser = async (req, res) => {
 
 //Export
 module.exports = {
-    getUsers,
+    userData,
     blockUser,
     unblockUser
 }

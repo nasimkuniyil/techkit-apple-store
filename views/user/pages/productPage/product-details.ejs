@@ -17,113 +17,24 @@
     </header>
     <main class="prod-pt">
       <!-- Breadcrumb Section -->
-      <section class="container">
-        <nav class="breadcrumb">
-          <a href="/">Home</a>
-          <span class="separator">›</span>
-          <a href="/shop/<%- product.category.category_name %>"
-            ><%- product.category.category_name %></a
-          >
-          <span class="separator">›</span>
-          <span><%- product.product_name %></span>
-        </nav>
-      </section>
+      <section class="container breadcrumb-container"></section>
       <!-- Image Gallery Section -->
       <section class="container">
         <div class="product-grid">
           <div class="image-gallery">
-            <div class="main-image">
-              <img
-                src="<%=product.images[0].url%>"
-                alt="Product Main Image"
-                id="mainImage"
-              />
-              <div id="zoomPane"></div>
-            </div>
-            <div class="thumbnail-container">
-              <%product.images.forEach( (img,index) => { %>
-              <div class="thumbnail active">
-                <img
-                  src="<%=img.url%>"
-                  alt="Product Thumbnail 1"
-                  data-src="<%=img.url%>"
-                />
-              </div>
-              <% }) %>
-            </div>
+            <div class="main-image"></div>
+            <div class="thumbnail-container"></div>
           </div>
 
           <!-- Product Info Section -->
           <div class="product-info">
-            <h1 class="product-title"><%- product.product_name %></h1>
-            <h3>₹ <%- product.price %></h3>
-
-            <div class="rating">
-              ★★★★☆
-              <span style="color: #86868b; margin-left: 10px">(4.5/5)</span>
-            </div>
-
-            <div class="color-options">
-              <% availableColors.forEach( item => { %>
-              <a
-                href="/product-details?id=<%- item._id %>"
-                class="product-color <%= ( product._id.toString() == item._id.toString() ) ? 'active' : '' %>"
-                style="background-color: #<%- item.color.color_code %>"
-              ></a>
-              <% }) %>
-            </div>
-            <p class="product-category">
-              <a href="/shop/<%- product.category.category_name %>">
-                <%- product.category.category_name %>
-              </a>
-            </p>
-
-            <% if(product.quantity > 0){ %>
-
-            <p class="stock-status">
-              <%- product.quantity < 10 ? "Only few products are left" : "" %>
-            </p>
-            <div class="quantity-selector">
-              <button
-                class="quantity-btn"
-                onclick="updateQuantity({change:-1, prodQuantity:'<%= product.quantity %>'})"
-              >
-                -
-              </button>
-              <span class="quantity-display" id="quantity">1</span>
-              <button
-                class="quantity-btn"
-                onclick="updateQuantity({change:1, prodQuantity:'<%= product.quantity %>'})"
-              >
-                +
-              </button>
-            </div>
-
-            <p class="stock-status" id="stockStatus"></p>
-
-            <% }else{ %>
-            <p class="stock-status" id="stockStatus">Out of stock</p>
-            <% } %>
-
-            <div class="action-buttons">
-              <%if(product.quantity > 0){%>
-              <button
-                class="add-to-cart"
-                onclick="addToCart('<%= product._id %>')"
-              >
-                Add to Cart
-              </button>
-              <%}%>
-              
-              <% if(userSession) { %>
-                <button
-                  class="add-to-wishlist"
-                  onclick="addToWishlist('<%= product._id %>')"
-                >
-                  <i class="far fa-heart"></i>
-                </button>
-              <% } %>
-            </div>
+            <!-- title -->
+            <!-- price -->
+            <!-- rating -->
+            <!-- color options -->
+            <!-- category -->
+            <!-- quantity and stock message -->
+            <!-- add to cart and add to wishlist buttons -->
           </div>
         </div>
       </section>
@@ -133,8 +44,6 @@
         <div class="product-description">
           <div class="product-description-grid">
             <div class="description-content">
-              <h2>About <%- product.product_name %></h2>
-              <p><%- product.description %></p>
             </div>
             <div class="features-list">
               <h3>Key Features</h3>
@@ -239,15 +148,16 @@
             <div class="heading">
               <h2><span>You May Also Like</span></h2>
             </div>
-            <div class="card-list">
-              <%- include('../../partials/card-item', {products:
-              recommendedProducts}) %>
-            </div>
+            <div class="card-list"></div>
           </div>
         </diV>
       </section>
     </main>
     <footer><%-include('../../partials/footer')%></footer>
+    <script src="/flashMessage.js"></script>
+    <script defer src="/tas_user/js/breadcrumb.js"></script>
+    <script defer src="/tas_user/components/productCard/productCard.js"></script>
     <script defer src="/tas_user/js/product-details.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
   </body>
 </html>

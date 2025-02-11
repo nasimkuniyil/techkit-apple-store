@@ -20,6 +20,7 @@ function renderWishlistData(data) {
     console.log('rendering...')
     console.log('result : ', data)
     let wishlistGrid = document.querySelector('.wishlist-grid');
+    wishlistGrid.innerHTML = ""
   data.items.forEach((item) => {
     console.log('items : ', item)
     const itemCard = `<div class="wishlist-item">
@@ -38,7 +39,7 @@ function renderWishlistData(data) {
                         </div>
                       </div>`
 
-                      wishlistGrid += itemCard;
+    wishlistGrid.innerHTML += itemCard;
   });
 
 }

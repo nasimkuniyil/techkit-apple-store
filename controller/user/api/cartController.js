@@ -7,7 +7,10 @@ const carData = async (req, res, next) => {
   try {
     const userSession = req.session.user;
     const userId = auth.getUserSessionData(userSession);
-    let cartList = await Cart.findOne({ userId }).populate("items.productId");
+    let cartList = await Cart.findOne({ userId }).populate({
+      path: "items.productId",
+      populate: { path: "offer", strictPopulate: false },
+    });
 
     if (!cartList) {
       console.log("items not available in cart");
@@ -37,7 +40,7 @@ const cartAdd = async (req, res, next) => {
     const userId = auth.getUserSessionData(uId);
 
     let cart = await Cart.findOne({ userId: userId });
-    let product = await Product.findOne({ _id: productId });
+    let product = await Product.findOne({ _id: productId }).populate('offer');
 
     if (!product || product.deleted) {
       const error = new Error("Item not available");
@@ -45,14 +48,22 @@ const cartAdd = async (req, res, next) => {
       return next(error);
     }
 
-    const totalPrice = product.price * quantity;
+    console.log("product before : ", product);
+    
+    let discountPrice ;
+    let totalPrice;
+
+    totalPrice = product.price * quantity;
+    
+    if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+      discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+      totalPrice = discountPrice * quantity;
+    }
+    
+    console.log("product after : ", product);
+    
     const price = product.price;
-
-    console.log("cart : ", cart);
-    console.log("product : ", product);
-    console.log("totalPrice : ", totalPrice);
-    console.log("Price : ", price);
-
+    
     if (cart) {
       const cartItem = cart.items.some(
         (item) => item.productId.toString() === productId.toString()
@@ -64,7 +75,7 @@ const cartAdd = async (req, res, next) => {
           message: "This product already added to cart",
         });
       }
-      cart.items.push({ productId: product._id, quantity, totalPrice, price });
+      cart.items.push({ productId: product._id, quantity, totalPrice, price, discountPrice });
     } else {
       console.log("cart else started ........");
 
@@ -76,6 +87,7 @@ const cartAdd = async (req, res, next) => {
             quantity,
             totalPrice,
             price,
+            discountPrice
           },
         ],
       });
@@ -125,7 +137,7 @@ const cartEdit = async (req, res, next) => {
           if (item.productId._id == productId) {
             console.log("product found.");
             item.quantity = updatedQuantity;
-            item.totalPrice = updatedQuantity * item.productId.price;
+            item.totalPrice = updatedQuantity * item.discountPrice || item.productId.price;
             return item;
           }
           return item;

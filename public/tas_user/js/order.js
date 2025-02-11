@@ -181,9 +181,6 @@ function CreateOrderOng(data) {
     orderDate: data.createdAt,
     items: data.products,
     status: data.orderStatus,
-    total: data.products.reduce((acc, item) => {
-      acc += item.productId.price * item.quantity;
-      return acc;
-    }, 0),
+    total: data.totalAmount
   };
 }

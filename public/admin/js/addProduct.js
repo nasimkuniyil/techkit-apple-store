@@ -268,11 +268,12 @@ async function onformSubmit(e) {
       });
 
       // Send data to backend
-      const response = await fetch('/admin/product/add', {
+      const response = await fetch('/admin/api/product/add', {
           method: 'POST',
           body: formData
       });
-      window.location.href = response.url; // Redirect to products list
+      window.location.href = response.url
+      
   } catch (error) {
       console.error('Error saving product:', error);
       alert('Failed to save product. Please try again.');

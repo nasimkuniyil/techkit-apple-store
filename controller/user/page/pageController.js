@@ -1,6 +1,11 @@
 const Category = require("../../../models/categorySchema");
+const Color = require("../../../models/colorSchema");
 const Order = require("../../../models/orderSchema");
 const Product = require("../../../models/productSchema");
+const Wallet = require("../../../models/walletSchema");
+
+const auth = require("../../sessionController");
+
 
 // LOGIN PAGE
 const loginPage = async (req, res, next) => {
@@ -31,7 +36,7 @@ const otpPage = async (req, res, next) => {
     res.render("user/pages/register/otp-verify.ejs");
   } catch (err) {
     console.log("otp page render error ");
-    next(err)
+    next(err);
   }
 };
 
@@ -41,7 +46,7 @@ const forgotPasswordPage = async (req, res, next) => {
     return res.render("user/pages/register/forgot-password");
   } catch (err) {
     console.log("forgot password page render error ");
-    next(err)
+    next(err);
   }
 };
 
@@ -49,18 +54,70 @@ const forgotPasswordPage = async (req, res, next) => {
 const homePage = async (req, res, next) => {
   try {
     let category = await Category.find({ category_name: "accessories" });
+
+    // latest products
     let latestProd = await Product.find({ deleted: false })
       .sort({ createdAt: -1 })
       .limit(5)
+      .populate("offer")
       .populate("color");
+
+      latestProd =latestProd.map(product => {
+      
+        const productDetails = product.toObject();
+       
+        if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+          const discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+          productDetails.discountPrice = discountPrice;
+          productDetails.offer = product.offer;
+        } else {
+          delete productDetails.offer;
+        }
+        return productDetails;
+      });
+      
+
+      console.log('latest prod details : ', latestProd)
+
     let popularProd = await Product.find({ deleted: false })
       .sort({ popularity: -1 })
       .limit(5)
+      .populate("offer")
       .populate("color");
+
+      popularProd =popularProd.map(product => {
+      
+        const productDetails = product.toObject();
+       
+        if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+          const discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+          productDetails.discountPrice = discountPrice;
+          productDetails.offer = product.offer;
+        } else {
+          delete productDetails.offer;
+        }
+        return productDetails;
+      });
+
     let accessories = await Product.find({ category, deleted: false })
       .sort({ popularity: -1 })
       .limit(5)
+      .populate("offer")
       .populate("color");
+
+      accessories =accessories.map(product => {
+      
+        const productDetails = product.toObject();
+       
+        if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+          const discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+          productDetails.discountPrice = discountPrice;
+          productDetails.offer = product.offer;
+        } else {
+          delete productDetails.offer;
+        }
+        return productDetails;
+      });
 
     let userSession = req.session.user;
 
@@ -72,7 +129,7 @@ const homePage = async (req, res, next) => {
     });
   } catch (err) {
     console.log("home page render error ");
-    next(err)
+    next(err);
   }
 };
 
@@ -91,26 +148,9 @@ const shopPage = async (req, res, next) => {
 
 const productPage = async (req, res, next) => {
   try {
-    const id = req.query.id;
-    let product = await Product.findOne({ _id: id })
-      .populate("category")
-      .populate("color");
-    let availableColors = await Product.find({
-      product_name: product.product_name,
-      category: product.category._id,
-    })
-      .populate("color")
-      .select("_id color");
-
-    let recommendedProducts = await Product.find().limit(5);
     let userSession = req.session.user;
 
-    res.render("user/pages/productPage/product-details", {
-      product,
-      availableColors,
-      recommendedProducts,
-      userSession,
-    });
+    res.render("user/pages/productPage/product-details", {userSession});
   } catch (err) {
     console.log("product page render error : ");
     next(err);
@@ -135,13 +175,14 @@ const checkoutPage = async (req, res, next) => {
     const uId = req.session.user;
 
     console.log("body data :", req.body);
-    return res.render("user/pages/checkoutPage/checkout-page", { userSession: uId });
+    return res.render("user/pages/checkoutPage/checkout-page", {
+      userSession: uId,
+    });
   } catch (err) {
-    console.log('checkout page render error');
+    console.log("checkout page render error");
     next(err);
   }
 };
-
 
 const ordersPage = async (req, res, next) => {
   try {
@@ -153,7 +194,7 @@ const ordersPage = async (req, res, next) => {
       userSession: uId,
     });
   } catch (err) {
-    console.log('orders page render error');
+    console.log("orders page render error");
     next(err);
   }
 };
@@ -165,27 +206,8 @@ const orderDetailsPage = async (req, res, next) => {
     const orderId = req.query.id;
     const uId = req.session.user;
 
-    const order = await Order.findOne({ _id: orderId })
-      .populate("userId")
-      .populate("products.productId")
-      .populate("addressInfo");
-
-    if (!order) {
-      const error = new Error("Order not available");
-      error.status = 400;
-      next(error);
-    }
-
-    const total = order.products.reduce((acc, val) => {
-      acc += val.quantity * val.productId.price;
-      return acc;
-    }, 0);
-
-    order.totalAmount = total;
-
     return res.status(400).render("user/pages/orderHistoryPage/order-details", {
-      userSession: uId,
-      order,
+      userSession: uId
     });
   } catch (err) {
     console.log("order details page render error : ");
@@ -206,17 +228,28 @@ const wishlistPage = async (req, res, next) => {
   }
 };
 
+
 const walletPage = async (req, res, next) => {
   try {
-    console.log("----- entered get order history page.  -----");
-
     const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+     // Assuming authentication middleware adds `user.id`
 
-    return res.status(400).render("user/pages/walletPage/wallet-page", {
-      userSession: uId,
+    const wallet = await Wallet.findOne({ userId }).lean();
+
+    if (!wallet) {
+      // something
+    }
+
+    console.log('wallet: ', wallet)
+
+    res.render('user/pages/walletPage/wallet-page',{
+      balance: wallet?.balance,
+      transactions: wallet?.transactions?.reverse(),
+      userSession:req.session.user
     });
   } catch (err) {
-    console.log("wallet page render error : ");
+    console.error("Error fetching wallet:", err);
     next(err);
   }
 };

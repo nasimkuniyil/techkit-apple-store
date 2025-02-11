@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <link rel="stylesheet" href="/message.css">
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/admin/css/couponAdd.css" />
+    <link rel="stylesheet" href="/admin/css/formValidation.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Include Sidebar -->
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
+      </div>
+
+      <main class="main-content">
+        <!-- Include Header -->
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="coupon-container">
+            <h1 class="form-title">Edit Offer</h1>
+            <form id="couponForm" onsubmit="validateForm(event)">
+              <div class="form-group">
+                <label for="offerTitle">Offer Title</label>
+                <input type="text" id="offerTitle" name="offerTitle" value="<%- offer.title %>"  
+                placeholder="Enter offer name">
+                <div class="error" id="offerTitleError"></div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="targetId">Target</label>
+                  <input type="text" id="targetId" value="<%- offer.targetId?.category_name || offer.targetId?.product_name+' '+ offer.targetId?.color.color_name %>" disabled>
+                  
+                </select>
+                <div class="error" id="targetIdError"></div>
+                </div>
+
+                <div class="form-group">
+          
+                <div class="form-group">
+                  <label for="discountValue">Discount Value (%)</label>
+                  <input type="number" id="discountValue" name="discountValue" 
+                         placeholder="Enter discount value" value="<%- offer.discountValue %>">
+                  <div class="error" id="valueError"></div>
+                </div>
+              </div>
+              </div>
+
+          
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="endDate">End Date</label>
+                  <input type="date" id="endDate" name="endDate" value="<%- new Date(offer.endDate).toISOString().slice(0, 10) %>" >
+                  <div class="error" id="endDateError"></div>
+                </div>
+          
+              </div>
+              <button type="submit" class="submit-btn">Edit Offer</button>
+            </form>
+          </div>
+      </main>
+    </div>
+    <!-- Common Scripts -->
+    <script src="/admin/common/scripts.js"></script>
+    <script src="/flashMessage.js"></script>
+    <script src="/admin/js/offerEdit.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+
+  </body>
+</html>

@@ -48,9 +48,10 @@
   }
 
   .category-table td {
-    padding: 1rem 1.5rem;
+    padding: 1rem 0.75rem;
     border-bottom: 1px solid #e5e5e7;
     color: #1d1d1f;
+    font-size: 15px;
   }
 
   .category-table tr:last-child td {

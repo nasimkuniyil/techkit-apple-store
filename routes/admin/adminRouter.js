@@ -1,83 +1,73 @@
 const express = require("express");
 const adminRouter = express.Router();
-const flash = require('connect-flash');
 
 const upload = require("../../middleware/uploads");
 const adminAuth = require("../../middleware/adminAuth");
 
-const categoryController = require("../../controller/adminController/categoryController");
-const colorController = require("../../controller/adminController/colorController");
-const productController = require("../../controller/adminController/productController");
-const userController = require("../../controller/adminController/userController");
-const commonController = require("../../controller/adminController/commonController");
-const orderController = require("../../controller/adminController/orderController");
-const couponController = require("../../controller/adminController/couponController");
+const registerController = require("../../controller/admin/api/registerController");
+const categoryController = require("../../controller/admin/api/categoryController");
+const colorController = require("../../controller/admin/api/colorController");
+const productController = require("../../controller/admin/api/productController");
+const userController = require("../../controller/admin/api/userController");
+const reportController = require("../../controller/admin/api/reportController");
+const orderController = require("../../controller/admin/api/orderController");
+const couponController = require("../../controller/admin/api/couponController");
+const offerController = require("../../controller/admin/api/offerController");
+
+// NEW CONTROLLER
 
 
-adminRouter.use(flash())
+//LOGIN API ROUTER
+// adminRouter.get('/get-order-data', adminAuth.isAdmin, reportController.getSalesData);
+adminRouter.post('/login',adminAuth.notAdmin, registerController.postLogin);
+adminRouter.get('/logout',adminAuth.isAdmin, registerController.getLogout);
 
-adminRouter.use((req, res, next) => {
-    res.locals.error_msg = req.flash('error_msg');
-    next();
-});
-
-
-
-//Login page
-adminRouter.get('/',adminAuth.isAdmin, commonController.getDashboard);
-adminRouter.get('/api/get-order-data', adminAuth.isAdmin, commonController.getSalesData);
-adminRouter.get('/login', adminAuth.notAdmin , commonController.getLogin);
-adminRouter.post('/login',adminAuth.notAdmin, commonController.postLogin);
-adminRouter.get('/logout',adminAuth.isAdmin, commonController.getLogout);
-
-//User Management
-adminRouter.get("/users", adminAuth.isAdmin, userController.getUsers);
+//USER MANAGEMENT
 adminRouter.put("/user/block", adminAuth.isAdmin, userController.blockUser);
 adminRouter.put("/user/unblock", adminAuth.isAdmin, userController.unblockUser);
 
-//Product Management
-adminRouter.get("/products",adminAuth.isAdmin,  productController.getAllProducts);
-adminRouter.get("/product/add",adminAuth.isAdmin,  productController.getAddProduct);
-adminRouter.post("/product/add",adminAuth.isAdmin, upload.array("images", 4) , productController.postAddProduct);
-adminRouter.get('/product/edit',adminAuth.isAdmin, productController.getUpdateProduct)
-adminRouter.put('/product/edit',adminAuth.isAdmin, upload.array("images", 4), productController.putUpdateProduct)
+//PRODUCT MANAGEMENT
+adminRouter.post("/product/add",adminAuth.isAdmin, upload.array("images", 4) , productController.productAdd);
+adminRouter.put('/product/edit',adminAuth.isAdmin, upload.array("images", 4), productController.productEdit)
 adminRouter.delete("/product/delete",adminAuth.isAdmin, productController.deleteProduct);
-adminRouter.get("/product/unblock",adminAuth.isAdmin, productController.unBlockProduct);
-adminRouter.delete("/products/delete-permenent",adminAuth.isAdmin, productController.permenentDeleteProduct);
+adminRouter.get("/product/unblock",adminAuth.isAdmin, productController.productRestore);
+adminRouter.delete("/products/delete-permenent",adminAuth.isAdmin, productController.productPermenentDelete);
 
-adminRouter.get("/recover",adminAuth.isAdmin,  productController.getRecyclePage);
-adminRouter.get("/requests",adminAuth.isAdmin,  productController.getRequestPage);
 
 //Category Management
-adminRouter.get("/category", adminAuth.isAdmin,  categoryController.getAllCategories);
-adminRouter.get("/category/add", adminAuth.isAdmin,  categoryController.getAddCategory);
-adminRouter.post("/category/add", adminAuth.isAdmin,  categoryController.postAddCategory);
-adminRouter.get("/category/edit", adminAuth.isAdmin,  categoryController.getUpdateCategory);
-adminRouter.put("/category/edit", adminAuth.isAdmin,  categoryController.putUpdateCategory);
-adminRouter.put("/category/block", adminAuth.isAdmin,  categoryController.deleteCategory);
-adminRouter.put("/category/unblock", adminAuth.isAdmin,  categoryController.unBlockCategory);
-adminRouter.delete("/category/delete-permenent", adminAuth.isAdmin, categoryController.permenentDeleteCategory);
+adminRouter.post("/category", adminAuth.isAdmin,  categoryController.categoryList);
+adminRouter.post("/category/data/:id", adminAuth.isAdmin,  categoryController.categoryDetails);
+adminRouter.post("/category/add", adminAuth.isAdmin,  categoryController.categoryAdd);
+adminRouter.put("/category/edit", adminAuth.isAdmin,  categoryController.categoryEdit);
+adminRouter.put("/category/block", adminAuth.isAdmin,  categoryController.categoryDelete);
+adminRouter.put("/category/unblock", adminAuth.isAdmin,  categoryController.categoryRestore);
+adminRouter.delete("/category/delete-permenent", adminAuth.isAdmin, categoryController.categoryPermenentDelete);
 
 //Color Management
-adminRouter.get("/color", adminAuth.isAdmin,  colorController.getAllColors);
-adminRouter.get("/color/add", adminAuth.isAdmin,  colorController.getAddColor);
-adminRouter.post("/color/add", adminAuth.isAdmin,  colorController.postAddColor);
-adminRouter.get("/color/edit", adminAuth.isAdmin,  colorController.getUpdateColor);
-adminRouter.put("/color/edit", adminAuth.isAdmin,  colorController.putUpdateColor);
-adminRouter.delete("/color/delete", adminAuth.isAdmin,  colorController.deleteColor);
-adminRouter.get("/color/unblock", adminAuth.isAdmin,  colorController.unBlockColor);
-adminRouter.delete("/color/delete-permenent", adminAuth.isAdmin, colorController.permenentDeleteColor);
+adminRouter.post("/color/add", adminAuth.isAdmin,  colorController.colorAdd);
+adminRouter.put("/color/edit", adminAuth.isAdmin,  colorController.colorEdit);
+adminRouter.delete("/color/delete", adminAuth.isAdmin,  colorController.colorDelete);
+adminRouter.get("/color/unblock", adminAuth.isAdmin,  colorController.colorRestore);
+adminRouter.delete("/color/delete-permenent", adminAuth.isAdmin, colorController.colorPermenentDelete);
+// done first step (above)
 
 //Orders Management
-adminRouter.get("/orders", adminAuth.isAdmin,  orderController.getOrdersPage);
-adminRouter.get("/order/view", adminAuth.isAdmin,  orderController.viewOrderDetails);
-adminRouter.get("/api/orders",adminAuth.isAdmin,  orderController.getOrdersData);
-adminRouter.put("/api/order/:status",adminAuth.isAdmin,  orderController.changeStatus);
-adminRouter.put("/api/prodcut/return",adminAuth.isAdmin,  orderController.changeProductStatus);
+adminRouter.get("/orders",adminAuth.isAdmin,  orderController.ordersData);
+adminRouter.get("/order/view",adminAuth.isAdmin,  orderController.orderDetails);
+adminRouter.put("/order/:status",adminAuth.isAdmin,  orderController.orderStatusChange);
+// adminRouter.put("/prodcut/return",adminAuth.isAdmin,  orderController.productStatusChange);
 
 //Coupon Management
-adminRouter.get('/coupons', adminAuth.isAdmin, couponController.getCouponPage);
-adminRouter.get('/coupon/add', adminAuth.isAdmin, couponController.getCouponAddPage);
-adminRouter.post('/api/add-coupon', adminAuth.isAdmin, couponController.AddCoupon);
+adminRouter.post('/coupon/add', adminAuth.isAdmin, couponController.couponAdd);
+adminRouter.put('/coupon/edit', adminAuth.isAdmin, couponController.couponEdit);
+adminRouter.put('/coupon/block', adminAuth.isAdmin, couponController.couponBlock);
+adminRouter.put('/coupon/unblock', adminAuth.isAdmin, couponController.couponUnblock);
+
+adminRouter.post('/offer/add/:type', adminAuth.isAdmin, offerController.offerAdd);
+adminRouter.put('/offer/edit', adminAuth.isAdmin, offerController.offerEdit);
+adminRouter.get('/offer/block', adminAuth.isAdmin, offerController.offerBlock);
+adminRouter.get('/offer/unblock', adminAuth.isAdmin, offerController.offerUnblock);
+
+adminRouter.get('/report', adminAuth.isAdmin, reportController.getReportData);
 
 module.exports = adminRouter;

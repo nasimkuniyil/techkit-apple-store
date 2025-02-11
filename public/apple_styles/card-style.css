@@ -62,6 +62,10 @@
   display: block;
 }
 
+.product_info .old-price{
+  text-decoration: line-through;
+}
+
 /* --- SHOP HIGHLIGHT SECTION --- */
 .card-item {
   padding: 30px;

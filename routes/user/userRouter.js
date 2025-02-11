@@ -40,6 +40,7 @@ router.delete("/remove-address", authMiddlewares.isAuthenticated, authMiddleware
 
 // SHOP ROUTES
 router.get('/get-all-products', visitorCount, productController.getAllProducts);
+router.get('/product/view', visitorCount, productController.productDetails);
 
 // CART ROUTES
 router.post("/add-cart", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, cartController.cartAdd);
@@ -48,7 +49,8 @@ router.put("/update-cart", authMiddlewares.isAuthenticated, authMiddlewares.isBl
 router.delete("/remove-cart", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, cartController.cartRemove);
 
 // ORDER ROUTES
-router.get('/order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderData);
+router.get('/order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.ordersData);
+router.get('/order/view', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderView);
 router.post('/add-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderAdd);
 router.post('/cancel-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderCancel);
 router.post('/return-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderReturn);
@@ -61,7 +63,6 @@ router.post('/online-payment/success', authMiddlewares.isAuthenticated, authMidd
 router.get('/wishlist',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.getData);
 router.post('/wishlist/add',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.addData);
 router.put('/wishlist/remove',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.removeData);
-
 
 
 module.exports = router;

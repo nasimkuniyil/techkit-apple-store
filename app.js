@@ -31,12 +31,15 @@ connectDB();
 
 //routes
 const adminRouter = require("./routes/admin/adminRouter.js");
+const adminPageRouter = require("./routes/admin/adminPageRouter.js");
 const userRouter = require("./routes/user/userRouter.js");
 const userPageRouter = require("./routes/user/userPageRouter.js");
 
-app.use("/admin", adminRouter);
-app.use("/api", userRouter);
+app.use("/admin", adminPageRouter);
+app.use("/admin/api", adminRouter);
+
 app.use("/", userPageRouter);
+app.use("/api", userRouter);
 
 //404 page for wrong routes
 app.get("*", (req, res) => {

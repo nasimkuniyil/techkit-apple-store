@@ -17,21 +17,21 @@ if (editForm) {
 // Functions
 function blockCategory(event,id) {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
-    const url = `/admin/category/block?id=${id}`;
+    const url = `/admin/api/category/block?id=${id}`;
     const options = {
       method: "PUT",};
     fetch(url, options)
-      .then((response) => (window.location.href = response.url))
+      .then((response) => (window.location.href = "/admin/category"))
       .catch((err) => console.log("something happend in add category"));
   }
 }
 function unblockCategory(event,id) {
   if (confirm("Are you sure you want to cancel? All changes will be lost.")) {
-    const url = `/admin/category/unblock?id=${id}`;
+    const url = `/admin/api/category/unblock?id=${id}`;
     const options = {
       method: "PUT",};
     fetch(url, options)
-      .then((response) => (window.location.href = response.url))
+      .then((response) => (window.location.href = "/admin/category"))
       .catch((err) => console.log("something happend in add category"));
   }
 }
@@ -53,7 +53,7 @@ function onSubmitAdd(event) {
     description: catDescription.value,
   };
 
-  const url = form.action;
+  const url = addForm.action;
   const options = {
     method: "POST",
     headers: {
@@ -62,7 +62,7 @@ function onSubmitAdd(event) {
     body: JSON.stringify(formData),
   };
   fetch(url, options)
-    .then((response) => (window.location.href = response.url))
+    .then((response) => (window.location.href = '/admin/category'))
     .catch((err) => console.log("something happend in add category"));
 }
 
@@ -78,19 +78,21 @@ function onSubmitEdit(event) {
     return;
   }
 
-  const formData = createFormData(editForm);
-
   const url = editForm.action;
-  const options = {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  };
-  fetch(url, options)
-    .then((response) => (window.location.href = response.url))
-    .catch((err) => console.log("something happend in add category"));
+  console.log('url : ', url);
+
+  const data = {
+    category_name : document.getElementById('category-name').value,
+    description : document.getElementById('description').value
+  }
+  axios.put(url, data)
+  .then(response=>{
+    window.location.href = '/admin/category'
+
+  })
+  .catch(err=>{
+    console.log('get data for edit page error.', err)
+  })
 }
 
 // Create Form Data

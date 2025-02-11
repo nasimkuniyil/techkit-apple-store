@@ -9,6 +9,10 @@ footer {
     padding: 20px 0 40px;
 }
 
+.ftr_heading h1{
+    padding: 40px 0;
+}
+
 .ftr_h_link a{
     padding: 10px;
     border: 1px solid black;

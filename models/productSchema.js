@@ -25,6 +25,7 @@ const productSchema = new Schema({
   createdAt: { type: Date, default: new Date() },
   popularity: { type: Number, default: 0 },
   purchases: { type: Number, default: 0 },
+  offer: { type: mongoose.Schema.Types.ObjectId, ref: "Offer", default: null },
 });
 
 const Product = model("Product", productSchema);

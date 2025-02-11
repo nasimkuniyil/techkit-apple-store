@@ -114,6 +114,11 @@
   margin-bottom: 20px;
 }
 
+.rating-span{
+  color: #86868b;
+  margin-left: 10px
+}
+
 .color-options {
   display: flex;
   gap: 8px;

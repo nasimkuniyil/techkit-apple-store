@@ -36,7 +36,8 @@ function fetchAllProducts() {
     .then((result) => {
         // rendering products...
         console.log('result : ', result)
-        renderProducts(result.products);
+        // renderProducts(result.products);
+        renderProductCard(result.products);
         setupPagination(result.totalPage, result.page).addEventListener('click', (event)=> paginationFunc(event, url, fetchAllProducts));
     })
     .catch((err) => {
@@ -44,6 +45,9 @@ function fetchAllProducts() {
     });
 }
 
+
+
+// old render prods
 function renderProducts(products) {
   const cardList = document.querySelector(".card-list");
   cardList.innerHTML = "";
@@ -56,7 +60,7 @@ function renderProducts(products) {
     const para = document.createElement("p");
 
     // Add link
-    wrapperLink.href = `/product-details?id=${prod._id}`
+    wrapperLink.href = `/product/view?id=${prod._id}`
 
     //Add classes
     wrapperLink.classList.add("card-item-wrapper");

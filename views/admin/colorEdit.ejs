@@ -323,10 +323,10 @@
         </header>
 
         <div class="content">
-          <h1 class="page-title">Add New Color</h1>
+          <h1 class="page-title">Edit Color</h1>
 
           <div class="form-card">
-            <form id="editColorForm" action="edit?id=<%-_id %>">
+            <form id="editColorForm" action="/admin/api/color/edit?id=<%-color._id %>">
               <div class="form-group">
                 <label for="colorName">Color Name</label>
                 <input
@@ -335,7 +335,7 @@
                   class="form-control"
                   placeholder="Enter color name"
                   name="color_name"
-                  value="<%- color %>"
+                  value="<%- color.color_name %>"
                   required
                 />
                 <div class="help-text">Choose a name for your color name</div>
@@ -348,7 +348,7 @@
                   class="form-control"
                   placeholder="Enter color name"
                   name="color_code"
-                  value="<%- code %>"
+                  value="<%- color.color_code %>"
                   required
                 />
               </div>

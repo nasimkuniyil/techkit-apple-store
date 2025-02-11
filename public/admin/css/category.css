@@ -28,7 +28,7 @@
 
   .category-card {
     background-color: white;
-    border-radius: 18px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow: hidden;
   }
@@ -40,7 +40,7 @@
 
   .category-table th {
     background-color: #f5f5f7;
-    padding: 1rem 1.5rem;
+    padding: 1rem  0.75rem;
     text-align: left;
     color: #86868b;
     font-weight: 500;
@@ -48,9 +48,10 @@
   }
 
   .category-table td {
-    padding: 1rem 1.5rem;
+    padding: 1rem 0.75rem;
     border-bottom: 1px solid #e5e5e7;
     color: #1d1d1f;
+    font-size: 15px;
   }
 
   .category-table tr:last-child td {
@@ -133,3 +134,56 @@
     color: #0066cc;
     font-weight: 500;
   }
+
+  /* dropdown style */
+      /* Dropdown container */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+  
+      /* Dropdown button */
+      .dropdown-btn {
+        padding: 0.75rem 1.5rem;
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+  
+      .dropdown-btn:hover {
+        background-color: #0055b3;
+      }
+  
+      /* Dropdown content (hidden by default) */
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1;
+      }
+  
+      /* Links inside the dropdown */
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.2s ease;
+      }
+  
+      .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+  
+      /* Show the dropdown menu on hover */
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }

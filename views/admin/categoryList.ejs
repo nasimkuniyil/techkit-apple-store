@@ -9,6 +9,7 @@
       rel="stylesheet"
     />
     <!-- Common Styles -->
+    <link rel="stylesheet" href="/message.css">
     <link rel="stylesheet" href="/admin/common/styles.css" />
     <link rel="stylesheet" href="/admin/common/sidebar.css" />
     <link rel="stylesheet" href="/admin/common/header.css" />
@@ -59,8 +60,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% if( categoryObj ){ %> 
-                    <% categoryObj.forEach((cat,index) => { %>
+                  <% if( categories ){ %> 
+                    <% categories.forEach((cat,index) => { %>
                   <tr>
                     <td>
                       <span class="category-id"><%- index+1 %></span>
@@ -80,17 +81,14 @@
                       <span class="status-badge <%= cat.deleted ?'status-inactive ':'status-active' %>"><%= cat.deleted ? 'inactive' : 'active' %></span>
                     </td>
                     <td>
-                      <%if(cat.deleted){%>
-                        <div class="action-cell">
-                          <a href="/admin/category/edit?id=<%- cat._id %>" class="action-btn edit-btn">Edit</a>
+                      <div class="action-cell">
+                        <a href="/admin/category/edit?id=<%- cat._id %>" class="action-btn edit-btn">Edit</a>
+                        <%if(cat.deleted){%>
                           <button class="action-btn delete-btn" id="category-del-btn" onclick="unblockCategory(event, '<%- cat._id %>')">Unblock</button>
-                        </div>
-                      <%}else{%>
-                        <div class="action-cell">
-                          <a href="/admin/category/edit?id=<%- cat._id %>" class="action-btn edit-btn">Edit</a>
+                        <%}else{%>
                           <button class="action-btn delete-btn" id="category-del-btn" onclick="blockCategory(event, '<%- cat._id %>')">Block</button>
-                        </div>
-                      <%}%>
+                        <%}%>
+                      </div>
                     </td>
                   </tr>
                   <% }) %> 

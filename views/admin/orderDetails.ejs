@@ -82,7 +82,7 @@
                               <div class="product-name"><%- prod.productId.product_name %></div>
                           </td>
                           <td><%- prod.quantity %></td>
-                          <td>₹ <%- prod.productId.price * prod.quantity %></td>
+                          <td class="prod-total-amount"><%- prod.productId.price * prod.quantity %></td>
                       </tr>
                       <%})%>
                       
@@ -91,20 +91,20 @@
 
               <div class="price-breakdown">
                 <div class="price-row">
-                  <span>Subtotal</span>
-                  <span>$1,447</span>
+                  <span >Subtotal</span>
+                  <span id="subtotal">₹<%- orderData.totalAmount %></span>
                 </div>
                 <div class="price-row">
                   <span>Shipping</span>
                   <span>Free</span>
                 </div>
-                <div class="price-row">
+                <!-- <div class="price-row">
                   <span>Tax</span>
                   <span>$130.23</span>
-                </div>
+                </div> -->
                 <div class="total-row">
                   <span>Total</span>
-                  <span>$1,577.23</span>
+                  <span id="total">₹<%- orderData.totalAmount %>
                 </div>
               </div>
             </div>

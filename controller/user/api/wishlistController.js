@@ -26,11 +26,10 @@ const getData = async (req, res, next) => {
 const addData = async (req, res, next) => {
   try {
     console.log("--Entered add whishlist api.");
-    const { productId } = req.body;
+    const productId  = req.query.id;
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
     const wishlist = await Wishlist.findOne({ userId });
-
     if (!wishlist) {
       console.log("add new wishlist.");
       const addWishlist = new Wishlist({
@@ -40,12 +39,12 @@ const addData = async (req, res, next) => {
       await addWishlist.save();
     } else {
       console.log("wishlist updating error.");
-      const updateWishlist = await wishlist.items.push(productId);
+      await wishlist.items.push(productId);
       await wishlist.save();
     }
     console.log("wishlist item added success.");
 
-    return res.status(200).json({ result: "Item added to wishlist" });
+    return res.status(200).json({ success:true, message: "Item added to wishlist" });
   } catch (err) {
     console.log("getWishlistData error.");
     next(err);
@@ -56,10 +55,10 @@ const addData = async (req, res, next) => {
 const removeData = async (req, res, next) => {
   try {
     console.log("--Entered remove whishlist api.");
-    const { productId } = req.body;
+    const  productId  = req.query.id;
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
-    const wishlist = await Wishlist.findOneAndUpdate({ userId, items:productId },{$pull:{'items':productId}});
+    const wishlist = await Wishlist.findOneAndUpdate({ userId },{$pull:{'items':productId}});
 
     console.log('wishlist update processing...');
 
@@ -71,7 +70,7 @@ const removeData = async (req, res, next) => {
     
     console.log("wishlist item removed success.");
 
-    return res.status(200).json({ result: "Item removed from wishlist" });
+    return res.status(200).json({ success:true, message: "Item removed from wishlist" });
   } catch (err) {
     console.log("getWishlistData error.");
     next(err);

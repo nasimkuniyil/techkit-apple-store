@@ -82,7 +82,11 @@
   }
   
   .wishlist-content {
+    height: 200px;
     padding: 20px;
+    DISPLAY: FLEX;
+    FLEX-DIRECTION: column;
+    justify-content: space-between;
   }
   
   .wishlist-content h3 {

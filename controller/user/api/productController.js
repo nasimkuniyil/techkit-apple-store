@@ -1,5 +1,9 @@
 const Category = require("../../../models/categorySchema");
 const Product = require("../../../models/productSchema");
+const Color = require("../../../models/colorSchema");
+const Wishlist = require("../../../models/wishlistSchema");
+
+const auth = require("../../sessionController");
 
 const getAllProducts = async (req, res, next) => {
   const sortOption = req.query.sort || "a-z";
@@ -50,7 +54,23 @@ const getAllProducts = async (req, res, next) => {
     let products = await Product.find(filterCritiria)
       .sort(sortCriteria)
       .limit(limit)
-      .skip(pageStart);
+      .skip(pageStart)
+      .populate('color')
+      .populate('offer');
+
+      products =products.map(product => {
+      
+        const productDetails = product.toObject();
+       
+        if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+          const discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+          productDetails.discountPrice = discountPrice;
+          productDetails.offer = product.offer;
+        } else {
+          delete productDetails.offer;
+        }
+        return productDetails;
+      });
 
     let productCount = await Product.find(filterCritiria);
 
@@ -71,6 +91,66 @@ const getAllProducts = async (req, res, next) => {
   }
 };
 
+const productDetails = async(req,res,next)=>{
+  try{
+    const {id:productId} = req.query;
+    const uId = req.session.user;
+    const userId = auth.getUserSessionData(uId);
+
+    // Validate productId
+    if(!productId){
+      const error = new Error("Product id not found");
+      error.status = 404;
+      return next(error);
+    }
+
+    let product = await Product.findOne({_id:productId, deleted:false}).populate("category").populate("color").populate("offer");
+      
+    const productDetails = product.toObject();
+     
+      if (product.offer && product.offer.discountValue && new Date(product.offer.endDate) >= new Date() && !product.offer.blocked) {
+        const discountPrice = product.price - (product.price * product.offer.discountValue / 100);
+        productDetails.discountPrice = discountPrice;
+        productDetails.offer = product.offer;
+      } else {
+        delete productDetails.offer;
+      }
+      
+      product = productDetails;
+
+      
+    let availableColors = await Product.find({
+      product_name: product.product_name,
+      category: product.category._id,
+    }).populate("color").select("_id color");
+
+    let recommendedProducts = await Product.find().limit(5);
+
+    // Check product
+    if(!product){
+      const error = new Error("Product not found");
+      error.status = 404;
+      return next(error);
+    }
+
+    const result = {
+      product, availableColors, recommendedProducts
+    }
+
+    if(userId){
+      result.wishlist = await Wishlist.findOne({userId})
+    }
+
+    console.log('prod details : ', product)
+
+    res.status(200).json(result)
+  }catch(err){
+    console.log('product details api error.');
+    next(err);
+  }
+}
+
 module.exports = {
   getAllProducts,
+  productDetails
 };

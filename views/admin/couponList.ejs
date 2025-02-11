@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/admin/common/sidebar.css" />
     <link rel="stylesheet" href="/admin/common/header.css" />
     <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/message.css">
+
     <link rel="stylesheet" href="/admin/css/category.css" />
   </head>
   <body>
@@ -84,42 +86,27 @@
                     <td><%-coupon.expirationDate.toISOString().substring(0,10) %></td>
                     <td>
                       <span
-                        class="status-badge <%= coupon.deleted ?'status-inactive ':'status-active' %>"
-                        ><%= coupon.deleted ? 'inactive' : 'active' %></span
+                        class="status-badge <%= coupon.blocked ?'status-inactive ':'status-active' %>"
+                        ><%= coupon.blocked ? 'inactive' : 'active' %></span
                       >
                     </td>
                     <td>
-                      <%if(coupon.deleted){%>
                       <div class="action-cell">
                         <a
-                          href="/admin/category/edit?id=<%- coupon._id %>"
-                          class="action-btn edit-btn"
-                          >Edit</a
+                        href="/admin/coupon/edit?id=<%- coupon._id %>"
+                        class="action-btn edit-btn"
+                        >Edit</a
                         >
-                        <button
-                          class="action-btn delete-btn"
-                          id="category-del-btn"
-                          onclick="unblockCategory(event, '<%- coupon._id %>')"
-                        >
-                          Unblock
-                        </button>
+                        <%if (coupon.usageLimit <= 0) {%>
+                          <p>Out of stock</p>
+                        <%} else if (new Date() > new Date(coupon.expirationDate)) {%>
+                          <p>Coupon expired</p>
+                          <%}else  if(coupon.blocked){%>
+                            <button class="action-btn delete-btn" id="<%- coupon._id %>" onclick="unblockCoupon('<%- coupon._id %>')">Unblock</button>
+                        <% } else { %>
+                          <button class="action-btn delete-btn" id="<%- coupon._id %>" onclick="blockCoupon('<%- coupon._id %>')">Block</button>
+                        <%}%>
                       </div>
-                      <%}else{%>
-                      <div class="action-cell">
-                        <a
-                          href="/admin/category/edit?id=<%- coupon._id %>"
-                          class="action-btn edit-btn"
-                          >Edit</a
-                        >
-                        <button
-                          class="action-btn delete-btn"
-                          id="category-del-btn"
-                          onclick="blockCategory(event, '<%- coupon._id %>')"
-                        >
-                          Block
-                        </button>
-                      </div>
-                      <%}%>
                     </td>
                   </tr>
                   <% }) %> <% } %>
@@ -132,8 +119,10 @@
     </div>
 
     <!-- Common Scripts -->
+    <script src="/flashMessage.js"></script>
     <script src="/admin/common/scripts.js"></script>
     <!-- Page Specific Scripts -->
-    <script src="/admin/js/category.js"></script>
+    <script src="/admin/js/coupon.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -37,14 +37,17 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Page Specific Content -->
         <div class="form-container">
           <div class="form-header">
             <h1 class="form-title">Edit Category</h1>
           </div>
 
-          <form id="categoryEditForm" action="/admin/category/edit?id=<%-category._id%>">
+          <form
+            id="categoryEditForm"
+            action="/admin/api/category/edit?id=<%- _id %>"
+          >
             <!-- Basic Information Section -->
             <div class="form-section">
               <div class="form-group">
@@ -55,7 +58,7 @@
                   class="form-input"
                   name="category_name"
                   placeholder="Category name"
-                  value="<%- category.category_name %>"
+                  value="<%- category_name %>"
                 />
               </div>
 
@@ -66,7 +69,9 @@
                   class="form-input"
                   name="description"
                   placeholder="Add description"
-                  ><%- category.description %></textarea>
+                >
+<%- description %></textarea
+                >
               </div>
             </div>
             <div class="form-actions">
@@ -88,5 +93,7 @@
     <!-- Common Scripts -->
     <script src="/admin/common/scripts.js"></script>
     <script src="/admin/js/category.js"></script>
+    <!-- <script src="/admin/js/categoryEdit.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
   </body>
 </html>

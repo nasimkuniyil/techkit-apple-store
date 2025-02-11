@@ -124,7 +124,8 @@ function createCartItem(products) {
       />
       <div class="item-details">
         <h3 class="item-name">${product.productId.product_name}</h3>
-        <p class="item-single-price">${product.productId.price}</p>
+        <p class="item-single-price">${product.discountPrice || product.productId.price}</p>
+        <span class='cartDiscountDispaly'>${product.discountPrice ? 'Offer price' : ''}</span>
         <div class="quantity-selector">
           <button class="quantity-btn decrease" ${
             product.quantity <= 1 ? "disabled" : ""

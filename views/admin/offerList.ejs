@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StoreAdmin - Products</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Common Styles -->
+    <link rel="stylesheet" href="/admin/common/styles.css" />
+    <link rel="stylesheet" href="/admin/common/sidebar.css" />
+    <link rel="stylesheet" href="/admin/common/header.css" />
+    <!-- Page Specific Styles -->
+    <link rel="stylesheet" href="/message.css">
+
+    <link rel="stylesheet" href="/admin/css/category.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Include Sidebar -->
+      <div id="sidebar-placeholder">
+        <%- include('./partials/sidebar.ejs') %>
+      </div>
+
+      <main class="main-content">
+        <!-- Include Header -->
+        <div id="header-placeholder">
+          <div class="header">
+            <div class="menu-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <div class="admin-info">
+              <div class="admin-avatar">A</div>
+              <span>Admin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Specific Content -->
+        <div class="products-header">
+          <div class="header-section">
+            <h1 class="page-title">Offers</h1>
+            <div class="dropdown">
+              <button class="dropdown-btn">Add Offer</button>
+              <div class="dropdown-content">
+                <a href="/admin/offer/add/category">Category</a>
+                <a href="/admin/offer/add/product">Products</a>
+              </div>
+            </div>
+          </div>
+          <!-- Rest of your page content -->
+          <div class="category-container">
+            <div class="category-card">
+              <table class="category-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Discount(%)</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if( offers ){ %> <% offers.forEach((offer,index) => { %>
+                  <tr>
+                    <td>
+                      <span class="category-id"><%- index+1 %></span>
+                    </td>
+                    <td>
+                      <div
+                        style="display: flex; align-items: center; gap: 1rem"
+                      >
+                        <span><%- offer.title %></span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="products-count"><%- offer.type %></span>
+                    </td>
+                    <td><%- offer.targetId.product_name || offer.targetId.category_name %></td>
+                    <td><%-offer.discountValue %></td>
+                    <td><%-offer.endDate.toISOString().substring(0,10) %></td>
+                    <td>
+                      <span
+                        class="status-badge <%= (offer.blocked || new Date(offer.endDate) < new Date()) ? 'status-inactive ':'status-active' %>"
+                        ><%= (offer.blocked || new Date(offer.endDate) < new Date()) ? 'inactive' : 'active' %></span
+                      >
+                    </td>
+                    <td>
+                      <div class="action-cell">
+                        <a
+                        href="/admin/offer/edit?id=<%- offer._id %>"
+                        class="action-btn edit-btn"
+                        >Edit</a
+                        >
+                        <% if(new Date() > new Date(offer.endDate)) {%>
+                          <p>Coupon expired</p>
+                          <%}else  if(offer.blocked){%>
+                            <button class="action-btn delete-btn" id="<%- offer._id %>" onclick="unblockOffer('<%- offer._id %>')">Unblock</button>
+                        <% } else { %>
+                          <button class="action-btn delete-btn" id="<%- offer._id %>" onclick="blockOffer('<%- offer._id %>')">Block</button>
+                        <%}%>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }) %> <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Common Scripts -->
+    <script src="/flashMessage.js"></script>
+    <script src="/admin/common/scripts.js"></script>
+    <!-- Page Specific Scripts -->
+    <script src="/admin/js/offer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+  </body>
+</html>

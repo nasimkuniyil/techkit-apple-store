@@ -1,11 +1,12 @@
 
 <%if(products){%> 
   <% products.forEach( product => { %>
-    <a href="/product-details?id=<%-product._id%>" class="card-item-wrapper">
+    <a href="/product/view?id=<%-product._id%>" class="card-item-wrapper">
       <div class="card-item" style="background-image: url(<%=product.images[0].url%>)">
         <div class="product_info card-md">
           <h3><%-product.product_name%><span> <%-product.color.color_name%></span></h3>
-          <p>Price ₹<%-product.price%></p>
+          <p><span class="old-price"><%- product.discountPrice ? product.price+" "+product.offer.discountValue : ""%> </span> <%- product.discountPrice ? product.offer.discountValue+"% offer" : "" %> </p>
+          <p>Price ₹<%- product.discountPrice || product.price %></p>
         </div>
       </div>
     </a>

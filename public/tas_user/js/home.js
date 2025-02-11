@@ -43,7 +43,7 @@ function renderSearchList(inputVal) {
 
   allProducts.forEach((prod) => {
     if (prod.product_name.toLowerCase().includes(inputVal) || prod.color.toLowerCase().includes(inputVal)) {
-      const listItem = `<a href=/product-details?id=${prod._id}><li>${prod.product_name} - ${prod.color}</li></a>`;
+      const listItem = `<a href=/product/view?id=${prod._id}><li>${prod.product_name} - ${prod.color}</li></a>`;
       productLists.innerHTML += listItem;
     }
   });

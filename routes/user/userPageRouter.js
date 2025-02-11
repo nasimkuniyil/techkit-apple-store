@@ -26,7 +26,7 @@ router.get('/forgot-password', userPageController.forgotPasswordPage);
 // OTHER PAGES
 router.get('/',visitorCount, userPageController.homePage);
 router.get("/shop", visitorCount, userPageController.shopPage);
-router.get("/product-details",visitorCount, userPageController.productPage);
+router.get("/product/view",visitorCount, userPageController.productPage);
 router.get("/cart", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, userPageController.cartPage);
 router.get('/checkout', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, checkoutRedirect, userPageController.checkoutPage);
 router.get('/orders',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, userPageController.ordersPage);

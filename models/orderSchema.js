@@ -20,6 +20,7 @@ const orderSchema = new Schema(
     ],
     addressInfo: { type: ObjectId, ref: "Address", required: true },
     paymentInfo: { type: String, required: true },
+    totalAmount: {type:Number},
     cancelReason: { type: String, defaule: "" },
     returnReason: { type: String, defaule: "" },
   },

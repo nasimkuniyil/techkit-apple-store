@@ -7,6 +7,7 @@ const categorySchema = new Schema(
     category_name: { type: String, unique: true, required: true },
     description: { type: String, required: true },
     deleted: { type: Boolean, default: false },
+    offer: { type: mongoose.Schema.Types.ObjectId, ref: "Offer", default: null }
   },
   { timestamps: true }
 );
