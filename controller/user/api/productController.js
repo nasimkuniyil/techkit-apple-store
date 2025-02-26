@@ -38,7 +38,6 @@ const getAllProducts = async (req, res, next) => {
       sortCriteria = {}; // Default to no sorting
   }
   try {
-    console.log("Api call for collect all products data");
 
     let category =
       filterOption &&
@@ -74,7 +73,6 @@ const getAllProducts = async (req, res, next) => {
 
     let productCount = await Product.find(filterCritiria);
 
-    console.log("ehie : ", productCount.length);
 
     const totalPage = Math.ceil(productCount.length / limit);
 
@@ -83,10 +81,8 @@ const getAllProducts = async (req, res, next) => {
       error.status = 400;
       return next(error);
     }
-    console.log(products);
     res.status(200).json({ success: true, products, totalPage, page });
   } catch (err) {
-    console.log('getAllProducts api error');
     next(err);
   }
 };
@@ -134,18 +130,16 @@ const productDetails = async(req,res,next)=>{
     }
 
     const result = {
-      product, availableColors, recommendedProducts
+      product, availableColors, recommendedProducts, userSession:uId || null
     }
 
     if(userId){
       result.wishlist = await Wishlist.findOne({userId})
     }
 
-    console.log('prod details : ', product)
 
     res.status(200).json(result)
   }catch(err){
-    console.log('product details api error.');
     next(err);
   }
 }

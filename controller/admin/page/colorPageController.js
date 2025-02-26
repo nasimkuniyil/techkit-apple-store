@@ -8,7 +8,6 @@ const colorPage = async (req, res, next) => {
 
     res.render("admin/colorList", {colors, deleted});
   } catch (err) {
-    console.log("Color page error");
     next(err);
   }
 };
@@ -18,7 +17,6 @@ const colorAddPage = (req, res, next) => {
   try {
     res.render("admin/colorAdd");
   } catch (err) {
-    console.log("Color add page error");
     next(err);
   }
 };
@@ -30,7 +28,6 @@ const colorEditPage = async (req,res,next)=>{
       const color = await Color.findOne({_id:id});
       res.render('admin/colorEdit', {color});
     }catch(err){
-      console.log('Color edit page error');
       next(err)
     }
   }

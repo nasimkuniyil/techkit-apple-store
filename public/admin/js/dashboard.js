@@ -1,158 +1,153 @@
-// Initialize charts
-// const salesCtx = document.getElementById('salesChart').getContext('2d');
-const productsCtx = document.getElementById('productsChart').getContext('2d');
+const timeSelect = document.querySelector(".time-select");
 
-let reportData;
-let productsChart;
+fetchReportData();
 
-//get sales data
-function getSalesReport (period){
-    if(productsChart){
-        productsChart.destroy()
+timeSelect.addEventListener("change", (event) => {
+  const selectedPeriod = event.target.value;
+  if (selectedPeriod !== "custom") {
+    fetchReportData(`/admin/api/report?filterType=${selectedPeriod}`);
+  }
+});
+
+
+function fetchReportData(url = "/admin/api/report") {
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("reuslt : ", response);
+      orderDetails(response.data.allOrders)
+      setupChart(timeSelect.value, response.data);
+      renderTopProducts(response.data.topProducts);
+      renderTopCategories(response.data.topCategories);
+    })
+    .catch((err) => console.error("Error fetching report data:", err));
+}
+
+//   RENDER TOP 10 PRODUCTS
+function renderTopProducts(products) {
+  const topProdGrid = document.querySelector(".products-grid");
+  topProdGrid.innerHTML = "";
+
+  products.forEach((prod) => {
+    const itemCard = ` <div class="product-card">
+                    <div class="product-image">
+                        <img src="${prod.images[0].url}" alt="Product Image">
+                    </div>
+                    <div class="product-info">
+                        <h2 class="product-name">${prod.productName}</h2>
+                        <p class="product-price">₹${prod.price}</p>
+                    </div>
+                  </div>`;
+
+    topProdGrid.innerHTML += itemCard;
+  });
+}
+
+//   RENDER TOP 10 PRODUCTS
+function renderTopCategories(categories) {
+  const topCatGrid = document.querySelector(".categories-grid");
+  topCatGrid.innerHTML = "";
+
+  categories.forEach((cat) => {
+    const itemCard = ` <div class="product-card">
+                    <div class="product-info">
+                        <h2 class="product-name">${cat.categoryName}</h2>
+                        <p>Total : ${cat.totalPurchases}</p>
+                    </div>
+                  </div>`;
+
+    topCatGrid.innerHTML += itemCard;
+  });
+}
+
+// CHART SETUP
+const ctx = document.getElementById("myChart").getContext('2d');
+let myLineChart = null;
+
+function setupChart(filterType, reportData) {
+    let labels = [];
+    let dataPoints = [];
+
+    const orders = reportData.orders; // Get order data from API response
+
+    if (filterType === "daily") {
+        labels = ["Today"];
+        dataPoints = [orders.length]; 
+    } else if (filterType === "weekly") {
+        labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        dataPoints = new Array(7).fill(0);
+
+        orders.forEach(order => {
+            let day = new Date(order.createdAt).getDay();
+            dataPoints[day]++;
+        });
+    } else if (filterType === "monthly") {
+        labels = Array.from({ length: 31 }, (_, i) => i + 1);
+        dataPoints = new Array(31).fill(0);
+
+        orders.forEach(order => {
+            let day = new Date(order.createdAt).getDate() - 1;
+            dataPoints[day]++;
+        });
+    } else if (filterType === "yearly") {
+        labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        dataPoints = new Array(12).fill(0);
+
+        orders.forEach(order => {
+            let month = new Date(order.createdAt).getMonth();
+            dataPoints[month]++;
+        });
     }
-    let url = `/admin/api/get-order-data`;
-    if(period){
-        url+='?period='+period
-    };
 
-        fetch(url)
-        .then(response =>{
-            if(!response.ok){
-                throw new Error('Error occured when fetching sales report'); 
-            }
-            return response.json();
-        })
-        .then(result =>{
-            console.log('response data : ', result);
-            reportData = result.report;
-            updateReport(result.report, result.topProducts);
-        })
+    // Destroy previous chart instance to avoid duplicates
+    if (myLineChart) {
+        myLineChart.destroy();
+    }
 
-}
-
-getSalesReport();
-
-function generateReport() {
-    // Get jsPDF from the window object if using CDN
-    const { jsPDF } = window.jspdf;
-
-    // Create a new jsPDF document
-    const doc = new jsPDF();
-
-    // Set Document Title
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("Sales Report", 20, 20);
-
-    // Add some spacing
-    doc.setFontSize(12);
-    doc.text("Date: " + reportData.date, 20, 30);
-
-    // Draw a line separator
-    doc.setLineWidth(0.5);
-    doc.line(20, 35, 190, 35);
-
-    // Add the sales report data
-    doc.text("Total Orders: " + reportData.totalOrders, 20, 50);
-    doc.text("Total Revenue: ₹" + reportData.totalRevenue, 20, 60);
-    doc.text("Total Products Sold: " + reportData.totalProductsSold, 20, 70);
-    doc.text("Average Order Value: ₹" + reportData.averageOrderValue.toFixed(2), 20, 80);
-
-    // Finalize the PDF and save
-    doc.save("Sales_Report_" + reportData.date + ".pdf");
-}
-
-//update report
-function updateReport(data,topProducts){
-    document.getElementById('total-sales').textContent = "₹ "+data.totalRevenue;
-    document.getElementById('total-orders').textContent = data.totalOrders;
-    document.getElementById('avg-order-value').textContent = "₹ "+data.averageOrderValue;
-    // document.getElementById('conversion-rate').textContent = data.conversionRate;
-
-    productsChart = new Chart(productsCtx, {
-        type: 'bar',
+    myLineChart = new Chart(ctx, {
+        type: "line",
         data: {
-            labels: topProducts.map(prod=>prod.productName),
-            datasets: [{
-                label: 'Sales',
-                data: topProducts.map(prod=>prod.totalQuantitySold),
-                backgroundColor: '#0071e3'
-            }]
+            labels: labels,
+            datasets: [
+                {
+                    label: "Total Orders",
+                    data: dataPoints,
+                    borderColor: "blue",
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: "Time Period",
+                        font: { size: 16, weight: "bold" },
+                        color: "darkblue"
+                    }
                 },
+                y: {
+                    title: {
+                        display: true,
+                        text: "Orders Count",
+                        font: { size: 16, weight: "bold" },
+                        color: "darkblue"
+                    },
+                    beginAtZero: true
+                }
             }
         }
     });
 }
 
-// const salesChart = new Chart(salesCtx, {
-//     type: 'line',
-//     data: {
-//         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-//         datasets: [{
-//             label: 'Sales ($)',
-//             data: [5200, 6300, 4800, 7200, 8100, 7400, 6200],
-//             borderColor: '#0071e3',
-//             tension: 0.4
-//         }]
-//     },
-//     options: {
-//         responsive: true,
-//         plugins: {
-//             legend: {
-//                 position: 'top',
-//             }
-//         }
-//     }
-// });
-
-
-
-// Filter buttons functionality
-function updatePeriod(period) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    if (period !== 'custom') {
-        document.getElementById('customDateInputs').style.display = 'none';
-    }
-    // Update charts and data based on selected period
-    updateData(period);
+function orderDetails(orders){
+    document.getElementById('total-sales').textContent = orders.filter(odr => odr.orderStatus == "Delivered").length;
+    document.getElementById('total-orders').textContent = orders.length;
+    document.getElementById('avg-order-value').textContent = (orders.reduce((acc,odr) => {
+        acc += (odr.orderStatus == "Delivered") ? odr.totalAmount : 0;
+        return acc;
+    }, 0)/orders.length).toFixed(2);
 }
-
-function toggleCustomDate() {
-    const customInputs = document.getElementById('customDateInputs');
-    customInputs.style.display = customInputs.style.display === 'none' ? 'flex' : 'none';
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-}
-
-function updateData(period) {
-    getSalesReport(period);
-    console.log('Updating data for period:', period);
-}
-
-// Generate sample table data
-function generateTableData() {
-    const tbody = document.getElementById('reportTable');
-    const dates = ['2024-01-28', '2024-01-27', '2024-01-26', '2024-01-25', '2024-01-24'];
-    
-    dates.forEach(date => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${date}</td>
-            <td>${Math.floor(Math.random() * 100 + 150)}</td>
-            <td>$${(Math.random() * 5000 + 3000).toFixed(2)}</td>
-            <td>$${(Math.random() * 20 + 30).toFixed(2)}</td>
-            <td>${(Math.random() * 2 + 1).toFixed(2)}%</td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Initialize table data
-generateTableData();

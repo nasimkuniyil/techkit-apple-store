@@ -126,7 +126,7 @@ const productAdd = async (req, res, next) => {
 
 // EDIT PRODUCT API
 const productEdit = async (req, res, next) => {
-  console.log("--- PUT UPDATE PRODUCT IS STARTED ---");
+  
   try {
     const id = req.query.id;
     const {
@@ -139,7 +139,7 @@ const productEdit = async (req, res, next) => {
       removedImages,
     } = req.body;
 
-    // Validate product_name
+    
     if (!product_name) {
       const error = new Error(`Product name is required`);
       error.status = 400;

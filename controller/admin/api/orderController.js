@@ -21,16 +21,14 @@ const orders = async (req, res, next) => {
 
     orders.forEach((odr) => {
       odr.totalAmount = odr.products.reduce((acc, val) => {
-        acc += val.quantity * val.price;
+        acc += (!val.isReturn) ? val.quantity * val.price : 0;
         return acc;
       }, 0);
     });
 
-    console.log("oders data : ", orders);
 
     res.status(200).json(orders);
   } catch (err) {
-    console.log("Orders get data api error");
     next(err);
   }
 };
@@ -38,7 +36,6 @@ const orders = async (req, res, next) => {
 // GET ORDER DETAILS API
 const orderDetails = async (req, res, next) => {
   try {
-    console.log("------------- Entered order details --------------");
     const orderId = req.query.id;
 
     // Check if id is provided
@@ -59,7 +56,6 @@ const orderDetails = async (req, res, next) => {
       return next(error);
     }
 
-    console.log("order data : ", order.products);
     res.status(200).json(order);
   } catch (err) {
     next(err);
@@ -69,7 +65,6 @@ const orderDetails = async (req, res, next) => {
 // GET ALL ORDERS DATA API
 const ordersData = async (req, res, next) => {
   try {
-    console.log("--- entered get order data api ---");
     const orders = await Order.find().populate('addressInfo').sort({createdAt:-1});
 
     if (!order) {
@@ -84,11 +79,9 @@ const ordersData = async (req, res, next) => {
       users.push(await User.findOne({ _id: odr.userId }));
     });
 
-    console.log("orders : ", orders);
 
     res.status(200).json({orders});
   } catch (err) {
-    console.log("Get all orders data api error");
     next(err);
   }
 };
@@ -96,7 +89,6 @@ const ordersData = async (req, res, next) => {
 // CHANGE ORDER STATUS API
 const orderStatusChange = async (req, res, next) => {
   try {
-    console.log("--- entered change order status ---");
 
     const id = req.query.id;
     const orderStatus = req.params.status;
@@ -133,8 +125,6 @@ const orderStatusChange = async (req, res, next) => {
       return next(error);
     }
 
-    console.log("order status updated.");
-    console.log("order details *** : ", order);
 
     // If the order is canceled, refund wallet and update product quantity
     if (statusObj[orderStatus] === "Cancelled") {
@@ -149,7 +139,6 @@ const orderStatusChange = async (req, res, next) => {
 
       // Refund only if the payment method is "Online Payment"
       if (order.paymentInfo == "onlinePayment") {
-        console.log('HHHHH +++++ =====')
         const userId = order.userId._id;
         const orderAmount = order.totalAmount;
 
@@ -168,13 +157,34 @@ const orderStatusChange = async (req, res, next) => {
 
         await wallet.save();
 
-        console.log("Amount refunded to wallet:", orderAmount);
       }
     }
 
+    // LATEST PURCHASES INCREMENT CODE WITH PRODUCT ORDER QUANTITY
+    if (statusObj[orderStatus] === "Delivered") {
+      try {
+        await Promise.all(
+          order.products.map(async (prod) => {
+            // Ensure productId is valid
+            if (prod.productId) {
+              // Increment the purchases by the quantity of that product in the order
+              await Product.findOneAndUpdate(
+                { _id: prod.productId },
+                { $inc: { purchases: prod.quantity } }  // Increment purchases by product quantity
+              );
+            } else {
+              console.error(`Invalid productId for product ${prod.productId}`);
+            }
+          })
+        );
+      } catch (error) {
+        console.error('Error updating product purchases:', error);
+      }
+    }
+    
+    
     res.status(200).json({ success: true, message: "Order status changed" });
   } catch (err) {
-    console.log("Orders status change api error:", err);
     next(err);
   }
 };
@@ -183,13 +193,11 @@ const orderStatusChange = async (req, res, next) => {
 // **** CHANGE THIS CODE **** IS IT CONTINUE IN ORDER CONTROLLET OR PRODUCT CONTROLLER. WHICH IS BETTER?
 const productStatusChange = async (req, res, next) => {
   try {
-    console.log("--- entered change order status ---");
 
     const orderStatus = req.query.status; // Get the status from the URL parameter
-    const orderId = req.query.id; // Get the order ID from the query string
+    const orderId = req.query.orderId; // Get the order ID from the query string
     const productId = req.query.productId; // Assuming you pass the product ID in the query string to identify the product
 
-    console.log("req.query : ", req.query);
 
     // Ensure status is 'returned'
     if (orderStatus !== "returned") {
@@ -206,30 +214,52 @@ const productStatusChange = async (req, res, next) => {
     }
 
     // Find the order and update the status of the specific product
-    const order = await Order.findOne({ _id: orderId });
-    console.log("--- order : ", order);
+    const order = await Order.findOne({ _id: orderId }).populate('products.productId');
 
     if (!order) {
       const error = new Error("Order or product not found");
       error.status = 404;
       return next(error);
     }
+    
+    const userId = order.userId._id;
+    let wallet = await Wallet.findOne({ userId });
 
     order.products.forEach((prod) => {
-      if (prod._id === productId) {
-        console.log("found same product...,");
-        prod.productStatus = "Returned";
+      if (prod._id == productId) {
+        prod.isReturn = true;
+        
+          order.totalAmount = order.products.reduce((acc, val) => {
+            acc -= (val.returnReason) ? val.quantity * val.productId.price : 0;
+            return acc;
+          }, order.totalAmount);
+    
+        if (order.paymentInfo == "onlinePayment") {
+          const returnAmount = prod.quantity * prod.productId.price;
+  
+          if (!wallet) {
+            wallet = new Wallet({ userId, balance: 0, transactions: [] });
+          }
+  
+          wallet.balance += returnAmount;
+          wallet.transactions.push({
+            amount: returnAmount,
+            type: "credit",
+            date: new Date(),
+          });
+  
+          
+        }
       }
     });
-
+    
+    await wallet.save();
     await order.save();
 
-    console.log("Updated Order: ", order);
 
     // Redirect to the view page with the updated order
     res.status(200).redirect(`/admin/order/view?id=${orderId}`);
   } catch (err) {
-    console.log("Error changing product status: ", err);
     next(err);
   }
 };

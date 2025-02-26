@@ -6,7 +6,6 @@ const Color = require("../../../models/colorSchema");
 const colorAdd = async (req, res, next) => {
   try {
     const { color_name, color_code } = req.body;
-    console.log("color body : ", req.body);
 
     // Check if color_name is provided
     if (!color_name) {
@@ -29,7 +28,6 @@ const colorAdd = async (req, res, next) => {
       .status(200)
       .json({ success: true, message: "Color added successfully" });
   } catch (err) {
-    console.log("Color add api error");
     next(err);
   }
 };
@@ -39,8 +37,6 @@ const colorEdit = async (req, res, next) => {
   try {
     const { id } = req.query;
     const { color_name, color_code } = req.body;
-    console.log("req body data : ", req.body);
-    console.log(req.query.id);
 
     // Check if id is provided
     if (!id) {
@@ -72,18 +68,15 @@ const colorEdit = async (req, res, next) => {
       return next(error);
     }
 
-    console.log("color data : ", color);
 
     color.color_name = color_name;
     color.color_code = color_code;
 
     await color.save();
 
-    console.log("color edited");
     res.status(200).json({success:true, message:"Color has been successfully updated"});
 
   } catch (err) {
-    console.log("Color edit api error");
     next(err);
   }
 };
@@ -113,7 +106,6 @@ const colorDelete = async (req, res, next) => {
 
     res.status(200).json({success:true, message:'Color has been deleted'})
   } catch (err) {
-    console.log("Color delete api error");
     next(err);
   }
 };
@@ -144,7 +136,6 @@ const colorRestore = async (req, res, next) => {
     res.status(200).json({success:true, message:' Color has been restored'})
 
   } catch (err) {
-    console.log("Color restore api error");
     next(err);
   }
 };
@@ -153,10 +144,8 @@ const colorRestore = async (req, res, next) => {
 const colorPermenentDelete = async (req, res, next) => {
   try {
     await Color.deleteMany({ deleted: true });
-    console.log('Color deleted permenently.')
     res.status(200).json({success:true, message:"Color has been permanently removed"})
   } catch (err) {
-    console.log("permenent delete api error");
     next(err);
   }
 };

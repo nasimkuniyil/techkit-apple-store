@@ -6,11 +6,15 @@ const Product = require("../../../models/productSchema");
 // PRODUCT MANAGEMENT PAGE
 const productPage = async (req, res, next) => {
   try {
-    const products = await Product.find({deleted:false});
+    const currentPage = req.query.page || 1;
+    const limit = 9;
+    const skip = (currentPage-1) * limit;
+    const products = await Product.find({deleted:false}).skip(skip).limit(currentPage*limit);
+    const totalProducts = await Product.countDocuments({deleted:false});
+    const totalPage = Math.ceil(totalProducts/limit)
     const deleted = await Product.find({deleted:true});
-    res.render("admin/productsList", { allProducts:products, deleted });
+    res.render("admin/productsList", { allProducts:products, deleted, currentPage, totalPage });
   } catch (err) {
-    console.log("Product page error");
     next(err);
   }
 };
@@ -22,7 +26,6 @@ const productAddPage = async (req, res, next) => {
     const colors = await Color.find();
     res.render("admin/productAdd",{categories, colors});
   } catch (err) {
-    console.log("Product add page error.");
     next(err);
   }
 };
@@ -36,7 +39,6 @@ const productEditPage = async (req, res, next) => {
     const product = await Product.findOne({_id:id}).populate('category').populate('color');
     res.render("admin/productEdit", {product, categories, colors});
   } catch (err) {
-    console.log("Product edit pageerror");
     next(err);
   }
 };
@@ -47,7 +49,6 @@ const recyclePage = async (req, res, next) => {
     const products = await Product.find({deleted:true})
     res.render("admin/recoverPage", {products});
   } catch (err) {
-    console.log("Recycle page error");
     next(err);
   }
 };
@@ -63,17 +64,14 @@ const  requestPage = async (req, res, next) => {
   
       // Fetching return orders with products having a returnReason and excluding cancelled orders
       const returnOrders = await Order.find({
+        "products.isReturn" : false,
         "products.returnReason": { $exists: true, $ne: "" }, // Look for products with returnReason
         orderStatus: { $ne: "Cancelled" }, // Exclude cancelled orders
       }).sort({ createdAt: -1 }).populate('products.productId');
   
-      console.log("cancelOrders: ", cancelOrders);
-      console.log("returnOrders: ", returnOrders);
-  
-      // Render the admin/requests page, passing the cancelOrders and returnOrders data
+
       res.render("admin/requests", { cancelOrders, returnOrders });
     } catch (err) {
-      console.log("Request page error.");
       next(err);
     }
   };

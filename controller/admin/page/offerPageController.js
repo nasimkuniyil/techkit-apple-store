@@ -7,14 +7,12 @@ const offerPage = async (req, res, next)=>{
         const offers = await Offer.find().populate('targetId');
         res.render('admin/offerList', {offers});
     }catch(err){
-        console.log('offer page render error');
         next(err);
     }
 }
 
 const offerAddPage = async (req, res, next)=>{
     try{
-        console.log('offer add page')
         const type = req.params.type;
         let datas;
         if(type.toLowerCase() == 'category'){
@@ -24,20 +22,16 @@ const offerAddPage = async (req, res, next)=>{
         }
         res.render('admin/offerAdd', {datas});
     }catch(err){
-        console.log('offer page render error');
         next(err);
     }
 }
 
 const offerEditPage = async (req, res, next)=>{
     try{
-        console.log('offer add page')
         const id = req.query.id;
         const offer = await Offer.findOne({_id:id}).populate('targetId');
-        console.log('offer details : ', offer)
         res.render('admin/offerEdit', {offer});
     }catch(err){
-        console.log('offer page render error');
         next(err);
     }
 }

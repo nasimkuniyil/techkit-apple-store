@@ -6,7 +6,6 @@ module.exports = {
     try {
       const new_cat = new Category({ category_name: category_name });
       await new_cat.save();
-      console.log("add new category : ", new_cat);
     } catch (err) {
       if (err.name == "MongoServerError" && err.code === 11000) {
         throw new Error("Enter unique category name. It already exists.");
@@ -39,7 +38,6 @@ module.exports = {
   update: async (id, field) => {
     try {
       const data = await Category.findOneAndUpdate({ _id: id }, field);
-      console.log("document updated success : ", data);
     } catch (err) {
       if (err.name === "MongoServerError" && err.code === 11000) {
         throw new Error("Category already exist. Enter unique category name.");
@@ -52,9 +50,7 @@ module.exports = {
   deleteAll: async () => {
     try {
       await Category.deleteMany({ deleted: true });
-      console.log("All categories deleted successfully");
     } catch (err) {
-      console.log("delete all error : ", err);
       throw new Error("Failed to delete all catagory");
     }
   },

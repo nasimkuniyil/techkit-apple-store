@@ -54,11 +54,13 @@ router.get('/order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked,
 router.get('/order/view', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderView);
 router.post('/add-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderAdd);
 router.post('/cancel-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderCancel);
-router.post('/return-order', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderReturn);
+router.post('/return-product', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, orderController.orderReturn);
 
 // ONLINE PAYMENT ROUTES
 router.post('/online-payment', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, paymentController.onlinePayment);
 router.post('/online-payment/success', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, paymentController.paymentSuccess);
+// router.post('/online-payment/completed', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, paymentController.paymentCompleted);
+router.post('/payment/failure', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, paymentController.paymentFail);
 
 // WISHLIST ROUTES
 router.get('/wishlist',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, wishlistController.getData);

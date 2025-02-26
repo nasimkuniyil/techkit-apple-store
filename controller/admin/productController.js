@@ -8,7 +8,6 @@ module.exports = {
       const deleted_product = await Product.find({ deleted: true });
       return { products, deleted_product };
     } catch (err) {
-      console.log("Get all product error : ", err); // for debugging
       throw new Error("Cannot get all products"); //for the route handler
     }
   },
@@ -25,9 +24,7 @@ module.exports = {
         quantity: data.quantity,
       });
       await new_product.save();
-      console.log("product added successfully");
     } catch (err) {
-      console.log("Product adding failed : ", err); //Log error for debugging
       throw new Error("Product Adding failed", err.message); //throw an error for the route handler
     }
   },
@@ -36,7 +33,6 @@ module.exports = {
     try {
       return await Product.findOne({ _id: id });
     } catch (err) {
-      console.log("Get one product failed : ", err);
       throw new Error("Cannot get a product", err);
     }
   },
@@ -54,9 +50,7 @@ module.exports = {
         quantity: data.quantity,
       });
 
-      console.log("product updated successfully");
     } catch (err) {
-      console.log("Product update failed : ", err); //Log error for debugging
       throw new Error("Product update failed", err.message); //throw an error for the route handler
     }
   },
@@ -64,9 +58,7 @@ module.exports = {
   softDelete: async (id, field) => {
     try {
       await Product.findByIdAndUpdate(id, field);
-      console.log("product soft deleted");
     } catch (err) {
-      console.log("product soft delete failed : ", err); //log for debugging
       throw new Error("Product soft delete failed", err.message);
     }
   },
@@ -74,9 +66,7 @@ module.exports = {
   deleteAll: async () => {
     try {
       await Product.deleteMany({ deleted: true });
-      console.log("Deleted all products from recover list");
     } catch (err) {
-      console.log("All products permenent delete error : ", err);
       throw new Error("All products permenent delete error", err.message);
     }
   },

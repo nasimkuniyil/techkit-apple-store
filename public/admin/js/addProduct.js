@@ -26,7 +26,6 @@ function handleImageUpload(input, index) {
 function handleSubmit(event) {
   event.preventDefault();
   // Add your form submission logic here
-  console.log('Form submitted');
 }
 
 

@@ -13,18 +13,14 @@ const isAuthenticated = (req, res, next) => {
 
 const isBlocked = async (req, res, next) => {
   try {
-    console.log('-- isBlocked started.')
     const userSession = req.session.user;
     const userId = getUserSessionData(userSession);
     const user = await User.findOne({ _id: userId, isBlocked: false });
-    console.log('user data : ', user);
     if (!user) {
-      console.log('account is blocked.')
       return res.render('accountBlocked')
     }
     return next();
   } catch (err) {
-    console.log("isBlocked middleware error.");
     next(err);
   }
 };

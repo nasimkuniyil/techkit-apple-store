@@ -15,7 +15,6 @@ const dir_name = path.join(__dirname,'../','uploads');
 
 const images = fs.readdirSync(dir_name);
 
-console.log('all images from uploads : ',images);
 
 
 
@@ -23,7 +22,6 @@ console.log('all images from uploads : ',images);
 async function run (){
     for (const image of images){
         const result = await cloudinary.uploader.upload(image);
-        console.log('cloudinary img : ',result); 
     }
 }
 

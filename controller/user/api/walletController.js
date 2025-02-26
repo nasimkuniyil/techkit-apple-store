@@ -19,7 +19,6 @@ const getWallet = async (req, res, next) => {
       transactions: wallet.transactions.reverse(), // Show latest transactions first
     });
   } catch (err) {
-    console.error("Error fetching wallet:", err);
     next(err);
   }
 };

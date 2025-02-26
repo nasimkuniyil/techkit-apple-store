@@ -29,8 +29,11 @@ function showOrderConfirmation(orderData) {
 
   //PLACE ORDER
   function addOrder() {
-
     const {products, addressId, paymentInfo} = window.localStorage;
+
+    if(paymentInfo == 'onlinePayment'){
+      window.location.href = '/orders'
+    }else{
 
     const url = `/api/add-order`;
     const options = {
@@ -51,4 +54,5 @@ function showOrderConfirmation(orderData) {
         showOrderConfirmation(orderData);
       })
       .catch((err) => console.log("add order error : ", err));
+    }
   }

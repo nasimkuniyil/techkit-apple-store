@@ -55,7 +55,7 @@ adminRouter.delete("/color/delete-permenent", adminAuth.isAdmin, colorController
 adminRouter.get("/orders",adminAuth.isAdmin,  orderController.ordersData);
 adminRouter.get("/order/view",adminAuth.isAdmin,  orderController.orderDetails);
 adminRouter.put("/order/:status",adminAuth.isAdmin,  orderController.orderStatusChange);
-// adminRouter.put("/prodcut/return",adminAuth.isAdmin,  orderController.productStatusChange);
+adminRouter.put("/prodcut/return",adminAuth.isAdmin,  orderController.productStatusChange);
 
 //Coupon Management
 adminRouter.post('/coupon/add', adminAuth.isAdmin, couponController.couponAdd);

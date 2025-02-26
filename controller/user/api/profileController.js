@@ -4,7 +4,6 @@ const auth = require("../../sessionController");
 
 const profileData = async (req, res, next) => {
   try {
-        console.log('--------- profile data api  --------')
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
     const userData = await User.findOne({ _id: userId });
@@ -15,21 +14,17 @@ const profileData = async (req, res, next) => {
     }
 
     const profileAvatar = `${userData.firstname[0]}${userData.lastname[0]}`;
-    console.log('send user data.')
     return res.status(200).json({ userData, profileAvatar });
   } catch (err) {
-    console.log("profile data api error : ");
     next(err);
   }
 };
 
 const editProfile = async (req, res) => {
     try {
-      console.log("--------- edit profile api  --------");
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
       const { firstName, lastName, mobile } = req.body;
-      console.log("user data : ", req.body);
       const userData = await User.findOneAndUpdate(
         { _id: userId },
         {
@@ -49,7 +44,6 @@ const editProfile = async (req, res) => {
     
       return res.status(200).redirect("/profile");
     } catch (err) {
-      console.log("edit profile api error");
       next(err);
     }
   };

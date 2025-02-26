@@ -17,8 +17,8 @@ passport.use(
         user = await new User({
           firstname: profile.displayName.split(" ")[0],
           lastname: profile.displayName.split(" ")[1],
-          email: email,
-          googleId: id,
+          email: profile.email,
+          googleId: profile.id,
         });
         await user.save();
       }

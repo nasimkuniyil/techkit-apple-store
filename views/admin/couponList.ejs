@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/message.css">
 
     <link rel="stylesheet" href="/admin/css/category.css" />
+    <link rel="stylesheet" href="/admin/css/pagination.css" />
   </head>
   <body>
     <div class="container">
@@ -111,6 +112,13 @@
                   <% }) %> <% } %>
                 </tbody>
               </table>
+              <div class="pagination minimalist-apple-pagination">
+                <% if(currentPage && totalPage) { %> 
+                  <% for(let i=1; i<=totalPage; i++){ %>
+                    <a href="/admin/coupons?page=<%-i%>" class="<%- currentPage == i ? 'active' : '' %>"><%-i%></a>
+                  <% } %>
+                <% } %>
+            </div>
             </div>
           </div>
         </div>

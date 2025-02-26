@@ -6,7 +6,6 @@ const loginPage = async (req, res, next) => {
   try {
     res.render("admin/login");
   } catch (err) {
-    console.log("Login page error");
     next(err);
   }
 };
@@ -16,7 +15,6 @@ const dashboardPage = async (req, res, next) => {
   try {
     res.render("admin/dashboard");
   } catch (err) {
-    console.log("Dashboard page error");
     next(err);
   }
 };
@@ -26,7 +24,6 @@ const reportPage = async (req, res, next) => {
   try {
     res.render("admin/reportPage");
   } catch (err) {
-    console.log("Dashboard page error");
     next(err);
   }
 };
@@ -41,7 +38,6 @@ const userPage = async (req, res, next) => {
     });
     res.render("admin/usersList",{users, coupons});
   } catch (err) {
-    console.log("Users page error");
     next(err);
   }
 };

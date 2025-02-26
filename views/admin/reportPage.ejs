@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/admin/common/header.css" />
     <!-- Page Specific Styles -->
     <link rel="stylesheet" href="/admin/css/report.css" />
+    <link rel="stylesheet" href="/apple_styles/pagination.css" />
   </head>
   <body>
     <div class="container">
@@ -56,9 +57,9 @@
               </select>
               
               <div class="custom-date" style="display: none;">
-                <input type="date" class="date-input">
+                <input type="date" class="date-input" id="startDate">
                 <span>to</span>
-                <input type="date" class="date-input">
+                <input type="date" class="date-input" id="endDate">
               </div>
           
               <button class="download-btn" onclick="generatePDF()">Download Report</button>
@@ -114,6 +115,12 @@
                   </tr>
                 </tbody>
               </table>
+              <!-- Pagination -->
+              <section class="pagination-section">
+                <nav>
+                  <ul class="pagination"></ul>
+                </nav>
+              </section>
             </div>
           </div>
         </div>
@@ -121,6 +128,7 @@
     </div>
 
     <!-- Common Scripts -->
+    <script src="/pagination.js"></script>
     <script src="/admin/common/scripts.js"></script>
     <!-- Page Specific Scripts -->
     <script src="/admin/js/report.js"></script>

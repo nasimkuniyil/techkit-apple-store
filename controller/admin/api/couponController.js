@@ -6,8 +6,6 @@ const User = require("../../../models/userSchema");
 // COUPON ADD API
 const couponAdd = async (req, res, next) => {
   try {
-      console.log('------- add coupon api started.....')
-      console.log('req.body : ',req.body)
     const {
       code,
       value:discountValue,
@@ -64,11 +62,9 @@ const couponAdd = async (req, res, next) => {
 
     await coupon.save();
 
-    console.log('coupon created.')
 
     res.status(201).json({ message: "Coupon created successfully.", coupon });
   } catch (err) {
-    console.log("coupon add api error");
     next(err);
   }
 };
@@ -76,8 +72,6 @@ const couponAdd = async (req, res, next) => {
 // COUPON EDIT API
 const couponEdit = async (req, res, next) => {
   try {
-      console.log('------- EDIT coupon api started.....')
-      console.log('req.body : ',req.body);
       const id = req.query.id;
     const {
       discountValue,
@@ -86,7 +80,6 @@ const couponEdit = async (req, res, next) => {
       minimumPurchase
     } = req.body;
 
-    console.log('coupon edited data : ', req.body)
 
 
     // Check discountValue
@@ -132,11 +125,9 @@ const couponEdit = async (req, res, next) => {
       return next(error);
     }
 
-    console.log('coupon updated')
 
     res.status(200).json({ message: "Coupon updated successfully."});
   } catch (err) {
-    console.log("coupon edit api error");
     next(err);
   }
 };
@@ -144,10 +135,8 @@ const couponEdit = async (req, res, next) => {
 // COUPON BLOCK API
 const couponBlock = async (req, res, next) => {
   try {
-      console.log('------- BLOCK coupon api started.....');
     const couponId = req.query.id;
 
-    console.log('coupon id : ', couponId);
 
     if (!couponId) {
       const error = new Error("Coupon id is not defined");
@@ -164,11 +153,9 @@ const couponBlock = async (req, res, next) => {
       return next(error);
     }
 
-    console.log('coupon blocked')
 
     res.status(200).json({ success:true,message: "Coupon blocked"});
   } catch (err) {
-    console.log("coupon block api error");
     next(err);
   }
 };
@@ -176,10 +163,8 @@ const couponBlock = async (req, res, next) => {
 // COUPON BLOCK API
 const couponUnblock = async (req, res, next) => {
   try {
-      console.log('------- UNBLOCK coupon api started.....');
     const couponId = req.query.id;
 
-    console.log('coupon id : ', couponId)
 
     if (!couponId) {
       const error = new Error("Coupon id is not defined");
@@ -196,11 +181,9 @@ const couponUnblock = async (req, res, next) => {
       return next(error);
     }
 
-    console.log('coupon unblocked');
 
     res.status(200).json({ success:true,message: "Coupon unblocked"});
   } catch (err) {
-    console.log("coupon unblock api error");
     next(err);
   }
 };
@@ -208,10 +191,8 @@ const couponUnblock = async (req, res, next) => {
 // COUPON PROVIDE TO USER
 const couponProvide = async (req, res, next) => {
   try {
-      console.log('------- provide coupon api started.....');
     const {userId,couponId} = req.query;
 
-    console.log('coupon id : ', couponId)
 
     if (!couponId) {
       const error = new Error("Coupon id is not defined");
@@ -222,7 +203,6 @@ const couponProvide = async (req, res, next) => {
     const user = await User.findOne({_id:userId});
     
     if (!user) {
-      console.log('user not found')
       const error = new Error("User not found");
       error.status = 400;
       return next(error);
@@ -230,7 +210,6 @@ const couponProvide = async (req, res, next) => {
 
     const coupon = await Coupon.findOne({_id:couponId});
     if (!coupon) {
-      console.log('coupon not found')
       const error = new Error("Coupon not found");
       error.status = 400;
       return next(error);
@@ -248,11 +227,9 @@ const couponProvide = async (req, res, next) => {
 
     user.coupon = couponId;
     await user.save();
-    console.log('coupon added to user');
 
     res.status(200).json({ success:true,message: "Coupon provided to user"});
   } catch (err) {
-    console.log("coupon provide api error");
     next(err);
   }
 };

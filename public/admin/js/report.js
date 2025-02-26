@@ -1,23 +1,31 @@
 let totalProducts = 0;
+
 const timeSelect = document.querySelector('.time-select');
 
+const Url = new URL(`${window.location.host}/admin/api/report`);
 fetchReportData()
+
 
 timeSelect.addEventListener('change', (event)=>{
   totalProducts = 0
-  event.target.value;
-  fetchReportData(`/admin/api/report?filterType=${event.target.value}`)
+  // event.target.value;
+  if(event.target.value != 'custom'){
+    Url.searchParams.set("filterType", event.target.value);
+    fetchReportData(Url)
+  }
 })
 
-function fetchReportData(url = '/admin/api/report'){
-  fetch(url) 
+function fetchReportData(){
+  const fetchUrl = Url.toString().split('3000')[1];
+  fetch(fetchUrl) 
   .then(response => response.json())
   .then(data => {
     if (data.success) {
       console.log('console : ',data)
+
       const tableBody = document.querySelector(".orders-table tbody");
       tableBody.innerHTML = "";
-
+    
       data.orders.forEach(order => {
         totalProducts += order.products.length
         const row = `
@@ -32,6 +40,8 @@ function fetchReportData(url = '/admin/api/report'){
         `;
         tableBody.innerHTML += row;
       });
+
+      // setupPagination(data.totalPage, data.currentPage).addEventListener('click', (event)=> paginationFunc(event, Url, ()=>fetchReportData(Url)));
 
       // Update Summary Cards
       document.querySelector(".summary-cards .summary-card:nth-child(1) .card-value").innerText = data.totalOrders;
@@ -146,4 +156,22 @@ function generatePDF() {
 document.querySelector('.time-select').addEventListener('change', function(e) {
     const customDateDiv = document.querySelector('.custom-date');
     customDateDiv.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+
+    Url.searchParams.set("filterType", "custom");
+    Url.searchParams.set("startDate", startDate.value);
+    Url.searchParams.set("endDate", endDate.value);
+
+    const applyBtn = document.createElement('button');
+    applyBtn.classList.add('btn')
+    applyBtn.addEventListener('click',()=>fetchReportData(Url))
+    applyBtn.textContent = 'Apply'
+    customDateDiv.appendChild(applyBtn);
+    
+    // if(!startDate || !endDate){
+    //   alert('select date')
+    // }
+
 });
+

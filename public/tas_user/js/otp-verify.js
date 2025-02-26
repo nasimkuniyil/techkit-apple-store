@@ -71,7 +71,7 @@ document.getElementById("otpForm").addEventListener("submit", (e) => {
     otp: parseInt(otp),
   };
 
-  fetch("/otp", {
+  fetch("/api/otp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -107,7 +107,7 @@ resendBtn.addEventListener("click", () => {
 
   console.log("Resending OTP");
 
-  fetch(`/signup`, {
+  fetch(`/api/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 // add a section with 'pagination' class in html page
 
 
-function setupPagination(totalPage, currentPage, url, cb) {
+function setupPagination(totalPage, currentPage) {
     console.log('total page : ', totalPage)
     const paginationContainer = document.querySelector(".pagination");
     paginationContainer.innerHTML = ""; // Clear previous pagination
@@ -43,38 +43,3 @@ function paginationFunc(event, url, cb){
       cb();
     }
   }
-
-
-
-
-
-
-// function setupPagination(totalPage, currentPage) {
-//     const paginationContainer = document.querySelector(".pagination");
-//     paginationContainer.innerHTML = ""; // Clear previous pagination
-    
-//     // Create pagination items
-//     for (let i = 1; i <= totalPage; i++) {
-//       const paginationItem = document.createElement("li");
-//       paginationItem.classList.add("pagination-item");
-      
-//       const link = document.createElement("a");
-//     //   link.href = `/orders?page=${i}`;
-//       link.classList.add("pagination-link");
-//       link.textContent = i;
-      
-//       paginationItem.appendChild(link);
-//       paginationContainer.appendChild(paginationItem);
-//     }
-  
-//     // Mark the current page as active
-//     const paginationLinks = document.querySelectorAll(".pagination-link");
-//     paginationLinks.forEach((link) => {
-//       const pageNumber = parseInt(link.textContent);
-//       if (pageNumber == currentPage) {
-//         link.classList.add("active");
-//       } else {
-//         link.classList.remove("active");
-//       }
-//     });
-//   }

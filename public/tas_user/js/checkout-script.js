@@ -15,7 +15,7 @@ let porductDetails = [];
 
 let selectedAddressId = null;
 let selectedPaymentMethod = null;
-let couponDiscountPercentage;
+let couponDiscountPercentage = 0;
 let totalAmount = 0;
 
 // Initial load
@@ -74,6 +74,11 @@ async function fetchCartData() {
     }
 
     const data = await response.json();
+    console.log("total  : ", data.cartProducts.cartTotalAmount);
+    if (data.cartProducts.cartTotalAmount >= 10000) {
+      document.getElementById("cod-section").innerHTML =
+        "Cash on delivery not available above 10000";
+    }
     if (data.cartProducts) {
       console.log("data:", data.cartProducts);
       porductDetails.push(...data.cartProducts.items);
@@ -89,22 +94,22 @@ async function fetchCoupon() {
   const url = "/api/coupon";
 
   try {
-
     console.log("fetch coupon.");
     fetch(url)
-    .then(response =>{
-      if(!response.ok){
-        throw new Error(response.textContent);
-      }
-      return response.json()
-    })
-    .then(data =>{
-      if(data.coupon){
-          showFlashMessage({success:true, message:'Coupon applied'})
-          document.querySelector('#coupon').textContent = "-"+data.coupon.discountValue+"%";
-          couponDiscountPercentage = data.coupon.discountValue/100;
-      }
-    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.textContent);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.coupon) {
+          showFlashMessage({ success: true, message: "Coupon applied" });
+          document.querySelector("#coupon").textContent =
+            "-" + data.coupon.discountValue + "%";
+          couponDiscountPercentage = data.coupon.discountValue / 100;
+        }
+      });
   } catch (err) {
     console.error("Error fetching coupon:", err);
     alert("An error occurred while fetching the coupon");
@@ -218,7 +223,9 @@ function editAddress(_id, event) {
   document.getElementById("pincode").value = address.pincode;
   document.getElementById("country").value = address.country;
   document.getElementById("landmark").value = address.landmark;
-  document.getElementById("addressForm").addEventListener("submit", (event) => submitEditAddress(event, _id));
+  document
+    .getElementById("addressForm")
+    .addEventListener("submit", (event) => submitEditAddress(event, _id));
 
   addressModal.classList.add("active");
 }
@@ -250,9 +257,9 @@ function submitEditAddress(event, _id) {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      return response.json()
+      return response.json();
     })
-    .then(data=>{
+    .then((data) => {
       // console.log('data === ',data)
       // fetchAddresses(data);
       // showFlashMessage()
@@ -319,41 +326,67 @@ async function payNow() {
       price: prod.price,
     };
     products.push(data);
-    console.log("products : ", products);
   });
 
-  window.localStorage.setItem("products", JSON.stringify(products));
-  window.localStorage.setItem("addressId", selectedAddressId);
-  window.localStorage.setItem("paymentInfo", selectedPaymentMethod);
-  console.log("local storage : ", window.localStorage);
-
-  // Create order by calling the server endpoint
-  const response = await fetch("/api/online-payment", {
+  const url = `/api/add-order`;
+  const options = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      totalAmount,
-      currency: "INR",
-      receipt: "receipt#1",
-      notes: {},
+      products,
+      addressId: selectedAddressId,
+      paymentInfo: selectedPaymentMethod,
     }),
-  });
-
-  const order = await response.json();
-
-  // Open Razorpay Checkout
-  const options = {
-    key: "rzp_test_hGYKC7nv8aVuxX", // Replace with your Razorpay key_id
-    amount: totalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-    currency: "INR",
-    order_id: order.id, // This is the order_id created in the backend
-    callback_url: "http://localhost:3000/api/online-payment/success",
   };
+  fetch(url, options)
+    .then((response) => {
+      console.log("add order res : ", response);
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then(async (data)=>{
+      window.localStorage.setItem("products", JSON.stringify(products));
+        window.localStorage.setItem("addressId", selectedAddressId);
+        window.localStorage.setItem("paymentInfo", selectedPaymentMethod);
+        window.localStorage.setItem("totalAmount", totalAmount);
+        console.log("local storage : ", window.localStorage);
 
-  const rzp = new Razorpay(options);
-  rzp.open();
+        // Create order by calling the server endpoint
+        const response = await fetch("/api/online-payment?orderId="+data.order._id, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            totalAmount,
+            currency: "INR",
+            receipt: "receipt#1",
+            notes: {},
+          }),
+        });
+
+        if(!response.ok){
+          window.location.href = '/orders'
+        }
+
+        const order = await response.json();
+
+        // Open Razorpay Checkout
+        const options = {
+          key: "rzp_test_hGYKC7nv8aVuxX",
+          amount: totalAmount * 100,
+          currency: "INR",
+          order_id: order.id,
+          callback_url: "http://localhost:3000/api/online-payment/success?payment=onlinePayment&orderId="+data.order._id,
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+    })
+    .catch((err) => console.log("add order error : ", err));
 }
 
 async function placeOrderWithCOD() {
@@ -449,7 +482,6 @@ document.getElementById("pincode").addEventListener("input", function () {
   }
 });
 
-
 function createCartItem(products) {
   const summeryItemsContainer = document.querySelector(".summary-items");
   const subtotalSpan = document.querySelector("#subtotal");
@@ -476,7 +508,7 @@ function createCartItem(products) {
   });
 
   shipping = subtotal >= 50000 ? 0 : 800;
-  totalAmount = subtotal - (subtotal * couponDiscountPercentage);
+  totalAmount = subtotal - subtotal * couponDiscountPercentage;
 
   subtotalSpan.textContent = subtotal.toLocaleString("en-US", {
     style: "currency",
@@ -520,7 +552,9 @@ function addOrder(orderData) {
   fetch(url, options)
     .then((response) => {
       console.log("add order res : ", response);
-      showOrderConfirmation(orderData);
+      if (response.ok) {
+        showOrderConfirmation(orderData);
+      }
     })
     .catch((err) => console.log("add order error : ", err));
 }

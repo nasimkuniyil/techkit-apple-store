@@ -83,7 +83,7 @@ function createOrderCard(order) {
         ")" +
         "</span>" +
         '<span class="item-price">' +
-        formatCurrency(item.productId.price) +
+        `${(item.isReturn) ? "Returned" : formatCurrency(item.productId.price)}` +
         "</span>" +
         "</div>"
       );
@@ -110,7 +110,7 @@ function createOrderCard(order) {
     order.status.slice(1) +
     "</span>" +
     '<span class="order-total">' +
-    formatCurrency(order.total) +
+    `<p>${(order.paymentStatus != 'Success' && order.paymentStatus) ? 'Payment '+order.paymentStatus : formatCurrency(order.total)}</p>` +
     "</span>" +
     "</div>";
 
@@ -181,6 +181,7 @@ function CreateOrderOng(data) {
     orderDate: data.createdAt,
     items: data.products,
     status: data.orderStatus,
+    paymentStatus : data.paymentStatus,
     total: data.totalAmount
   };
 }

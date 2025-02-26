@@ -53,13 +53,17 @@
                     ><%- orderData.orderStatus %></span
                   >
                   <div>
-                    <select class="status-select" onchange="changeOrderStatus(event, '<%-orderData._id%>')">
-                      <option value="pending" <%= orderData.orderStatus == 'Pending' ? 'selected' : "" %> >Pending</option>
-                      <option value="processing" <%= orderData.orderStatus == 'Processing' ? 'selected' : "" %> >Processing</option>
-                      <option value="shipped" <%= orderData.orderStatus == 'Shipped' ? 'selected' : "" %> >Shipped</option>
-                      <option value="delivered" <%= orderData.orderStatus == 'Delivered' ? 'selected' : "" %> >Delivered</option>
-                      <option value="cancelled" <%= orderData.orderStatus == 'Cancelled' ? 'selected' : "" %> >Cancelled</option>
-                    </select>
+                    <% if(orderData.paymentStatus && orderData.paymentStatus != 'Success'){ %>
+                      <p>Payment pending</p>
+                    <% }else { %>
+                      <select class="status-select" onchange="changeOrderStatus(event, '<%-orderData._id%>')">
+                        <option value="pending" <%= orderData.orderStatus == 'Pending' ? 'selected' : "" %> >Pending</option>
+                        <option value="processing" <%= orderData.orderStatus == 'Processing' ? 'selected' : "" %> >Processing</option>
+                        <option value="shipped" <%= orderData.orderStatus == 'Shipped' ? 'selected' : "" %> >Shipped</option>
+                        <option value="delivered" <%= orderData.orderStatus == 'Delivered' ? 'selected' : "" %> >Delivered</option>
+                        <option value="cancelled" <%= orderData.orderStatus == 'Cancelled' ? 'selected' : "" %> >Cancelled</option>
+                      </select>
+                    <% } %>
                   </div>
                 </div>
               </div>
@@ -79,11 +83,15 @@
                       <%orderData.products.forEach(prod =>{%>
                         <tr>
                           <td>
-                              <div class="product-name"><%- prod.productId.product_name %></div>
+                            <div class="product-name"><%- prod.productId.product_name %></div>
                           </td>
                           <td><%- prod.quantity %></td>
-                          <td class="prod-total-amount"><%- prod.productId.price * prod.quantity %></td>
-                      </tr>
+                          <% if(!prod.isReturn){ %>
+                            <td class="prod-total-amount"><%- prod.productId.price * prod.quantity %></td>
+                            <% }else{ %>
+                              <td class="prod-total-amount">Returned</td>
+                            <% } %>
+                        </tr>
                       <%})%>
                       
                   </tbody>

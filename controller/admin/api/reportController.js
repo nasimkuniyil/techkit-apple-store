@@ -1,10 +1,11 @@
 const Address = require("../../../models/addressSchema");
+const Category = require("../../../models/categorySchema");
 const Order = require("../../../models/orderSchema");
+const Product = require("../../../models/productSchema");
 const {generateSalesReport,otherReports,getTopProductsByPeriod,} = require("../../../service/salesReport");
 
 
 const salesReport = async (req, res, next) => {
-  console.log("------ entered get sales data");
   let dateFilter;
   try {
     const report = await generateSalesReport(req.query.period);
@@ -12,8 +13,6 @@ const salesReport = async (req, res, next) => {
     
     
     
-    console.log("hello sales report : ", report);
-    console.log("hello sales report : ", topProducts);
 
     let result = report.reduce(
       (acc, curr) => {
@@ -35,7 +34,6 @@ const salesReport = async (req, res, next) => {
 
     return res.status(200).json({ report: result, topProducts });
   } catch (err) {
-    console.log("salesReport api error");
     next(err);
   }
 };
@@ -46,7 +44,6 @@ const salesReport = async (req, res, next) => {
 
 const getReportData = async (req, res, next) => {
   try {
-    console.log('Fetching report data...');
     
     
     const { filterType = "daily", startDate, endDate } = req.query;
@@ -82,8 +79,11 @@ const getReportData = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Invalid filter type or missing dates" });
     }
 
-    
-    const deliveredOrders = await Order.find({
+    const currentPage = req.query.page || 1;
+    const limit = 50;
+    const skip = (currentPage-1) * limit;
+
+    let deliveredOrders = await Order.find({
       orderStatus: "Delivered",
       createdAt: { $gte: start, $lt: end }
     })
@@ -91,18 +91,165 @@ const getReportData = async (req, res, next) => {
       .populate('addressInfo')
       .lean();
 
+      // Top 10 products
+      const topProducts = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: "Delivered",
+            createdAt: { $gte: start, $lt: end }
+          }
+        },
+        { 
+          $unwind: "$products" 
+        },
+        { 
+          $group: {
+            _id: "$products.productId", 
+            totalPurchases: { $sum: "$products.quantity" }
+          }
+        },
+        { 
+          $lookup: {
+            from: "products", 
+            localField: "_id",
+            foreignField: "_id",
+            as: "productDetails"
+          }
+        },
+        { 
+          $unwind: "$productDetails" 
+        },
+        { 
+          $project: {
+            productName: "$productDetails.product_name",  
+            price: "$productDetails.price",  
+            images: "$productDetails.images",  
+            totalPurchases: 1 
+          }
+        },
+        { 
+          $sort: { totalPurchases: -1 } 
+        },
+        { 
+          $limit: 10 
+        }
+      ]);
+      
+
+      // Top 5 categories
+      const topCategories = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: "Delivered",
+            createdAt: { $gte: start, $lt: end } 
+          }
+        },
+        { 
+          $unwind: "$products" 
+        },
+        { 
+          $group: {
+            _id: "$products.productId", 
+            totalPurchases: { $sum: "$products.quantity" } 
+          }
+        },
+        { 
+          $lookup: {
+            from: "products", 
+            localField: "_id",
+            foreignField: "_id",
+            as: "productDetails"
+          }
+        },
+        { 
+          $unwind: "$productDetails" 
+        },
+        { 
+          $group: {
+            _id: "$productDetails.category",  
+            totalPurchases: { $sum: "$totalPurchases" }  
+          }
+        },
+        { 
+          $lookup: {
+            from: "categories", 
+            localField: "_id",
+            foreignField: "_id",
+            as: "categoryDetails"
+          }
+        },
+        { 
+          $unwind: "$categoryDetails"  
+        },
+        { 
+          $project: {
+            categoryName: "$categoryDetails.category_name", 
+            totalPurchases: 1 
+          }
+        },
+        { 
+          $sort: { totalPurchases: -1 }  
+        },
+        { 
+          $limit: 5 
+        }
+      ]);
+      
+
+      const salesData = await Order.aggregate([
+        {
+          $match: {
+            orderStatus: "Delivered",
+            createdAt: { $gte: start, $lt: end }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: {
+                format: filterType === "daily" ? "%Y-%m-%d" :
+                        filterType === "weekly" ? "%Y-%m-%d" :
+                        filterType === "monthly" ? "%Y-%m" : "%Y",
+                date: "$createdAt"
+              }
+            },
+            totalSales: { $sum: "$totalAmount" },
+            totalOrders: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+      
+      
+
+      const allOrders = await Order.find({createdAt: { $gte: start, $lt: end }});
     
     let totalRevenue = deliveredOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-    let totalOrders = deliveredOrders.length;
+    let orders = await Order.find({orderStatus: "Delivered",createdAt: { $gte: start, $lt: end }});
+    let totalOrders = orders.length;
+    let totalPage = Math.ceil(totalOrders/limit);
 
-    console.log('Total Orders:', totalOrders);
-    console.log('Total Revenue:', totalRevenue);
+    deliveredOrders = await Order.find({
+      orderStatus: "Delivered",
+      createdAt: { $gte: start, $lt: end }
+    })
+      .populate("products.productId")
+      .populate('addressInfo')
+      .lean()
+      .skip(skip).limit(limit);
+
 
     res.status(200).json({
       success: true,
       totalOrders,
       totalRevenue,
-      orders: deliveredOrders,
+      orders : deliveredOrders,
+      allOrders,
+      topProducts,
+      topCategories,
+      salesData,
+      totalPage,
+      currentPage
     });
 
   } catch (err) {

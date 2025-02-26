@@ -13,13 +13,11 @@ let timeout;
 // LOGIN
 const login = async (req, res, next) => {
   try {
-    console.log("--------- login api  --------");
 
     const { email, password } = req.body;
 
     // Check if email is provided
     if (!email) {
-      console.log("Email not entered");
       const error = new Error("Email is required");
       error.status = 400;
       return next(error);
@@ -27,7 +25,6 @@ const login = async (req, res, next) => {
 
     // Check if password is provided
     if (!password) {
-      console.log("Password not entered");
       const error = new Error("Password is required");
       error.status = 400;
       return next(error);
@@ -38,7 +35,6 @@ const login = async (req, res, next) => {
 
     // If user is not found
     if (!userData) {
-      console.log("User not registered");
       const error = new Error("User is not exist");
       error.status = 404;
       return next(error);
@@ -46,7 +42,6 @@ const login = async (req, res, next) => {
 
     // If password doesn't match
     if (userData.password !== password) {
-      console.log("Password does not match");
       const error = new Error("Wrong password");
       error.status = 400;
       return next(error);
@@ -54,14 +49,12 @@ const login = async (req, res, next) => {
 
     // If the user is blocked
     if (userData.isBlocked) {
-      console.log("Accessing with blocked account.");
       const error = new Error("Account is blocked");
       error.status = 400;
       return next(error);
     }
 
     // Successful login
-    console.log("Logged in successfully");
     const uId = uuidv4();
     auth.addUserSessionData(userData._id, uId);
     req.session.user = uId;
@@ -73,7 +66,6 @@ const login = async (req, res, next) => {
       .status(200)
       .json({ success: true, message: "Logged in successfully" });
   } catch (err) {
-    console.log("post login error - [api]");
     next(err);
   }
 };
@@ -81,10 +73,8 @@ const login = async (req, res, next) => {
 // SIGNUP
 const signup = async (req, res, next) => {
   try {
-    console.log("--------- signup api  --------");
 
     if (!req.body.email) {
-      console.log("Email not entered");
       const error = new Error("Email is required");
       error.status = 400;
       return next(error);
@@ -93,13 +83,11 @@ const signup = async (req, res, next) => {
     const otp = generateOTP();
     otpStore[req.body.email] = otp;
 
-    console.log("req body ", req.body.email);
-
+    
     const userExist = await User.findOne({ email: req.body.email });
 
     // If user exist
     if (userExist) {
-      console.log("this user already exist");
       const error = new Error("User already exist");
       error.status = 409;
       return next(error);
@@ -132,7 +120,6 @@ const signup = async (req, res, next) => {
         .json({ success: true, message: "OTP sent successfully" });
     });
   } catch (err) {
-    console.log("post signup error - [api]");
     next(err);
   }
 };
@@ -140,7 +127,6 @@ const signup = async (req, res, next) => {
 // VERIFY OTP
 const verifyOTP = async (req, res, next) => {
   try {
-    console.log("--------- verify otp api  --------");
 
     const data = req.body;
 
@@ -148,7 +134,6 @@ const verifyOTP = async (req, res, next) => {
 
     // If user exist
     if (userExist) {
-      console.log("this user already exist");
       const error = new Error("User already exist");
       error.status = 409;
       return next(error);
@@ -156,15 +141,13 @@ const verifyOTP = async (req, res, next) => {
 
     //   OTP is expired?
     if (!otpStore[data.email]) {
-      console.log("Your OTP has expired");
       const error = new Error("Your OTP has expired");
       error.status = 404;
       return next(error);
     }
 
     // OPT is valid?
-    if (otpStore[data.email] !== data.otp) {
-      console.log("The OTP is incorrect");
+    if (otpStore[data.email] != data.otp) {
       const error = new Error("The OTP is incorrect");
       error.status = 404;
       return next(error);
@@ -190,13 +173,11 @@ const verifyOTP = async (req, res, next) => {
 
       delete otpStore[data.email];
 
-      console.log("otp verification success. user registered");
       return res
         .status(200)
         .json({ success: true, message: "OTP verification successfully" });
     }
   } catch (err) {
-    console.log("verify otp error - [api]");
     next(err);
   }
 };
@@ -204,14 +185,10 @@ const verifyOTP = async (req, res, next) => {
 // LOGOUT
 const logout = async (req, res, next) => {
   try {
-    console.log("--------- logout api  --------");
 
-    await req.session.destroy((err) =>
-      console.log("session destroy (logout) error:", err)
-    );
+    await req.session.destroy();
     return res.redirect("/login");
   } catch (err) {
-    console.log("getLogout error ");
     next(err);
   }
 };
@@ -219,7 +196,6 @@ const logout = async (req, res, next) => {
 // SEND OTP
 const sentOTP = async (req, res, next) => {
   try {
-    console.log("--------- sent otp api  --------");
 
     const { email } = req.body;
     if (!email) {
@@ -228,17 +204,14 @@ const sentOTP = async (req, res, next) => {
       return next(error);
     }
 
-    console.log("email : ", email);
     const otp = generateOTP();
     otpStore[email] = otp;
 
-    console.log("req body ", email);
 
     const userExist = await User.findOne({ email: email });
     // If user exist
     // If user exist
     if (!userExist) {
-      console.log("this User not registered");
       const error = new Error("User not registered");
       error.status = 404;
       return next(error);
@@ -275,7 +248,6 @@ const sentOTP = async (req, res, next) => {
       });
     });
   } catch (err) {
-    console.log("setOTP error");
     next(err);
   }
 };
@@ -288,7 +260,6 @@ const forgotVerifyOTP = async (req, res, next) => {
     const userExist = await User.findOne({ email: email });
     // If user exist
     if (!userExist) {
-      console.log("User not registered");
       const error = new Error("User not registered");
       error.status = 404;
       return next(error);
@@ -296,7 +267,6 @@ const forgotVerifyOTP = async (req, res, next) => {
 
     // Check OTP expired?
     if (!otpStore[email]) {
-      console.log("Your OTP has expired");
       const error = new Error("Your OTP has expired");
       error.status = 400;
       return next(error);
@@ -304,19 +274,16 @@ const forgotVerifyOTP = async (req, res, next) => {
 
     // OPT is valid?
     if (otpStore[email] !== otp) {
-      console.log("The OTP is incorrect");
       const error = new Error("The OTP is incorrect");
       error.status = 404;
       return next(error);
     }
 
     clearTimeout(timeout);
-    console.log("otp verification success.");
     return res
       .status(200)
       .json({ success: true, message: "OTP verified successfully" });
   } catch (err) {
-    console.log("forgotVerifyOTP error : ");
     next(err)
   }
 };
@@ -324,25 +291,20 @@ const forgotVerifyOTP = async (req, res, next) => {
 // FORGOT CHANGE PASSWORD
 const forgotChangePassword = async (req, res, next) => {
   try {
-    console.log("--- ----- entered change password with otp --------");
     const { email } = req.query;
     const { newPassword, otp } = req.body;
-    console.log("body data : ", newPassword, " , ", otp);
 
     //   Check user is exist
     if (!newPassword) {
-      console.log("Password not entered");
       const error = new Error("Enter Password");
       error.status = 404;
       return next(error);
     }
 
     const userData = await User.findOne({ email: req.query.email });
-    console.log("user data : ", userData);
 
     //   Check user is exist
     if (!userData) {
-      console.log("User not registered");
       const error = new Error("User not registered");
       error.status = 404;
       return next(error);
@@ -350,34 +312,28 @@ const forgotChangePassword = async (req, res, next) => {
 
     // Check OTP expired?
     if (!otpStore[email]) {
-      console.log("Your OTP has expired");
       const error = new Error("Your OTP has expired");
       error.status = 400;
       return next(error);
     }
 
     //otp change password
-    console.log("otp store : ", otpStore[email] == otp.toString());
 
     if (otp != otpStore[email]) {
-      console.log("The OTP is incorrect");
       const error = new Error("The OTP is incorrect");
       error.status = 404;
       return next(error);
     }
 
-    console.log("otp verified. changing password...");
     delete otpStore[email];
     const uId = uuidv4();
     userData.password = newPassword;
     await userData.save();
     auth.addUserSessionData(userData._id, uId);
     req.session.user = uId;
-    console.log("password changed");
 
     return res.status(200).json({ success: true, message: "Password Changed" });
   } catch (err) {
-    console.log("forgot change password error ");
     next(err)
   }
 };
@@ -385,7 +341,6 @@ const forgotChangePassword = async (req, res, next) => {
 // CHANGE PASSWORD
 const changePassword = async (req, res, next) => {
     try {
-      console.log("--- ----- entered change password  --------");
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
       const userData = await User.findOne({ _id: userId });
@@ -414,7 +369,6 @@ const changePassword = async (req, res, next) => {
       .json({ success: true, message: "Password Changed" });
   
     } catch (err) {
-      console.log("changePassword error ");
       next(err);
     }
   };
@@ -427,5 +381,7 @@ module.exports = {
   sentOTP,
   forgotVerifyOTP,
   forgotChangePassword,
-  changePassword
+  changePassword,
+
+  otpStore
 };

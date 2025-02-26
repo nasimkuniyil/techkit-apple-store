@@ -35,30 +35,25 @@
       </div>
   </div>
     <!-- Return Modal -->
+
     <div id="returnModal" class="modal">
-      <div class="modal-content">
-          <h2>Return Product</h2>
-          <div class="form-group">
-              <label>Return Reason</label>
-              <select id="returnReason" class="form-control">
-                  <option value="">Select a reason</option>
-                  <option value="customer_request">Change color</option>
-                  <option value="price_error">I found better price</option>
-                  <option value="out_of_stock">Reason 1</option>
-                  <option value="damaged">Reason 2</option>
-                  <option value="other">Other</option>
-              </select>
-          </div>
-          <div class="form-group">
-              <label>Additional Notes</label>
-              <textarea id="returnNotes" class="form-control" rows="3"></textarea>
-          </div>
-          <div style="display: flex; gap: 10px; justify-content: flex-end;">
-              <button class="button" onclick="closeReturnModal()">Cancel</button>
-              <button class="button button-danger" id="return-order-btn">Confirm Cancellation</button>
-          </div>
-      </div>
-  </div>
+        <div class="modal-content">
+            <h2>Select Return Reason</h2>
+            <div class="form-group">
+                <label for="returnReason">Reason</label>
+                <select id="returnReason" class="form-control">
+                    <option value="">Select a reason</option>
+                    <option value="damaged">Product is damaged</option>
+                    <option value="wrong_item">Received wrong item</option>
+                    <option value="not_needed">No longer needed</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <button id="submitReturn" class="form-control">Submit</button>
+            <button id="closeModal" class="form-control">Cancel</button>
+        </div>
+    </div>
+    
 
 
     <section>
@@ -105,6 +100,10 @@
     <script src="/flashMessage.js"></script>
     <script defer src="/tas_user/js/orderDetails.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+    
   </body>
 </html>

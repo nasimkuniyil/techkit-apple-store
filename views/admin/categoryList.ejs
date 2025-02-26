@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/admin/common/header.css" />
     <!-- Page Specific Styles -->
     <link rel="stylesheet" href="/admin/css/category.css" />
+    <link rel="stylesheet" href="/admin/css/pagination.css" />
   </head>
   <body>
     <div class="container">
@@ -95,6 +96,13 @@
                   <% } %>
                 </tbody>
               </table>
+              <div class="pagination minimalist-apple-pagination">
+                <% if(currentPage && totalPage) { %> 
+                  <% for(let i=1; i<=totalPage; i++){ %>
+                    <a href="/admin/category?page=<%-i%>" class="<%- currentPage == i ? 'active' : '' %>"><%-i%></a>
+                  <% } %>
+                <% } %>
+            </div>
             </div>
           </div>
         </div>

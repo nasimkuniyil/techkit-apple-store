@@ -11,26 +11,21 @@ const getCoupon = async(req, res, next)=>{
     const user = await User.findOne({_id:userId}).populate('coupon');
     const cart = await Cart.findOne({userId});
 
-    console.log('cart : ', cart)
-    console.log('user with coupon : ', user)
 
 
     // remove expired coupon
     if (new Date(user.coupon.expirationDate) < new Date()) {
       user.coupon = null;
       await user.save();
-      console.log('expired coupon removed.')
     }
 
     if(!user.coupon){
-      console.log('coupon not available');
       const error = new Error('Coupon not available');
       error.status = 404;
       return next(error);
     }
 
     if (cart.cartTotalAmount < user.coupon.minimumPurchase) {
-      console.log('cart total is less');
       const error = new Error(`You are not eligible for you coupon. It must be at least ${user.coupon.minimumPurchase}`);
       error.status = 400;
       return next(error);
@@ -40,7 +35,6 @@ const getCoupon = async(req, res, next)=>{
     res.status(200).json({success:true, coupon : user.coupon});
 
   }catch(err){
-    console.log('get coupon api error.');
     next(err);
   }
 }
@@ -53,7 +47,6 @@ const applyCoupon = async(req, res, next)=>{
     const user = await User.findOne({_id:userId}).populate('coupon');
 
     if(!user.coupon){
-      console.log('coupon not available');
       const error = new Error('Coupon not available');
       error.status = 404;
       return next(error);
@@ -64,7 +57,6 @@ const applyCoupon = async(req, res, next)=>{
     res.status(200).json({success:true, coupon : user.coupon});
 
   }catch(err){
-    console.log('get coupon api error.');
     next(err);
   }
 }
@@ -88,7 +80,6 @@ const provideCoupon = async (req, res, next)=>{
 
       if (validationResult.valid) {
         // If the coupon is valid, provide it to the user
-        console.log('Hello, you are eligible for the coupon.');
 
         // You can also include the coupon code or other details in the response
         return res.status(200).json({
@@ -112,7 +103,6 @@ const provideCoupon = async (req, res, next)=>{
     }
 
   }catch(err){
-    console.log('provide coupon coupon middleware error');
     next(err);
   }
 }

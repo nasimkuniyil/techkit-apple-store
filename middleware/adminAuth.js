@@ -6,7 +6,6 @@ const isAdmin = async (req, res, next) => {
             res.redirect('/admin/login')
         }
     }catch(err){
-        console.log('isAdmin error : ',err)
     }
 }
 
@@ -18,7 +17,6 @@ const notAdmin = async (req, res, next)=>{
             next();
         }
     }catch(err){
-        console.log('notAdmin error : ',err)
     }
 }
 

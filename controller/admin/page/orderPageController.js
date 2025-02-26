@@ -5,7 +5,6 @@ const Order = require("../../../models/orderSchema");
 // ORDER PAGE
 const ordersPage = async (req, res, next) => {
   try {
-    console.log("--- entered get order page ---");
     const orders = await Order.find()
       .populate("addressInfo")
       .populate("products.productId")
@@ -19,7 +18,6 @@ const ordersPage = async (req, res, next) => {
     
     res.render("admin/orderList", { orders });
   } catch (err) {
-    console.log("Order page error");
     next(err);
   }
 };
@@ -33,7 +31,6 @@ const orderDetailsPage = async (req, res, next) => {
     );
     res.render("admin/orderDetails", { orderData: order });
   } catch (err) {
-    console.log("Order details page error");
     next(err);
   }
 };

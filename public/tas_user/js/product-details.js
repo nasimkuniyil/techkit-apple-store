@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
       renderProductDetails(
         response.data.product,
         response.data.availableColors,
-        response.data.wishlist || ""
+        response.data.wishlist || "",
+        response.data.userSession
       );
     });
 
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render product details
-  function renderProductDetails(product, colors, wishlist) {
+  function renderProductDetails(product, colors, wishlist, userSession) {
     const mainImage = document.querySelector(".main-image");
     const thumbImage = document.querySelector(".thumbnail-container");
 
@@ -164,15 +165,16 @@ document.addEventListener("DOMContentLoaded", function () {
     addToCartBtn.addEventListener("click", () => addToCart(product._id));
     actionBtns.appendChild(addToCartBtn);
 
-    if(wishlist){
-      const addToWishlistBtn = document.createElement("button");
-      addToWishlistBtn.classList.add("add-to-wishlist");
-      addToWishlistBtn.innerHTML = wishlist.items.includes(product._id) ? `<i class="fas fa-heart"></i>` : `<i class="far fa-heart"></i>`;
-      addToWishlistBtn.addEventListener("click", () =>
-        addToWishlist(product._id)
-    );
+  if(userSession){
+    const addToWishlistBtn = document.createElement("button");
+    addToWishlistBtn.classList.add("add-to-wishlist");
+    addToWishlistBtn.addEventListener("click", () =>
+      addToWishlist(product._id)
+  );
+    addToWishlistBtn.innerHTML =  (wishlist && wishlist.items.includes(product._id)) ? `<i class="fas fa-heart"></i>` : `<i class="far fa-heart"></i>`;
     actionBtns.appendChild(addToWishlistBtn);
-    } 
+  }
+
     productInfo.appendChild(actionBtns)
     // prodcut info end
 

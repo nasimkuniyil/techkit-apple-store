@@ -9,21 +9,17 @@ const auth = require("../../sessionController");
 // GET ORDER DATA
 const ordersData = async (req, res, next) => {
     try {
-      console.log("----- entered get order data api.  -----");
   
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
   
       const page = req.query.page || 1;
-      console.log("page : == ", page);
   
       const limit = 5;
       const pageStart = (page - 1) * limit;
   
-      console.log("page start : ", pageStart);
   
       const totalPage = Math.ceil((await Order.find({ userId })).length / limit);
-      console.log("total Page : ", totalPage);
   
       const orderData = await Order.find({ userId })
         .populate("products.productId")
@@ -34,7 +30,6 @@ const ordersData = async (req, res, next) => {
   
   
   
-      console.log("populate : ", orderData);
   
   
       if (orderData.length == 0) {
@@ -45,14 +40,12 @@ const ordersData = async (req, res, next) => {
   
       return res.status(200).json({ success: true, orderData, page, totalPage });
     } catch (err) {
-      console.log("!!! - Error geting order - !!!");
       next(err);
     }
   };
 
 const orderView = async (req, res, next) => {
     try {
-      console.log("----- entered get order data api.  -----");
 
       const orderId = req.query.id;
   
@@ -85,9 +78,8 @@ const orderView = async (req, res, next) => {
       return acc;
     }, 0);
 
-    order.totalAmount = total;  
+    // order.totalAmount = total;  
   
-      console.log("populate : ", order);
   
   
       if (order.length == 0) {
@@ -98,7 +90,6 @@ const orderView = async (req, res, next) => {
   
       return res.status(200).json({ success: true, order});
     } catch (err) {
-      console.log("!!! - Error geting order - !!!");
       next(err);
     }
   };
@@ -107,20 +98,19 @@ const orderView = async (req, res, next) => {
 //  ORDER ADD
 const orderAdd = async (req, res, next) => {
   try {
-    console.log("----- entered add order.  -----");
 
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
     let { products, addressId, paymentInfo } = req.body;
 
-    console.log("body data : ", req.body);
 
     if (!userId) {
       return next(new Error("User not available"));
     }
 
-    console.log('convert')
-    products = JSON.parse(products);
+    if(isValidJson(products)){
+       products = JSON.parse(products);
+    }
 
     // Fetch product details and calculate discount
     const prodDetails = await Promise.all(
@@ -149,7 +139,6 @@ const orderAdd = async (req, res, next) => {
     // Calculate total amount using discounted price
     const totalAmount = prodDetails.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
-    console.log("Total amount calculated (with discount): ", totalAmount);
 
     // Generating Order ID
     const orderId = `ORD - ${Date.now()}`;
@@ -160,22 +149,25 @@ const orderAdd = async (req, res, next) => {
       return next(new Error("Address not available"));
     }
 
-    console.log("Order adding...");
 
     const user = await User.findOne({_id:userId}).populate('coupon');
 
-    const couponDiscountPrice = totalAmount * (user.coupon.discountValue/100);
-    console.log('total amount  : ', totalAmount)
-    console.log('coupondiscount price : ', couponDiscountPrice)
+    const couponDiscountPrice = (user.coupon?.discountValue)?totalAmount * (user.coupon.discountValue/100) : 0;
 
-    const newOrder = new Order({
+    const orderData = {
       userId,
       orderId,
       products:prodDetails, 
       addressInfo: addressId,
       paymentInfo,
       totalAmount : totalAmount - couponDiscountPrice, 
-    });
+    }
+
+    if(paymentInfo == 'onlinePayment'){
+      orderData.paymentStatus = 'Pending'
+    }
+
+    const newOrder = new Order(orderData);
 
     await newOrder.save();
 
@@ -187,11 +179,9 @@ const orderAdd = async (req, res, next) => {
       await Product.findByIdAndUpdate(item.productId, { $inc: { quantity: -item.quantity } });
     }
 
-    console.log("Order placed successfully!");
 
     // Delete cart after order placement
     await Cart.deleteOne({ userId });
-    console.log("Cart cleared.");
 
     
     const responseProducts = prodDetails.map((prod) => ({
@@ -202,6 +192,7 @@ const orderAdd = async (req, res, next) => {
 
     res.status(200).json({ 
       success: true, 
+      order:newOrder,
       message: "Order placed", 
       totalAmount, 
       products: prodDetails.map((prod) => ({
@@ -211,7 +202,6 @@ const orderAdd = async (req, res, next) => {
     });
     
   } catch (err) {
-    console.log("!!! - Error placing order - !!!");
     next(err);
   }
 };
@@ -222,17 +212,14 @@ const orderAdd = async (req, res, next) => {
 //   ORDER CANCEL
 const orderCancel = async (req, res, next) => {
     try {
-      console.log("Entered cancel order.");
       const { id, reason } = req.body;
       if (!id) {
-        console.log("order id is not defined.");
         const error = new Error("Order id is not defined");
         error.status = 400;
         next(error);
       }
   
       if (!reason) {
-        console.log("cancel reason is not defined.");
         const error = new Error("Cancel reason is not defined");
         error.status = 400;
         next(error);
@@ -255,17 +242,14 @@ const orderCancel = async (req, res, next) => {
 //  RETURN ORDER
 const orderReturn = async (req, res, next) => {
     try {
-      console.log("--- Entered return order.");
       const { productId, orderId, reason } = req.body;
       if (!orderId) {
-        console.log("order id is not defined.");
         const error = new Error("Order id is not defined");
         error.status = 400;
         next(error);
       }
   
       if (!reason) {
-        console.log("cancel reason is not defined.");
         const error = new Error("Cancel reason is not defined");
         error.status = 400;
         next(error);
@@ -276,10 +260,8 @@ const orderReturn = async (req, res, next) => {
         "products.productId": productId,
       });
   
-      console.log("order details : ", order);
   
       if (!order) {
-        console.log("Order or product not found.");
         const error = new Error("Order or product not found");
         error.status = 404;
         return next(error);
@@ -310,4 +292,13 @@ const orderReturn = async (req, res, next) => {
     orderAdd,
     orderCancel,
     orderReturn
+  }
+
+  function isValidJson(str) {
+    try {
+      JSON.parse(str); // Try parsing the string
+      return true; // It's valid JSON
+    } catch (e) {
+      return false; // It's not valid JSON
+    }
   }

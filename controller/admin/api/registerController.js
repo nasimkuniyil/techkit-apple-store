@@ -21,12 +21,9 @@ const postLogin = async (req, res, next) => {
     }
 
     const adminData = await Admin.findOne({ email: email });
-    console.log("ADMIN : ", adminData);
-    console.log("ADMIN : ", adminData.isAdmin);
 
     // Verify admin access
     if (!adminData && adminData.isAdmin) {
-      console.log("new error code in admin login");
       const error = new Error("Only admins can log in here");
       error.status = 400;
       return next(error);
@@ -34,7 +31,6 @@ const postLogin = async (req, res, next) => {
 
     // Verify passwrod
     if (password !== adminData.password) {
-      console.log("Admin password is invalid");
       const error = new Error("Please check your password");
       error.status = 400;
       return next(error);
@@ -46,7 +42,6 @@ const postLogin = async (req, res, next) => {
     res.render('admin/dashboard')
 
   } catch (err) {
-    console.log("Admin login api error");
     next(err)
   }
 };
@@ -56,7 +51,6 @@ const getLogout = async (req, res, next) => {
     req.session.destroy();
     res.redirect("/admin/login");
   } catch (err) {
-    console.log("admin logout api error");
     next(err);
   }
 };

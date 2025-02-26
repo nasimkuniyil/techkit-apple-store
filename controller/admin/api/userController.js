@@ -6,31 +6,24 @@ const userData = async (req, res) => {
         const users = await User.find({isAdmin : false});
         res.status(200).json(users);
     }catch(err){
-        console.log('getUsers error :',err);
     }
 }
 
 const blockUser = async (req, res) => {
     try{
-        console.log('blockUser');
         const id = req.query.id;
-        console.log('blockUser id : ', id);
         await User.updateOne({_id : id}, {$set : {isBlocked : true}});
         res.redirect('/admin/users');
     }catch(err){
-        console.log('blockUser error : ',err);
     }
 }
 
 const unblockUser = async (req, res) => {
     try{
-        console.log('unblock blockUser');
         const id = req.query.id;
-        console.log('blockUser id : ', id);
         await User.updateOne({_id : id}, {$set : {isBlocked : false}});
         res.redirect('/admin/users');
     }catch(err){
-        console.log('blockUser error : ',err);
     }
 }
 

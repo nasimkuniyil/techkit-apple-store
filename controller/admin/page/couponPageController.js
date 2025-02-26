@@ -3,8 +3,13 @@ const Coupon = require("../../../models/couponSchema");
 // COUPONs PAGE
 const couponsPage = async (req, res, next) => {
   try {
-    const coupons = await Coupon.find();
-    res.render("admin/couponList", { coupons });
+    const currentPage = req.query.page || 1;
+    const limit = 5;
+    const skip = (currentPage-1) * limit;
+    const coupons = await Coupon.find().skip(skip).limit(currentPage*limit);
+    const totalCoupons = await Coupon.countDocuments();
+    const totalPage = Math.ceil(totalCoupons/limit);
+    res.render("admin/couponList", { coupons, currentPage, totalPage });
   } catch (err) {
     next(err);
   }

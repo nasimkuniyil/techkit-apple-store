@@ -13,16 +13,16 @@ const orderSchema = new Schema(
       {
         productId: { type: ObjectId, ref: "Product", required: true },
         quantity: { type: Number, required: true },
-        productStatus: { type: String, default: "Pending" },
-        cancelReason: { type: String, defaule: "" },
-        returnReason: { type: String, defaule: "" },
+        isReturn: { type: Boolean, default: false },
+        returnReason: { type: String, default: "" },
       },
     ],
     addressInfo: { type: ObjectId, ref: "Address", required: true },
     paymentInfo: { type: String, required: true },
+    paymentStatus: {type:String, default:""},
     totalAmount: {type:Number},
-    cancelReason: { type: String, defaule: "" },
-    returnReason: { type: String, defaule: "" },
+    cancelReason: { type: String, default: "" },
+    returnReason: { type: String, default: "" },
   },
   { timestamps: true }
 );

@@ -1,0 +1,32 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.pagination a {
+    color: #1d1d1f;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0 4px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.minimalist-apple-pagination a {
+    border: 1px solid #d2d2d7;
+    background-color: #ffffff;
+}
+
+.minimalist-apple-pagination a.active {
+    background-color: #007aff;
+    color: white;
+    border: 1px solid #007aff;
+}
+
+.minimalist-apple-pagination a:hover:not(.active) {
+    background-color: #f5f5f7;
+}

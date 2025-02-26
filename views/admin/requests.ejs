@@ -69,7 +69,8 @@
               <% }) %> <% } %>
 
               <% if(returnOrders){ %> <% returnOrders.forEach( (order) => { %>
-                <% order.products.forEach(prod=>{ %>
+                <% order.products.forEach(prod=> { %>
+                  <% if( !prod.isReturn && prod.returnReason ){ %>
                   <a href="/admin/order/view?id=<%-order._id%>">
                     <div class="order-card">
                       <div class="order-header">
@@ -95,6 +96,7 @@
                       <div class="order-total"></div>
                     </div>
                   </a>
+                <%}%>
                 <%})%>
                 <% }) %> <% } %>
             <!-- Order card end -->

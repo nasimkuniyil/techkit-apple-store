@@ -45,7 +45,7 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
     localStorage.setItem(data[0], data[1]);
   });
 
-  fetch(`/signup`, {
+  fetch(`/api/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

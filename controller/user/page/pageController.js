@@ -6,13 +6,14 @@ const Wallet = require("../../../models/walletSchema");
 
 const auth = require("../../sessionController");
 
+const {otpStore} = require('../api/registerController')
+
 
 // LOGIN PAGE
 const loginPage = async (req, res, next) => {
   try {
     res.render("user/pages/register/login.ejs");
   } catch (err) {
-    console.log("login page render error");
     next(err);
   }
 };
@@ -22,7 +23,6 @@ const signupPage = async (req, res, next) => {
   try {
     res.render("user/pages/register/signup.ejs");
   } catch (err) {
-    console.log("signup page render error");
     next(err);
   }
 };
@@ -35,7 +35,6 @@ const otpPage = async (req, res, next) => {
     }, 1000 * 60);
     res.render("user/pages/register/otp-verify.ejs");
   } catch (err) {
-    console.log("otp page render error ");
     next(err);
   }
 };
@@ -45,7 +44,6 @@ const forgotPasswordPage = async (req, res, next) => {
   try {
     return res.render("user/pages/register/forgot-password");
   } catch (err) {
-    console.log("forgot password page render error ");
     next(err);
   }
 };
@@ -77,7 +75,6 @@ const homePage = async (req, res, next) => {
       });
       
 
-      console.log('latest prod details : ', latestProd)
 
     let popularProd = await Product.find({ deleted: false })
       .sort({ popularity: -1 })
@@ -128,7 +125,6 @@ const homePage = async (req, res, next) => {
       userSession,
     });
   } catch (err) {
-    console.log("home page render error ");
     next(err);
   }
 };
@@ -136,12 +132,10 @@ const homePage = async (req, res, next) => {
 // SHOP PAGE
 const shopPage = async (req, res, next) => {
   try {
-    console.log("rendering shop page.");
     let userSession = req.session.user;
 
     res.render("user/pages/shopPage/shop-all-page.ejs", { userSession });
   } catch (err) {
-    console.log("shop page render error.");
     next(err);
   }
 };
@@ -152,41 +146,34 @@ const productPage = async (req, res, next) => {
 
     res.render("user/pages/productPage/product-details", {userSession});
   } catch (err) {
-    console.log("product page render error : ");
     next(err);
   }
 };
 
 const cartPage = async (req, res, next) => {
   try {
-    console.log("get cart page started...");
     const userSession = req.session.user;
     res.render("user/pages/cartPage/cart-page", { userSession });
   } catch (err) {
-    console.log("cart page render error : ");
     next(err);
   }
 };
 
 const checkoutPage = async (req, res, next) => {
   try {
-    console.log("----- entered get checkout page -----.");
 
     const uId = req.session.user;
 
-    console.log("body data :", req.body);
     return res.render("user/pages/checkoutPage/checkout-page", {
       userSession: uId,
     });
   } catch (err) {
-    console.log("checkout page render error");
     next(err);
   }
 };
 
 const ordersPage = async (req, res, next) => {
   try {
-    console.log("----- entered get order history page.  -----");
 
     const uId = req.session.user;
 
@@ -194,14 +181,12 @@ const ordersPage = async (req, res, next) => {
       userSession: uId,
     });
   } catch (err) {
-    console.log("orders page render error");
     next(err);
   }
 };
 
 const orderDetailsPage = async (req, res, next) => {
   try {
-    console.log("----- entered get order history page.  -----");
 
     const orderId = req.query.id;
     const uId = req.session.user;
@@ -210,7 +195,6 @@ const orderDetailsPage = async (req, res, next) => {
       userSession: uId
     });
   } catch (err) {
-    console.log("order details page render error : ");
     next(err);
   }
 };
@@ -218,12 +202,10 @@ const orderDetailsPage = async (req, res, next) => {
 // Render whishlist page
 const wishlistPage = async (req, res, next) => {
   try {
-    console.log("--Entered get whishlist page.");
     res.render("user/pages/wishlistPage/wishlist-page", {
       userSession: req.session.user,
     });
   } catch (err) {
-    console.log("whishlist page render error.");
     next(err);
   }
 };
@@ -241,7 +223,6 @@ const walletPage = async (req, res, next) => {
       // something
     }
 
-    console.log('wallet: ', wallet)
 
     res.render('user/pages/walletPage/wallet-page',{
       balance: wallet?.balance,
@@ -261,7 +242,6 @@ const profilePage = async (req, res, next) => {
       userSession: uId,
     });
   } catch (err) {
-    console.log("profile page render error : ");
     next(err);
   }
 };
@@ -272,7 +252,6 @@ const addressPage = async (req, res) => {
       userSession: req.session.user,
     });
   } catch (err) {
-    console.log("getProfile error : ", err.message);
   }
 };
 
