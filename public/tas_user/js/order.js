@@ -148,7 +148,7 @@ function initializeSearch() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  initializeSearch();
+  // initializeSearch();
 
   // Load more button functionality
   // document.getElementById("loadMoreBtn").addEventListener("click", function () {
