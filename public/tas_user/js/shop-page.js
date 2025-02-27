@@ -22,7 +22,7 @@ function filterChange(event){
 }
 
 function fetchAllProducts() {
-    const fetchUrl = url.toString().split('3000')[1];
+    const fetchUrl = url.pathname;
   fetch(fetchUrl)
     .then((response) => {
       if (!response.ok) {
