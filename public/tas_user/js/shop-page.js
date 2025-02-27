@@ -22,7 +22,7 @@ function filterChange(event){
 }
 
 function fetchAllProducts() {
-    const fetchUrl = url.pathname;
+    const fetchUrl = url.pathname + url.search;
   fetch(fetchUrl)
     .then((response) => {
       if (!response.ok) {

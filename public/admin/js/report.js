@@ -2,7 +2,7 @@ let totalProducts = 0;
 
 const timeSelect = document.querySelector('.time-select');
 
-const Url = new URL(`${window.location.host}/admin/api/report`);
+const Url = new URL(`${window.location.origin}/admin/api/report`);
 fetchReportData()
 
 
@@ -16,7 +16,7 @@ timeSelect.addEventListener('change', (event)=>{
 })
 
 function fetchReportData(){
-  const fetchUrl = Url.toString().split('3000')[1];
+  const fetchUrl = Url.pathname+Url.search;
   fetch(fetchUrl) 
   .then(response => response.json())
   .then(data => {
