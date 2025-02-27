@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="/admin/common/header.css" />
     <!-- Page Specific Styles -->
     <link rel="stylesheet" href="/admin/css/ordersStyle.css" />
+    <link rel="stylesheet" href="/admin/css/pagination.css" />
   </head>
   <body>
     <div class="container">
@@ -86,6 +87,13 @@
             </a>
             <% }) %> <% } %>
             <!-- Order card end -->
+            <div class="pagination minimalist-apple-pagination">
+              <% if(currentPage && totalPage) { %> 
+                <% for(let i=1; i<=totalPage; i++){ %>
+                  <a href="/admin/orders?page=<%-i%>" class="<%- currentPage == i ? 'active' : '' %>"><%-i%></a>
+                <% } %>
+              <% } %>
+          </div>
           </div>
         </div>
       </main>
