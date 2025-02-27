@@ -32,12 +32,11 @@ function fetchAllProducts() {
       }
     })
     .then((result) => {
-        // rendering products...
-        // renderProducts(result.products);
         renderProductCard(result.products);
         setupPagination(result.totalPage, result.page).addEventListener('click', (event)=> paginationFunc(event, url, fetchAllProducts));
     })
     .catch((err) => {
+      console.log("get all products api error : ", err);
     });
 }
 
