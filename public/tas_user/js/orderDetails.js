@@ -377,7 +377,7 @@ async function payNow(order){
           amount: totalAmount * 100,
           currency: "INR",
           order_id: rzpOrder.id,
-          callback_url: "http://localhost:3000/api/online-payment/success?payment=onlinePayment&orderId="+order._id,
+          callback_url: "https://techkit.site/api/online-payment/success?payment=onlinePayment&orderId="+order._id,
         };
 
         const rzp = new Razorpay(options);

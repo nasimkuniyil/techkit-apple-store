@@ -1,6 +1,6 @@
 var orderData = [];
 
-const url = new URL(`${window.location.host}/api/order`);
+const url = new URL(`${window.location.origin}/api/order`);
 fetchOrderData();
 
 async function fetchOrderData() {
@@ -12,13 +12,11 @@ async function fetchOrderData() {
     
     if (!response.ok) {
       const result = await response.json();
-      console.log("res :", result);
       showFlashMessage(result);
     } else {
       const result = await response.json();
 
       if (result?.orderData) {
-        console.log("hello ; ", result);
         orderData.length = 0
         result.orderData.forEach((odrData) => {
           const orderDataObj = CreateOrderOng(odrData);
@@ -44,7 +42,6 @@ function formatCurrency(amount) {
 }
 
 function formatDate(dateString) {
-  console.log("date : ", dateString);
   var options = { year: "numeric", month: "long", day: "numeric" };
   return new Date(dateString).toLocaleDateString("en-US", options);
 }
@@ -70,7 +67,6 @@ function createOrderCard(order) {
   var card = document.createElement("div");
   card.className = "order-card";
 
-  console.log("jhgj : ", order);
 
   var items = order.items
     .map(function (item) {

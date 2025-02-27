@@ -35,11 +35,9 @@ async function fetchOrdersData() {
     const result = await response.json();
     console.log("order data : ", result);
     if (!response.ok) {
-      console.log("hey");
       showFlashMessage(result.data);
       return;
     } else {
-      console.log("hello");
       result.data.forEach(data => {
         data.orders.forEach(ord => ordersData.push(CreateOrderDateObj(ord)))
       });
