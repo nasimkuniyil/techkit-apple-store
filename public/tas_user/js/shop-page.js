@@ -1,7 +1,7 @@
 const sortSelect = document.querySelector("#sort");
 const filterSelect = document.querySelector("#filter");
 
-const url = new URL(`${window.location.host}/api/get-all-products`);
+const url = new URL(`${window.location.origin}/api/get-all-products`);
 
 sortSelect.addEventListener('change', sortChange);
 filterSelect.addEventListener('change', filterChange);
@@ -12,14 +12,12 @@ fetchAllProducts();
 // Functions
 function sortChange(event){
     url.searchParams.set("sort", event.target.value);
-    console.log('sort value : ',event.target.value);
     fetchAllProducts();
 }
 
 function filterChange(event){
     url.searchParams.set("filter", event.target.value);
     url.searchParams.set("page", 1);
-    console.log('filter value : ',event.target.value);
     fetchAllProducts();
 }
 
@@ -35,13 +33,11 @@ function fetchAllProducts() {
     })
     .then((result) => {
         // rendering products...
-        console.log('result : ', result)
         // renderProducts(result.products);
         renderProductCard(result.products);
         setupPagination(result.totalPage, result.page).addEventListener('click', (event)=> paginationFunc(event, url, fetchAllProducts));
     })
     .catch((err) => {
-      console.log("get all products api error : ", err);
     });
 }
 
