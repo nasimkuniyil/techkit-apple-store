@@ -1,6 +1,5 @@
 // CHANGE COMPLETED --
 
-const { default: products } = require("razorpay/dist/types/products");
 const Category = require("../../../models/categorySchema");
 const Product = require("../../../models/productSchema");
 
