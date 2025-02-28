@@ -1,7 +1,6 @@
 const blockOffer = (id)=>{
     axios.get(`/admin/api/offer/block?id=${id}`)
     .then(response =>{
-        console.log(response.data.message);
         showFlashMessage(response.data);
         setTimeout(() => {
             window.location.reload()
@@ -18,7 +17,6 @@ const unblockOffer = (id)=>{
     axios.get(`/admin/api/offer/unblock?id=${id}`)
     .then(response =>{
         showFlashMessage(response.data)
-        console.log(response.data.message);
         setTimeout(() => {
             window.location.reload()
         }, 1100);

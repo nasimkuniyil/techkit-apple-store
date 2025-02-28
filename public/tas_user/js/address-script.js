@@ -17,9 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         addAddressCard(data);
-        console.log("address data :", data);
       })
       .catch((error) => console.log("error : ", error));
   }
@@ -55,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch(url, options)
         .then((response) => {
           if (!response.ok) {
-            console.log("response :", response);
             throw new Error(response.statusText);
           }
           return response.json();

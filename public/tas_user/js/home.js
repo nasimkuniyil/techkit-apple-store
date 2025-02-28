@@ -22,8 +22,6 @@ async function searchInputOnFocus(event) {
     const response = await fetch(url);
     const result = await response.json();
     if (response.ok) {
-      console.log("all products data collected.");
-      console.log(result.products);
       allProducts.push(...result.products);
     } else {
       console.log("something error");
@@ -37,7 +35,6 @@ async function searchInputOnFocus(event) {
 function renderSearchList(inputVal) {
   productLists.innerHTML = "";
   if (allProducts.length == 0) {
-    console.log("products not available.");
     return;
   }
 

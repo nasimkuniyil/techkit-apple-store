@@ -25,7 +25,6 @@ function formValidate() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const email = document.querySelector("#email").value;
-  console.log("email valid : ", emailRegex.test(email));
 
   inputField.forEach((item) => {
     if (item.value == "") {

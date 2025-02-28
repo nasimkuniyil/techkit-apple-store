@@ -1,6 +1,8 @@
 // CHANGE COMPLETED --
 
+const { default: products } = require("razorpay/dist/types/products");
 const Category = require("../../../models/categorySchema");
+const Product = require("../../../models/productSchema");
 
 // GET CATEGORIES LIST
 const categoryList = async (req, res, next) => {
@@ -121,11 +123,26 @@ const categoryDelete = async (req, res, next) => {
     const id = req.query.id;
     const updatedData = await Category.findOneAndUpdate({ _id: id },{ $set: { deleted: "true" } });
 
+    // remove prods quantity < 5 && price > 1000
+
     if (!updatedData) {
       const error = new Error('Category does not exist');
       error.status = 404;
       return next(error);
     }
+
+    const prods = await Product.find({category:id});
+
+    prods.forEach(item =>{
+      if(item.quantity < 5 && item.price > 1000){
+        item.deleted = true;
+      }
+    });
+
+    await prods.save();
+
+    console.log('category prods : ', prods);
+
     res.status(200).json({success:true, message:'Category has been deleted'})
 
   } catch (err) {

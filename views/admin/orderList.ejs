@@ -57,31 +57,13 @@
                     <span class="info-value"><%- order.createdAt.toISOString().substring(0,10) %></span>
                   </div>
                   <div class="info-group">
-                    <span class="info-label">Shipping Address</span>
-                    <div class="info-label-group">
-                      <span class="info-value"><%-order.addressInfo.name%></span>
-                    </div>
-                    <div class="info-label-group">
-                      <span class="info-value"><%-order.addressInfo.mobile%></span>
-                    </div>
-                      <div class="info-label-group">
-                      <span class="info-value"><%-order.addressInfo.address%>,</span>
-                      <span class="info-value"><%-order.addressInfo.city%></span>
-                    </div>
-                    <div class="info-label-group">
-                      <span class="info-value"><%-order.addressInfo.landmark%>,</span>
-                      <span class="info-value"><%-order.addressInfo.pincode%></span>
-                    </div>
-                  </div>
-                  <div class="info-group">
                     <span class="info-label">Payment Method</span>
                     <span class="info-value"><%-order.paymentInfo%></span>
                   </div>
-                </div>
-
-                <div class="order-total">
-                  <span class="total-label">Total</span>
-                  <span class="total-value">₹ <%-order.totalAmount%></span>
+                  <div class="info-group">
+                    <span class="info-label">Total</span>
+                    <span class="info-value">₹ <%-order.totalAmount || 0%></span>
+                  </div>
                 </div>
               </div>
             </a>

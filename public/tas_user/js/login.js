@@ -28,12 +28,9 @@ form.addEventListener("submit", (event) => {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        // Handle success (e.g., redirect to home page)
-        console.log("Logged in successfully:", data.message);
         window.location.href = "/";
       } else {
         showFlashMessage(data);
-        console.log(data);
       }
     })
     .catch((error) => {
@@ -70,7 +67,6 @@ function formValidate() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const email = document.querySelector("#email").value;
-  console.log("email valid : ", emailRegex.test(email));
 
   inputField.forEach((item) => {
     if (item.value == "") {

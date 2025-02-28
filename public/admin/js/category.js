@@ -79,7 +79,6 @@ function onSubmitEdit(event) {
   }
 
   const url = editForm.action;
-  console.log('url : ', url);
 
   const data = {
     category_name : document.getElementById('category-name').value,

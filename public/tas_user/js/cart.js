@@ -26,7 +26,6 @@ async function fetchCartData() {
     const data = await response.json();
     if (data.cartProducts) {
       cartProducts = data.cartProducts.items;
-      console.log("data:", cartProducts);
       cartId = data.cartId;
       createCartItem(cartProducts);
       attachEventListeners(cartProducts);
@@ -52,7 +51,6 @@ async function updateCart(data) {
 
     if (!response.ok) {
       const result = await response.json();
-      console.log("res :", result);
       stock = result.prodQty;
       showFlashMessage(result);
     } else {
@@ -109,11 +107,8 @@ function updateButtonStates(container, quantity, stock) {
 function createCartItem(products) {
   const cartItems = products
     .map((product) => {
-      // const imgSrc = "data:image/"+product.productId.images[0].contentType+"; base64,"+product.productId.images[0].data.toString('base64') ;
-      // console.log('hey : ', imgSrc)
     const imageData = product.productId.images[0].data; 
     const contentType = product.productId.images[0].contentType; 
-    // let imgSrc =`data:image/${contentType};base64,${imageData.toString('base64')}`;
     
       return `
     <div class="cart-item" id="${product.productId._id}" data-stock="${product.productId.quantity}">
@@ -155,7 +150,6 @@ function createCartItem(products) {
 
 function attachEventListeners() {
   document.querySelectorAll(".cart-item").forEach((cartItemElement) => {
-    console.log("HHH : ", cartItemElement);
     const productId = cartItemElement.id;
     const stock = parseInt(cartItemElement.dataset.stock);
 

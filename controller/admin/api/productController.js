@@ -25,10 +25,6 @@ const productsData = async (req, res, next) => {
 // ADD PRODUCT API
 const productAdd = async (req, res, next) => {
   try {
-    console.log("--- Started add product post method ---");
-    console.log("body data : ", req.body);
-    console.log("image data : ", req.files);
-
     const { product_name, description, color, price, quantity, category } =
       req.body;
 
@@ -75,7 +71,6 @@ const productAdd = async (req, res, next) => {
     }
 
     const imageFile = req.files;
-    console.log("images length : ", imageFile.length);
     const images = [];
 
     if (imageFile && imageFile.length > 0) {
@@ -84,7 +79,6 @@ const productAdd = async (req, res, next) => {
         const result = await cloudinary.uploader.upload(image, {
           folder: "products",
         });
-        console.log("cloudinary img : ", result);
         images.push({ url: result.secure_url, public_id: result.public_id });
         // fs.unlinkSync(image);
         setTimeout(() => {
@@ -205,19 +199,14 @@ const productEdit = async (req, res, next) => {
 
     obj.images = prodData.images;
 
-    console.log("req.body : ", req.body);
-    console.log("req.files : ", req.files);
-
     const beforeObjImg = obj.images;
 
     //delete removed image data from database
     if (removedImages) {
-      console.log("image removing...");
       removedImages.forEach((rmId) => {
         const data = obj.images.filter((img) => img._id != rmId);
         obj.images = data;
       });
-      console.log("image removed success.");
     }
 
     //add new image
@@ -227,22 +216,22 @@ const productEdit = async (req, res, next) => {
         const result = await cloudinary.uploader.upload(image, {
           folder: "products",
         });
-        console.log("cloudinary img : ", result);
+
         obj.images.push({
           url: result.secure_url,
           public_id: result.public_id,
         });
-        // fs.unlinkSync(image);
-        setTimeout(() => {
-          let rmImage = image;
-          fs.unlink(rmImage, (err) => {
+        console.log('* images file path : ', image);
+        // remove image from uploads
+        let rmImage = image;
+         await fs.unlink(rmImage, (err) => {
             if (err) {
               console.error("Error deleting file:", err);
             } else {
-              console.log("File deleted successfully.");
+              console.log("Image deleted successfully.");
             }
           });
-        }, 3000);
+
       }
     } else {
       console.log("No new images uploaded");
@@ -272,7 +261,6 @@ const deleteProduct = async (req, res, next) => {
     }
 
     await Product.updateOne({ _id: id }, { $set: { deleted: "true" } });
-    console.log("Product deleted");
 
     res
       .status(200)
@@ -296,7 +284,6 @@ const productRestore = async (req, res, next) => {
     }
 
     await Product.updateOne({ _id: id }, { $set: { deleted: "false" } });
-    console.log("Product restored.");
 
     res.status(200).json({ success: true, message: "Product restored" });
   } catch (err) {

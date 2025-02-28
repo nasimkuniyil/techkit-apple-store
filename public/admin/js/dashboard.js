@@ -14,7 +14,6 @@ function fetchReportData(url = "/admin/api/report") {
   axios
     .get(url)
     .then((response) => {
-      console.log("reuslt : ", response);
       orderDetails(response.data.allOrders)
       setupChart(timeSelect.value, response.data);
       renderTopProducts(response.data.topProducts);

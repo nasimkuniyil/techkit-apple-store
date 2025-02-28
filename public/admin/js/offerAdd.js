@@ -53,13 +53,11 @@ function validateForm(event) {
   if (isValid) {
     // Here you would typically submit the form to your backend
     const type = window.location.href.toString().split("/").pop();
-    console.log("HELLO WORLD");
     const url = `/admin/api/offer/add/${type}`;
     const data = { title, type, targetId, discountValue, endDate}
 
     axios.post(url, data)
       .then(response => {
-        console.log('response : ', response)
         showFlashMessage(response.data)
         window.location.href = '/admin/offers'
       })

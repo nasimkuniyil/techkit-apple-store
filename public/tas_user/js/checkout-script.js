@@ -25,10 +25,8 @@ fetchCartData();
 
 paymentOption.addEventListener("input", (e) => {
   if (e.target.checked) {
-    console.log("hello, payment ", e.target.id);
     selectedPaymentMethod = e.target.id;
   }
-  // console.log('event id : ',e.target.id)
 });
 
 // Fetch addresses from API
@@ -40,9 +38,7 @@ async function fetchAddresses() {
       throw new Error(error.message);
     }
     const data = await response.json();
-    console.log("address data : ", data);
     const updatedAdd = data.map((add) => {
-      console.log(" address one : ", add);
       const { _id } = add;
       let id = _id.toString();
       return { ...add, _id: id };
@@ -74,13 +70,11 @@ async function fetchCartData() {
     }
 
     const data = await response.json();
-    console.log("total  : ", data.cartProducts.cartTotalAmount);
     if (data.cartProducts.cartTotalAmount >= 10000) {
       document.getElementById("cod-section").innerHTML =
         "Cash on delivery not available above 10000";
     }
     if (data.cartProducts) {
-      console.log("data:", data.cartProducts);
       porductDetails.push(...data.cartProducts.items);
       createCartItem(data.cartProducts.items);
     }
@@ -94,7 +88,6 @@ async function fetchCoupon() {
   const url = "/api/coupon";
 
   try {
-    console.log("fetch coupon.");
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -170,7 +163,6 @@ async function saveAddress(event) {
 function renderAddresses() {
   addressList.innerHTML = addresses
     .map((address) => {
-      console.log("print address : ", address);
       return `
           <div class="address-card" data-id="${address._id}" onclick="selectAddress('${address._id}')">
               <strong>${address.name}</strong><br>
@@ -260,9 +252,6 @@ function submitEditAddress(event, _id) {
       return response.json();
     })
     .then((data) => {
-      // console.log('data === ',data)
-      // fetchAddresses(data);
-      // showFlashMessage()
     })
     .catch((err) => showFlashMessage({ success: false, message: err.message }));
 }
@@ -281,8 +270,6 @@ async function deleteAddress(_id, event) {
       }
 
       const data = await response.json();
-
-      console.log("==== DATA : ", data);
       showFlashMessage(data);
 
       fetchAddresses();
@@ -342,7 +329,6 @@ async function payNow() {
   };
   fetch(url, options)
     .then((response) => {
-      console.log("add order res : ", response);
       if (response.ok) {
         return response.json();
       }
@@ -352,7 +338,6 @@ async function payNow() {
         window.localStorage.setItem("addressId", selectedAddressId);
         window.localStorage.setItem("paymentInfo", selectedPaymentMethod);
         window.localStorage.setItem("totalAmount", totalAmount);
-        console.log("local storage : ", window.localStorage);
 
         // Create order by calling the server endpoint
         const response = await fetch("/api/online-payment?orderId="+data.order._id, {
@@ -414,13 +399,6 @@ async function placeOrderWithCOD() {
     };
 
     addOrder(orderData);
-
-    // You can add API call here to place order
-    // const response = await fetch('/api/orders', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(orderData)
-    // });
   } catch (error) {
     showFlashMessage({ success: false, message: error.message });
   }
@@ -428,7 +406,6 @@ async function placeOrderWithCOD() {
 
 // Show order confirmation
 function showOrderConfirmation(orderData) {
-  console.log("order data : ", orderData);
   const selectedAddress = addresses.find(
     (addr) => addr._id === orderData.addressId
   );
@@ -493,7 +470,6 @@ function createCartItem(products) {
   let tax;
 
   products.forEach((prod) => {
-    console.log("prod : sum : ", prod);
     summeryItemsContainer.innerHTML += `<div class="summary-item">
               <img src="${prod.productId.images[0].url}" alt="Product" />
               <div class="item-details">
@@ -551,36 +527,9 @@ function addOrder(orderData) {
   };
   fetch(url, options)
     .then((response) => {
-      console.log("add order res : ", response);
       if (response.ok) {
         showOrderConfirmation(orderData);
       }
     })
     .catch((err) => console.log("add order error : ", err));
 }
-
-console.log("details : ", porductDetails);
-
-// Backup
-
-// confirmationContent.innerHTML = `
-// <h2>Order Confirmation</h2>
-// <p>Your order has been placed successfully!</p>
-// <div class="order-details">
-//     <p><strong>Delivery Address:</strong></p>
-//     <p>${selectedAddress.name}<br>
-//        ${selectedAddress.address}<br>
-//        ${selectedAddress.city}, ${selectedAddress.state} ${
-// selectedAddress.pincode
-// }<br>
-//        ${selectedAddress.country}<br>
-//        ${selectedAddress.landmark}</p>
-//     <p><strong>Payment Method:</strong> Cash on Delivery</p>
-//     <p><strong>Amount to be paid:</strong> ₹ ${totalAmount.toLocaleString(
-//       "en-US",
-//       { minimumFractionDigits: 2 }
-//     )}</p>
-//     <p>Please keep cash ready at the time of delivery.</p>
-// </div>
-// <a class="checkout-btn-primary" href="/orders">Continue Shopping</a>
-// `;

@@ -58,7 +58,6 @@ function sendOTP() {
     try {
       const response = await fetch("/api/send-otp", options);
       const data = await response.json();
-      console.log("data : ", data);
       if (!response.ok) {
         throw new Error(data.message);
       }
@@ -71,7 +70,6 @@ function sendOTP() {
       startTimer();
 
     } catch (err) {
-      console.log("errr : ", err);
       showFlashMessage({success:false, message:err.message});
       emailSubmitBtn.textContent = "Try again";
       emailSubmitBtn.removeAttribute("disabled");
@@ -84,8 +82,6 @@ function sendOTP() {
 function verifyOTP() {
   otpForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    // otpSubmitBtn
-
     const options = {
       method: "POST",
       headers: {
@@ -102,7 +98,6 @@ function verifyOTP() {
         return { success: true, message: "Verification success" };
       })
       .then((data) => {
-        console.log(data);
         showFlashMessage(data);
         if (data.success) {
           clearInterval(timerInterval);
@@ -206,7 +201,6 @@ function handlePasswordUpdate(event) {
       }
     })
     .catch((err) => {
-      console.log("Password update error:", err);
       showFlashMessage({
         success: false,
         message: "Failed to update password, Error!",

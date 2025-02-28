@@ -2,7 +2,6 @@
 function blockCoupon(id){
     axios.put('/admin/api/coupon/block?id='+id)
     .then(response=>{
-        console.log("blocked : ",response)
         showFlashMessage(response.data);
        setTimeout(() => {
         window.location.reload()
@@ -16,7 +15,6 @@ function blockCoupon(id){
 function unblockCoupon(id){
     axios.put('/admin/api/coupon/unblock?id='+id)
     .then(response=>{
-        console.log("unblocked : ",response)
         showFlashMessage(response.data);
         setTimeout(() => {
             window.location.reload()

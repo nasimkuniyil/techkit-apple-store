@@ -1,5 +1,4 @@
 function addBreadcrumb(product) {
-    console.log('adding breadcrumb...')
   const breadCrumbContainer = document.querySelector(".breadcrumb-container");
 
   const nav = document.createElement("nav");

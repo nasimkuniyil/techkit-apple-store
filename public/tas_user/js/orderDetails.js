@@ -4,7 +4,6 @@ function fetchOrderData(){
   const url = `/api/order/view${window.location.search}`;
   axios.get(url)
   .then(response => {
-    console.log('order response : ', response);
     renderOrderData(response.data.order)
   })
   .catch(err=>{
@@ -180,8 +179,6 @@ for (key in obj) {
     break;
   }
   document.getElementById(obj[key])?.classList.add("step-completed");
-
-  // console.log(value)
 }
 
 window.addEventListener("click", (e) => {});
@@ -221,8 +218,6 @@ function confirmCancellation() {
   .then(response => {
     if(response.ok){
       window.location.href = `/order/view?id=${id}`
-    }else{
-      console.log(response.json())
     }
   })
   .catch(err=>alert('somethin error occured.'))
@@ -240,7 +235,6 @@ function confirmCancellation() {
 
   // Open modal
   function showReturnModal(productId, orderId){
-    console.log('order id : ',returnObj.orderId )
     returnObj.productId = productId;
     returnObj.orderId = orderId;
     returnModal.style.display = "flex";
@@ -261,8 +255,6 @@ function confirmCancellation() {
   // Handle submit
   submitBtn.addEventListener("click", function () {
       if (returnReason.value) {
-          console.log("Return reason submitted: " + returnReason.value);
-        
           const url = `/api/return-product`
           const options = {
             method : 'POST',
@@ -275,8 +267,6 @@ function confirmCancellation() {
           .then(response => {
             if(response.ok){
               window.location.reload()
-            }else{
-              console.log(response.json())
             }
           })
           .catch(err=>alert('somethin error occured.'))
@@ -345,9 +335,7 @@ function downloadInvoice(order) {
 
 
 async function payNow(order){
-        console.log("local storage : ", window.localStorage);
         const totalAmount = window.localStorage.getItem('totalAmount');
-        console.log('total amount is ', totalAmount);
 
         // Create order by calling the server endpoint
         const response = await fetch("/api/online-payment?orderId="+order._id, {
@@ -367,8 +355,6 @@ async function payNow(order){
           window.location.href = '/orders'
         }
 
-        // window.localStorage.clear()
-
         const rzpOrder = await response.json();
 
         // Open Razorpay Checkout
@@ -384,7 +370,6 @@ async function payNow(order){
         rzp.open();
       
         rzp.on('payment.failed', function (response) {
-          console.log('Payment Failed:', response.error.description);
           
           // Optionally, send failure details to your backend to log and update the payment status
           fetch('/payment/failure?orderId='+order._id``, {

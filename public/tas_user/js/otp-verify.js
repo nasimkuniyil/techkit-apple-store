@@ -80,18 +80,13 @@ document.getElementById("otpForm").addEventListener("submit", (e) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
       showFlashMessage(data);
       if (data.success) {
         localStorage.clear();
         window.location.href = "/";
-      } else {
-        console.log("Invalid or expired OTP. Please try again.");
       }
     })
     .catch((error) => console.error("Error verifying OTP:", error));
-
-  console.log("Verifying OTP:", otp);
 });
 
 // Cancel Button
@@ -104,8 +99,6 @@ document.getElementById("cancelBtn").addEventListener("click", () => {
 resendBtn.addEventListener("click", () => {
   // Reset timer
   resendBtn.disabled = true;
-
-  console.log("Resending OTP");
 
   fetch(`/api/signup`, {
     method: "POST",
@@ -121,13 +114,9 @@ resendBtn.addEventListener("click", () => {
       showFlashMessage(data);
       if (data.success) {
         window.location.href = `/otp/${localStorage.email}`; // Navigate to OTP page
-      } else {
-        // Handle error (for example, show an alert)
-        console.error("Signup error:", data.message);
       }
     })
     .catch((error) => {
-      // Catch any errors and log them
       console.error("Request failed:", error);
     });
 });

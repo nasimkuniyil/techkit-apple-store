@@ -21,7 +21,6 @@ function fetchReportData(){
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      console.log('console : ',data)
 
       const tableBody = document.querySelector(".orders-table tbody");
       tableBody.innerHTML = "";

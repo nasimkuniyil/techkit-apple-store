@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function fetchProductData() {
     const url = `/api/product/view${window.location.search}`;
     axios.get(url).then((response) => {
-      console.log("fetch data api response : ", response);
       renderProductDetails(
         response.data.product,
         response.data.availableColors,
@@ -250,20 +249,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (newQuantity >= 1 && newQuantity <= maxStock) {
       quantity = newQuantity;
       quantityDisplay.textContent = quantity;
-      // updateStockStatus();
     }
   }
   
-  // function updateStockStatus() {
-  //   const stockStatus = document.querySelector(".stock-status");
-  //   if (quantity >= maxStock) {
-  //     stockStatus.textContent = "Added maximum";
-  //     stockStatus.style.color = "#e74c3c";
-  //   } else {
-  //     stockStatus.textContent = "";
-  //   }
-  // }
-
   // Cart and Wishlist Functions
   function addToCart(id) {
     const url = window.location.origin + "/api/add-cart";
@@ -283,7 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         }
         window.location.href = response.url;
-        // return response.json();
       })
       .catch((error) => {
         const text = `${error}`;
@@ -300,7 +287,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (wishlistBtn.className.includes("far")) {
       axios.post('/api/wishlist/add?id='+productId)
       .then(response=>{
-        console.log('axios a result : ', response);
         wishlistBtn.classList.add("fas");
         wishlistBtn.classList.remove("far");
         showFlashMessage(response.data)
@@ -309,7 +295,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (wishlistBtn.className.includes("fas")) {
       axios.put('/api/wishlist/remove?id='+productId)
       .then(response=>{
-        console.log('axios a result : ', response)
         wishlistBtn.classList.add("far");
         wishlistBtn.classList.remove("fas");
         showFlashMessage(response.data)
@@ -330,7 +315,6 @@ document.addEventListener("DOMContentLoaded", function () {
   starRatingInput.forEach((input) => {
     input.addEventListener("change", (e) => {
       userRating = e.target.value;
-      console.log(userRating);
       removeStarFill();
       starRatingLabel.forEach((item, index) => {
         if (userRating > index) {
@@ -346,7 +330,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function submitReview(event) {
     event.preventDefault();
-    console.log(userRating);
     const reviewText = event.target.querySelector("textarea").value;
 
     if (userRating === 0) {

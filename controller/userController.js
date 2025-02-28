@@ -15,30 +15,8 @@ const Order = require("../models/orderSchema");
 const Color = require("../models/colorSchema");
 const Coupon = require("../models/couponSchema");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const getShop = async (req, res) => {
   const sortOption = req.query.sort || "a-z";
-
-  console.log(sortOption);
 
   let sortCriteria;
 
@@ -85,35 +63,16 @@ const getShop = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const cancelProduct = async (req, res, next) => {
-  console.log("helloooooo...");
   try {
     const { id, reason, orderId } = req.body;
     if (!id) {
-      console.log("order id is not defined.");
       const error = new Error("Order id is not defined");
       error.status = 400;
       next(error);
     }
 
     if (!reason) {
-      console.log("cancel reason is not defined.");
       const error = new Error("Cancel reason is not defined");
       error.status = 400;
       next(error);
@@ -133,8 +92,6 @@ const cancelProduct = async (req, res, next) => {
       throw new Error("Order or product not found");
     }
 
-    console.log("Product cancel reason updated:", updatedOrder);
-
     res
       .status(200)
       .json({ success: true, message: "Requested product cancellation." });
@@ -143,14 +100,9 @@ const cancelProduct = async (req, res, next) => {
   }
 };
 
-
-
 const getWishlistPage = async (req, res) => {
   try {
-    console.log("----- entered get order history page.  -----");
-
     const uId = req.session.user;
-
     return res.status(400).render("user/pages/wishlistPage/wishlist-page", {
       userSession: uId,
     });
@@ -158,13 +110,7 @@ const getWishlistPage = async (req, res) => {
 };
 
 module.exports = {
-
-
   getShop,
-
-
- 
-
   getOrders,
   addOrder,
   onlinePayment,

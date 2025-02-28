@@ -208,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".existing-image-box").forEach((box) => {
       const imageId = box.dataset.imageId;
       formData.append("existing_images[]", imageId);
-      console.log(imageId);
     });
 
     // Add new images

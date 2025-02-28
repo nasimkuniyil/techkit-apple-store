@@ -2,7 +2,6 @@
 
 
 function setupPagination(totalPage, currentPage) {
-    console.log('total page : ', totalPage)
     const paginationContainer = document.querySelector(".pagination");
     paginationContainer.innerHTML = ""; // Clear previous pagination
     
@@ -38,7 +37,6 @@ function setupPagination(totalPage, currentPage) {
 function paginationFunc(event, url, cb){
   window.scrollTo({top : 0, behavior:"smooth"});
     if(event.target.className.includes('pagination-link')){
-      console.log('clicked page : ', event.target.innerHTML)
       url.searchParams.set("page", event.target.innerHTML);
       cb();
     }

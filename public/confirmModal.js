@@ -17,7 +17,7 @@ function confirmRequest(){
     const h = document.createElement('h3');
         h.textContent = 'Confirmed.'
         document.querySelector('main').appendChild(h);
-        console.log('hello')
+
     closePopup()
 }
 

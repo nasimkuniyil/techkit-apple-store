@@ -1,5 +1,4 @@
 function showOrderConfirmation(orderData) {
-  console.log("order data : ", orderData);
 
   const confirmationContent = document.querySelector(
     "#orderConfirmModal .modal-content"
@@ -45,7 +44,6 @@ function showOrderConfirmation(orderData) {
     };
     fetch(url, options)
       .then((response) => {
-        console.log("add order res : ", response);
         const orderData = {
             products : JSON.parse(products),
             addressId,

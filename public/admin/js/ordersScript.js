@@ -33,7 +33,6 @@ async function fetchOrdersData() {
     const url = "/admin/api/orders";
     const response = await fetch(url);
     const result = await response.json();
-    console.log("order data : ", result);
     if (!response.ok) {
       showFlashMessage(result.data);
       return;
@@ -92,6 +91,5 @@ function CreateOrderDateObj(data) {
 
     obj.products = products;
 
-  console.log("object created : ", obj);
   return obj;
 }

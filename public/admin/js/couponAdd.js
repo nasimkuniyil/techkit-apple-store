@@ -53,14 +53,11 @@ function validateForm(event) {
   }
 
   if (isValid) {
-    // Here you would typically submit the form to your backend
-    console.log("HELLO WORLD");
     const url = "/admin/api/coupon/add";
     const data = { code, value, expDate, limit, minimumPurchase}
 
     axios.post(url, data)
       .then(response => {
-        console.log('response : ', response)
         showFlashMessage(response.data)
         // window.location.href = '/admin/coupons'
       })

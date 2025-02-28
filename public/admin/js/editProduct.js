@@ -299,15 +299,10 @@ function validateImageQty() {
   let imguploadQty = 0;
   imageUploadBox.forEach(n =>{
     const a = n.querySelector('input');
-    console.log('n : ',a)
     if(!a.value) return;
     imguploadQty+=1;
   })
   const previewImg = document.querySelectorAll(".preview-image").length;
-
-  console.log('smile : ', imguploadQty)
-
-  console.log(imguploadQty + previewImg)
 
   if (imguploadQty + previewImg < 3) {
     alert("Add 3 images");
@@ -340,8 +335,6 @@ for (let i = previewImg; i < 3; i++) {
 }
 
 function removeExistingImage(event, id, index) {
-  console.log("remove elem : ", index);
-  ``;
   removedImages.push(id);
   event.target.parentNode.remove();
   addNewImageSection(parseInt(index));

@@ -37,8 +37,6 @@ function validateForm(event) {
   // Validate end date date
   const endDate = new Date(document.getElementById("endDate").value);
   if (isNaN(endDate)) {
-    console.log('date end empty')
-    console.log(endDate)
     document.getElementById("endDateError").textContent = "Select date";
     document.getElementById("endDateError").style.display = "block";
     isValid = false;
@@ -49,14 +47,11 @@ function validateForm(event) {
   }
 
   if (isValid) {
-    // Here you would typically submit the form to your backend
-    console.log("HELLO WORLD");
     const url = `/admin/api/offer/edit${window.location.search}`;
     const data = { title, discountValue, endDate}
 
     axios.put(url, data)
       .then(response => {
-        console.log('response : ', response)
         showFlashMessage(response.data)
         window.location.href = '/admin/offers'
       })

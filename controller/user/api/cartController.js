@@ -13,14 +13,10 @@ const carData = async (req, res, next) => {
     });
 
     if (!cartList) {
-      console.log("items not available in cart");
       const error = new Error("Your cart is empty. Start shopping");
       error.status = 404;
       return next(error);
     }
-
-    //collect cart product details
-    console.log("cart items : ", cartList);
 
     res.status(200).json({
       success: true,
@@ -49,8 +45,6 @@ const cartAdd = async (req, res, next) => {
     }
 
     let cartTotalAmount = cart?.cartTotalAmount || 0;
-
-    console.log("product before : ", product);
     
     let discountPrice ;
     let totalPrice;
@@ -63,8 +57,6 @@ const cartAdd = async (req, res, next) => {
     }
     
     cartTotalAmount += totalPrice;
-
-    console.log("product after : ", product);
     
     const price = product.price;
     
@@ -73,7 +65,6 @@ const cartAdd = async (req, res, next) => {
         (item) => item.productId.toString() === productId.toString()
       );
       if (cartItem) {
-        console.log("item available in cart");
         return res.status(400).json({
           success: false,
           message: "This product already added to cart",
@@ -81,8 +72,6 @@ const cartAdd = async (req, res, next) => {
       }
       cart.items.push({ productId: product._id, quantity, totalPrice, price, discountPrice });
     } else {
-      console.log("cart else started ........");
-
       cart = new Cart({
         userId,
         items: [
@@ -108,30 +97,21 @@ const cartAdd = async (req, res, next) => {
 // EDIT CART
 const cartEdit = async (req, res, next) => {
     try {
-      console.log("----- cart edit api -----.");
-  
       const { productId, quantity: updatedQuantity, deleted } = req.body;
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
-  
-      console.log(
-        `product id is -${productId}- | quantity : ${updatedQuantity} | deleted : ${deleted}`
-      );
   
       const cartData = await Cart.findOne({ userId: userId }).populate(
         "items.productId"
       );
   
       if (!cartData) {
-        console.log('cart is not available');
         const error = new Error('Cart is not available');
         error.status = 404;
         return next(error);
       }
   
       if (deleted) {
-        // If item should be deleted
-        console.log("deleting...");
         cartData.items = cartData.items.filter(
           (item) => item.productId._id !== productId
         );
@@ -140,7 +120,6 @@ const cartEdit = async (req, res, next) => {
         let items = cartData.items;
         items.filter((item) => {
           if (item.productId._id == productId) {
-            console.log("product found.");
             item.quantity = updatedQuantity;
             item.totalPrice = item.discountPrice  ? updatedQuantity * item.discountPrice : updatedQuantity * item.productId.price;
             return item;
@@ -148,10 +127,8 @@ const cartEdit = async (req, res, next) => {
           
           return item;
         });
-        console.log("items : ", items);
         cartData.items = items;
         await cartData.save();
-        console.log("cart updated");
       }
   
       return res.status(200).json({ success: true, message: "Product updated in cart" });
@@ -164,22 +141,11 @@ const cartEdit = async (req, res, next) => {
 
 const cartRemove = async (req, res, next) => {
     try {
-      console.log("----- remove cart api -----.");
-  
       const { productId } = req.body;
       const uId = req.session.user;
       const userId = auth.getUserSessionData(uId);
   
-      console.log(`product id is -${productId}-`);
-  
       const cartData = await Cart.findOne({ userId: userId });
-  
-      console.log(cartData);
-      console.log(
-        `body id : ${productId}, equals check : ${
-          productId == cartData.items[0].productId
-        }`
-      );
   
       if (!cartData) {
         const error = new Error("Cart not found");
@@ -190,14 +156,11 @@ const cartRemove = async (req, res, next) => {
       cartData.items = cartData.items.filter(
         (item) => item.productId != productId
       );
-  
-      console.log("cart item after : ", cartData);
       await cartData.save();
   
       if (cartData.items.length == 0) {
         await Cart.deleteOne({ userId });
       }
-      console.log("cart removed");
       return res.status(200).json({ success: true, message: "Product updated in cart" });
     } catch (err) {
       console.error("Cart remove error.");

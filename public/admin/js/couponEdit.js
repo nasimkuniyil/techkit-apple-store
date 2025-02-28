@@ -9,7 +9,6 @@ function couponEdit(){
 
     axios.put('/admin/api/coupon/edit'+window.location.search, data)
     .then(response=>{
-        console.log("blocked : ",response)
         showFlashMessage(response.data);
         window.location.href = '/admin/coupons'
     })
