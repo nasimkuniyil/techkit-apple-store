@@ -6,7 +6,7 @@ fetchOrderData();
 async function fetchOrderData() {
 
   
-  const fetchUrl = url.toString().split('3000')[1];
+  const fetchUrl = url.pathname + url.search;
   try {
     const response = await fetch(fetchUrl);
     
