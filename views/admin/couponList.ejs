@@ -80,13 +80,13 @@
                       <span class="products-count"><%- coupon.usageLimit %></span>
                     </td>
                     <td>
-                        <%-coupon.discountValue %> %
+                        ₹<%-coupon.discountValue %>
                     </td>
                     <td><%-coupon.createdAt.toISOString().substring(0,10) %></td>
                     <td><%-coupon.expirationDate.toISOString().substring(0,10) %></td>
                     <td>
                       <span
-                        class="status-badge <%= coupon.blocked ?'status-inactive ':'status-active' %>"
+                        class="status-badge <%= coupon.blocked || coupon.usageLimit <= 0 || new Date() > new Date(coupon.expirationDate) ?'status-inactive ':'status-active' %>"
                         ><%= coupon.blocked || coupon.usageLimit <= 0 || new Date() > new Date(coupon.expirationDate) ? 'inactive' : 'active' %></span
                       >
                     </td>

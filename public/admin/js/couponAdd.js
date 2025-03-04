@@ -59,7 +59,7 @@ function validateForm(event) {
     axios.post(url, data)
       .then(response => {
         showFlashMessage(response.data)
-        // window.location.href = '/admin/coupons'
+        window.location.href = '/admin/coupons'
       })
       .catch((err) => {
         console.error("error message : ", err)
