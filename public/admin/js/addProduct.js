@@ -53,11 +53,11 @@ function onformSubmit(e) {
 
 
 //Error message
-function showErrorMessage(elem, type) {
+function showErrorMessage(elem, type, message = undefined) {
   const text = type == "file" ? "Add" : type == "dropdown" ? "Select" : "Enter";
 
   const errText = document.createElement("p");
-  errText.textContent = `${text} ${elem.name}`;
+  errText.textContent = message || `${text} ${elem.name}`;
   errText.classList.add("err-text");
   elem.parentNode.classList.add("err-text-parent");
   elem.parentNode.appendChild(errText);
@@ -225,7 +225,10 @@ async function onformSubmit(e) {
   // Validate inputs
   inputFields.forEach((inp) => {
     
-    if (!inp.value && inp.type !== 'file' || inp.type == "number" && inp.value <= 0) {
+    if (inp.type == "number" && inp.value <= 0) {
+          showErrorMessage(inp, "text", "invalid amount");
+          hasError = true;
+      }else if (!inp.value && inp.type !== 'file' || inp.type == "number" && inp.value <= 0) {
           showErrorMessage(inp, "text");
           hasError = true;
       }
