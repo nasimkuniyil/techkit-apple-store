@@ -215,19 +215,22 @@ const walletPage = async (req, res, next) => {
   try {
     const uId = req.session.user;
     const userId = auth.getUserSessionData(uId);
-     // Assuming authentication middleware adds `user.id`
 
-    const wallet = await Wallet.findOne({ userId }).lean();
+    const currentPage = req.query.page || 1;
+    const limit = 5;
+    const skip = (currentPage-1) * limit;
 
-    if (!wallet) {
-      // something
-    }
+    const wallet = await Wallet.findOne({ userId }).skip(skip).limit(limit).lean();
 
+    const totalWallets = await Wallet.countDocuments();
+    const totalPage = Math.ceil(totalWallets/limit);
 
     res.render('user/pages/walletPage/wallet-page',{
       balance: wallet?.balance,
       transactions: wallet?.transactions?.reverse(),
-      userSession:req.session.user
+      userSession:req.session.user,
+      currentPage,
+      totalPage
     });
   } catch (err) {
     console.error("Error fetching wallet:", err);
