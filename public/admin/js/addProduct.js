@@ -273,7 +273,7 @@ async function onformSubmit(e) {
           method: 'POST',
           body: formData
       });
-      window.location.href = response.url
+      window.location.href = "/admin/products"
       
   } catch (error) {
       console.error('Error saving product:', error);
