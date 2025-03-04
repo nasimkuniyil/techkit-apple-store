@@ -99,7 +99,7 @@
                         >Edit</a
                         >
                         <% if(new Date() > new Date(offer.endDate)) {%>
-                          <p>Coupon expired</p>
+                          <p>Offer expired</p>
                           <%}else  if(offer.blocked){%>
                             <button class="action-btn delete-btn" id="<%- offer._id %>" onclick="unblockOffer('<%- offer._id %>')">Unblock</button>
                         <% } else { %>

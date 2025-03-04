@@ -148,5 +148,5 @@ function orderDetails(orders){
     document.getElementById('avg-order-value').textContent = (orders.reduce((acc,odr) => {
         acc += (odr.orderStatus == "Delivered") ? odr.totalAmount : 0;
         return acc;
-    }, 0)/orders.length).toFixed(2);
+    }, 0)/orders.length).toFixed(2) || 0;
 }
