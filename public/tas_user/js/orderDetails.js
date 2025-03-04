@@ -202,7 +202,7 @@ function closeCancelModal() {
 function confirmCancellation() {
   const reason = document.getElementById("cancellationReason").value;
   if (!reason) {
-    alert("Please select a cancellation reason");
+    console.log("Please select a cancellation reason");
     return;
   }
 
@@ -220,7 +220,7 @@ function confirmCancellation() {
       window.location.href = `/order/view?id=${id}`
     }
   })
-  .catch(err=>alert('somethin error occured.'))
+  .catch(err=>console.log('somethin error occured.'))
   closeCancelModal();
 }
 
@@ -269,10 +269,10 @@ function confirmCancellation() {
               window.location.reload()
             }
           })
-          .catch(err=>alert('somethin error occured.'))
+          .catch(err=>console.log('somethin error occured.'))
           returnModal.style.display = "none";
       } else {
-          alert("Please select a return reason.");
+          console.log("Please select a return reason.");
       }
   });
 

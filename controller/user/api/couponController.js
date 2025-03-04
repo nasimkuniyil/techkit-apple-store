@@ -11,8 +11,6 @@ const getCoupon = async(req, res, next)=>{
     const user = await User.findOne({_id:userId}).populate('coupon');
     const cart = await Cart.findOne({userId});
 
-
-
     // remove expired coupon
     if (new Date(user.coupon.expirationDate) < new Date()) {
       user.coupon = null;

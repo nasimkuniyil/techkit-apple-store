@@ -32,33 +32,6 @@ function handleCancel() {
   }
 }
 
-// Functions
-// function handleSubmit(e) {
-//   e.preventDefault();
-
-//   if (imageUploadBox + previewImg < 3) {
-//     return alert("Add 3 images");
-//   }
-
-//   inputFields.forEach((inp) => {
-//     if (!inp.value) {
-//       if (inp.type == "file") {
-//         showErrorMessage(inp, "file");
-//       } else {
-//         showErrorMessage(inp, "text");
-//       }
-//     }
-//   });
-
-//   formSelect.forEach((select) => {
-//     if (!select.value) showErrorMessage(select, "dropdown");
-//   });
-
-//   if (description.textLength == 0) {
-//     showErrorMessage(description, "file");
-//   }
-// }
-
 //Error message
 function showErrorMessage(elem, type) {
   const text = type == "file" ? "Add" : type == "dropdown" ? "Select" : "Enter";
@@ -142,7 +115,7 @@ function handleImageUpload(input, index) {
       };
       reader.readAsDataURL(file);
     } catch (error) {
-      alert(error.message);
+      console.log(error.message);
       input.value = "";
     }
   }
@@ -284,12 +257,12 @@ async function handleSubmit(e) {
       body: formData,
     });
     if(!response.ok){
-      alert('something went wrong')
+      console.log('something went wrong')
     }
     window.location.href = '/admin/products'
   } catch (error) {
     console.error("Error saving product:", error);
-    alert("Failed to save product. Please try again.");
+    console.log("Failed to save product. Please try again.");
   }
 }
 
@@ -305,7 +278,7 @@ function validateImageQty() {
   const previewImg = document.querySelectorAll(".preview-image").length;
 
   if (imguploadQty + previewImg < 3) {
-    alert("Add 3 images");
+    console.log("Add 3 images");
     return true
   }
 }

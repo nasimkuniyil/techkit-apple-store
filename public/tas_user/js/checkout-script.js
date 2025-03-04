@@ -80,7 +80,6 @@ async function fetchCartData() {
     }
   } catch (err) {
     console.error("Error fetching cart:", err);
-    alert("An error occurred while fetching the cart");
   }
 }
 
@@ -105,7 +104,6 @@ async function fetchCoupon() {
       });
   } catch (err) {
     console.error("Error fetching coupon:", err);
-    alert("An error occurred while fetching the coupon");
   }
 }
 

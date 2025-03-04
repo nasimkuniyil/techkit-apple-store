@@ -18,9 +18,9 @@ function validateForm(event) {
 
   // Validate discount value
   const value = parseFloat(document.getElementById("discountValue").value);
-  if (value < 1 || value > 90) {
+  if (value < 1 || value > 500) {
     document.getElementById("valueError").textContent =
-      "Percentage discount must be between 1 and 90";
+      "Discount price must be between 1 and 500";
     document.getElementById("valueError").style.display = "block";
     isValid = false;
   }

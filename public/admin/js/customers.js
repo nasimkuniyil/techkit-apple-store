@@ -29,7 +29,7 @@ function applyCoupon() {
       console.log('apply coupon error : ', err)
     })
   } else {
-      alert('Please select a coupon first.');
+      showFlashMessage({success:false,message:'Please select a coupon first.'});
   }
 }
 

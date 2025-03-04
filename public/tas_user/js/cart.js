@@ -62,7 +62,6 @@ async function updateCart(data) {
   } catch (err) {
     console.error("Error updating cart:", err.message);
     // showFlashMessage()
-    alert("An error occurred while updating the cart");
   }
 }
 
@@ -89,7 +88,6 @@ async function removeItemFromCart(productId) {
     window.location.href = "/cart";
   } catch (err) {
     console.error("Error removing item:", err);
-    alert("An error occurred while removing the item");
   }
 }
 
@@ -258,5 +256,5 @@ function removeCartItem(id){
       throw new Error('something went wrong');
     }
     window.location.href = '/admin/cart'
-  }).catch(err=> alert(err.message))
+  }).catch(err=> console.log(err.message))
 }

@@ -69,7 +69,7 @@ function addToCart(id) {
     })
     .catch((error) => {
       const text = `${error}`;
-      alert(text);
+      console.log(text);
     });
 }
 

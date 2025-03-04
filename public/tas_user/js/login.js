@@ -36,7 +36,6 @@ form.addEventListener("submit", (event) => {
     .catch((error) => {
       // Handle network errors
       console.error("Network error:", error);
-      alert("An unexpected error occurred. Please try again.");
     });
 });
 

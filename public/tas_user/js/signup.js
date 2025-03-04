@@ -58,7 +58,6 @@ document.getElementById("signupForm").addEventListener("submit", function (e) {
       if (data.success) {
         window.location.href = `/otp/${localStorage.email}`; // Navigate to OTP page
       } else {
-        // Handle error (for example, show an alert)
         console.log("Signup error:", data.message);
       }
     })

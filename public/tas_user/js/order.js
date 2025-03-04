@@ -30,7 +30,6 @@ async function fetchOrderData() {
   } catch (err) {
     console.error("Error updating cart:", err.message);
     // showFlashMessage()
-    alert("An error occurred while updating the cart");
   }
 }
 
@@ -150,21 +149,11 @@ function initializeSearch() {
 document.addEventListener("DOMContentLoaded", function () {
   initializeSearch();
 
-  // Load more button functionality
-  // document.getElementById("loadMoreBtn").addEventListener("click", function () {
-  //   // In a real application, this would load more orders from the server
-  //   alert("fetching order....");
-  // });
-
   // Filter functionality
   document
     .getElementById("orderFilter")
     .addEventListener("change", function (e) {
       // In a real application, this would filter orders based on the selected time period
-      alert(
-        "In a real application, this would filter orders based on the selected time period: " +
-          e.target.value
-      );
     });
 });
 

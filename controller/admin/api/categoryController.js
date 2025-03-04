@@ -3,14 +3,16 @@
 const Category = require("../../../models/categorySchema");
 const Product = require("../../../models/productSchema");
 
+const {MESSAGES, HTTP_STATUS} = require('../../../config/constants');
+
 // GET CATEGORIES LIST
 const categoryList = async (req, res, next) => {
   try {
     const categories = await Category.find({ deleted:fasle });
 
     if (categories.length == 0) {
-      const error = new Error('Categories not found');
-      error.status = 400;
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
@@ -23,18 +25,18 @@ const categoryList = async (req, res, next) => {
 // CATEGORY GET DATA
 const categoryDetails = async (req, res, next) => {
   try {
-    const id = req.query.id;
-    if (!id) {
-      const error = new Error('Category id not found');
-      error.status = 400;
+    const categoryId = req.query.id;
+    if (!categoryId) {
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
-    const category = await Category.findOne({ _id:id });
+    const category = await Category.findOne({ _id:categoryId });
 
     if (!category) {
-      const error = new Error('Category not found');
-      error.status = 400;
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
@@ -44,25 +46,25 @@ const categoryDetails = async (req, res, next) => {
   }
 };
 
-// CATEGORY UPDATE API
+// CATEGORY ADD API
 const categoryAdd = async (req, res, next) => {
   try {
     const { category_name, description } = req.body;
     const isAvailable = await Category.findOne({ category_name });
     if (isAvailable) {
-      const error = new Error('Category already exist');
-      error.status = 400;
+      const error = new Error(MESSAGES.ALREADY_EXISTS);
+      error.status = HTTP_STATUS.CONFLICT;
       return next(error);
     }
 
     if (!category_name) {
-      const error = new Error('Enter category name');
-      error.status = 400;
+      const error = new Error(MESSAGES.MISSING_FIELDS);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
     if (!description) {
-      const error = new Error('Add category description');
-      error.status = 400;
+      const error = new Error(MESSAGES.MISSING_FIELDS);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
@@ -78,8 +80,8 @@ const categoryAdd = async (req, res, next) => {
 // GET CATEGORY DETAILS FOR EDIT PAGE
 const getCategoryEditData = async (req, res, next) => {
   try {
-    const id = req.query.id;
-    const category = await Category.findOne({ _id: id });
+    const categoryId = req.query.id;
+    const category = await Category.findOne({ _id: categoryId });
     res.status(200).json(category);
   } catch (err) {
     next(err);
@@ -89,23 +91,22 @@ const getCategoryEditData = async (req, res, next) => {
 // CATEGORY UPDATE API
 const categoryEdit = async (req, res, next) => {
   try {
-    const id = req.query.id;
+    const categoryId = req.query.id;
     const { category_name, description } = req.body;
 
     if (!category_name) {
-      const error = new Error('Enter category name');
-      error.status = 400;
+      const error = new Error(MESSAGES.MISSING_FIELDS);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
     if (!description) {
-      const error = new Error('Add category description');
-      error.status = 400;
+      const error = new Error(MESSAGES.MISSING_FIELDS);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
-
     const category = await Category.findOneAndUpdate(
-      { _id:id },
+      { _id:categoryId },
       { $set: { category_name:category_name, description } }
     );
 
@@ -119,28 +120,21 @@ const categoryEdit = async (req, res, next) => {
 // CATEGORY DELETE API
 const categoryDelete = async (req, res, next) => {
   try {
-    const id = req.query.id;
-    const updatedData = await Category.findOneAndUpdate({ _id: id },{ $set: { deleted: "true" } });
+    const categoryId = req.query.id;
+    const updatedData = await Category.findOneAndUpdate({ _id: categoryId },{ $set: { deleted: true } });
 
     // remove prods quantity < 5 && price > 1000
 
     if (!updatedData) {
-      const error = new Error('Category does not exist');
-      error.status = 404;
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
-    const prods = await Product.find({category:id});
-
-    prods.forEach(item =>{
-      if(item.quantity < 5 && item.price > 1000){
-        item.deleted = true;
-      }
-    });
-
-    await prods.save();
-
-    console.log('category prods : ', prods);
+    await Product.updateMany(
+      { category: categoryId, quantity: { $lt: 5 }, price: { $gt: 1000 } },
+      { $set: { deleted: true } }
+    );
 
     res.status(200).json({success:true, message:'Category has been deleted'})
 
@@ -152,21 +146,23 @@ const categoryDelete = async (req, res, next) => {
 // CATEGORY RESTORE API
 const categoryRestore = async (req, res, next) => {
   try {
-    const id = req.query.id;
+    const categoryId = req.query.id;
 
     // Check if id is provided
-    if (!id) {
-      const error = new Error("Category id not found");
-      error.status = 400;
+    if (!categoryId) {
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
 
-    const updatedData = await Category.updateOne({ _id: id },{ $set: { deleted: "false" } });
+    const updatedData = await Category.updateOne({ _id: categoryId },{ $set: { deleted: false } });
+
     if (!updatedData) {
-      const error = new Error('Category does not exist');
-      error.status = 404;
+      const error = new Error(MESSAGES.NOT_FOUND);
+      error.status = HTTP_STATUS.NOT_FOUND;
       return next(error);
     }
+    
     res.status(200).json({success:true, message:' Category has been restored'})
   } catch (err) {
     next(err);

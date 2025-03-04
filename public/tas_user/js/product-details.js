@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch((error) => {
         const text = `${error}`;
-        alert(text);
+        console.log(text);
       });
   }
 
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const reviewText = event.target.querySelector("textarea").value;
 
     if (userRating === 0) {
-      alert("Please select a rating");
+      console.log("Please select a rating");
       return;
     }
 

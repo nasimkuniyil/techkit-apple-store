@@ -33,7 +33,6 @@ adminRouter.delete("/product/delete",adminAuth.isAdmin, productController.delete
 adminRouter.get("/product/unblock",adminAuth.isAdmin, productController.productRestore);
 adminRouter.delete("/products/delete-permenent",adminAuth.isAdmin, productController.productPermenentDelete);
 
-
 //Category Management
 adminRouter.post("/category", adminAuth.isAdmin,  categoryController.categoryList);
 adminRouter.post("/category/data/:id", adminAuth.isAdmin,  categoryController.categoryDetails);
@@ -49,7 +48,6 @@ adminRouter.put("/color/edit", adminAuth.isAdmin,  colorController.colorEdit);
 adminRouter.delete("/color/delete", adminAuth.isAdmin,  colorController.colorDelete);
 adminRouter.get("/color/unblock", adminAuth.isAdmin,  colorController.colorRestore);
 adminRouter.delete("/color/delete-permenent", adminAuth.isAdmin, colorController.colorPermenentDelete);
-// done first step (above)
 
 //Orders Management
 adminRouter.get("/orders",adminAuth.isAdmin,  orderController.ordersData);

@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalImages = existingImages + newImages;
 
     if (totalImages < 1) {
-      alert("At least one image is required");
+      console.log("At least one image is required");
       return false;
     }
 
@@ -228,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((err) => console.log(" product add fetch error : ", err));
     } catch (err) {
       console.error("Product update error:", err);
-      alert("Failed to update product. Please try again.");
     }
   });
 

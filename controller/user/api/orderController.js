@@ -152,7 +152,7 @@ const orderAdd = async (req, res, next) => {
 
     const user = await User.findOne({_id:userId}).populate('coupon');
 
-    const couponDiscountPrice = (user.coupon?.discountValue)?totalAmount * (user.coupon.discountValue/100) : 0;
+    // const couponDiscountPrice = (user.coupon?.discountValue)?totalAmount * (user.coupon.discountValue/100) : 0;
 
     const orderData = {
       userId,
@@ -160,7 +160,7 @@ const orderAdd = async (req, res, next) => {
       products:prodDetails, 
       addressInfo: addressId,
       paymentInfo,
-      totalAmount : totalAmount - couponDiscountPrice, 
+      totalAmount : totalAmount - user.coupon?.discountValue || 0, 
     }
 
     if(paymentInfo == 'onlinePayment'){

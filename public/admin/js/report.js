@@ -167,10 +167,6 @@ document.querySelector('.time-select').addEventListener('change', function(e) {
     applyBtn.addEventListener('click',()=>fetchReportData(Url))
     applyBtn.textContent = 'Apply'
     customDateDiv.appendChild(applyBtn);
-    
-    // if(!startDate || !endDate){
-    //   alert('select date')
-    // }
 
 });
 

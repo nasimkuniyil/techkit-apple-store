@@ -136,7 +136,6 @@ function handleImageUpload(input, index) {
             };
             reader.readAsDataURL(file);
         } catch (error) {
-            alert(error.message);
             input.value = '';
         }
     }
@@ -225,7 +224,8 @@ async function onformSubmit(e) {
 
   // Validate inputs
   inputFields.forEach((inp) => {
-      if (!inp.value && inp.type !== 'file') {
+    
+    if (!inp.value && inp.type !== 'file' || inp.type == number && inp.value <= 0) {
           showErrorMessage(inp, "text");
           hasError = true;
       }
@@ -241,13 +241,12 @@ async function onformSubmit(e) {
   if (description.textLength == 0) {
       showErrorMessage(description, "text");
       hasError = true;
-  }
-
-  // Check if all images are uploaded and cropped
-  if (Object.keys(croppedImages).length < 3) {
-      alert('Please upload and crop all three images');
-      hasError = true;
-  }
+    }
+    
+    // Check if all images are uploaded and cropped
+    if (Object.keys(croppedImages).length < 3) {
+        hasError = true;
+    }
 
   if (hasError) return;
 
@@ -275,6 +274,5 @@ async function onformSubmit(e) {
       
   } catch (error) {
       console.error('Error saving product:', error);
-      alert('Failed to save product. Please try again.');
   }
 }

@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     if (images.length < 3) {
-      alert("Select minimum 3 images");
+      console.log("Select minimum 3 images");
       return false;
     }
 
