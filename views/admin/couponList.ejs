@@ -87,7 +87,7 @@
                     <td>
                       <span
                         class="status-badge <%= coupon.blocked ?'status-inactive ':'status-active' %>"
-                        ><%= coupon.blocked ? 'inactive' : 'active' %></span
+                        ><%= coupon.blocked || coupon.usageLimit <= 0 || new Date() > new Date(coupon.expirationDate) ? 'inactive' : 'active' %></span
                       >
                     </td>
                     <td>

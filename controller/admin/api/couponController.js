@@ -45,8 +45,8 @@ const couponAdd = async (req, res, next) => {
     }
 
     // Validate discount value if percentage
-    if (discountValue > 90) {
-      const error = new Error("Max discount is 90%");
+    if (discountValue > 500) {
+      const error = new Error("Max discount is ₹500");
       error.status = 400;
       return next(error);
     }
