@@ -220,17 +220,31 @@ const walletPage = async (req, res, next) => {
     const limit = 5;
     const skip = (currentPage-1) * limit;
 
-    const wallet = await Wallet.findOne({ userId }).skip(skip).limit(limit).lean();
+    const wallet = await Wallet.findOne({ userId }).lean();
 
-    const totalWallets = await Wallet.countDocuments();
-    const totalPage = Math.ceil(totalWallets/limit);
+    if (!wallet) {
+      return res.render('user/pages/walletPage/wallet-page', {
+        currentPage,
+        totalPage: 0,
+        balance: 0,
+        transactions: [],
+        userSession: req.session.user,
+      });
+    }
+
+    const totalTransactions = wallet.transactions.length;
+    const totalPage = Math.ceil(totalTransactions / limit);
+
+    const paginatedTransactions = wallet.transactions
+      .slice(skip, skip + limit)
+      .reverse(); 
 
     res.render('user/pages/walletPage/wallet-page',{
-      balance: wallet?.balance,
-      transactions: wallet?.transactions?.reverse(),
-      userSession:req.session.user,
       currentPage,
-      totalPage
+      totalPage,
+      balance: wallet?.balance,
+      transactions: paginatedTransactions,
+      userSession:req.session.user,
     });
   } catch (err) {
     console.error("Error fetching wallet:", err);
