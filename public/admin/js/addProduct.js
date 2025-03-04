@@ -225,7 +225,7 @@ async function onformSubmit(e) {
   // Validate inputs
   inputFields.forEach((inp) => {
     
-    if (!inp.value && inp.type !== 'file' || inp.type == number && inp.value <= 0) {
+    if (!inp.value && inp.type !== 'file' || inp.type == "number" && inp.value <= 0) {
           showErrorMessage(inp, "text");
           hasError = true;
       }
