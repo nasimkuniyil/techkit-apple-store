@@ -24,9 +24,9 @@ router.get("/auth/google/callback",passport.authenticate("google", { failureRedi
 router.get('/forgot-password', userPageController.forgotPasswordPage);
 
 // OTHER PAGES
-router.get('/',visitorCount, userPageController.homePage);
-router.get("/shop", visitorCount, userPageController.shopPage);
-router.get("/product/view",visitorCount, userPageController.productPage);
+router.get('/', userPageController.homePage);
+router.get("/shop", userPageController.shopPage);
+router.get("/product/view", userPageController.productPage);
 router.get("/cart", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, userPageController.cartPage);
 router.get('/checkout', authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, checkoutRedirect, userPageController.checkoutPage);
 router.get('/orders',authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, userPageController.ordersPage);
