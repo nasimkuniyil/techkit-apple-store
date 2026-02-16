@@ -40,8 +40,8 @@ router.put("/edit-address", authMiddlewares.isAuthenticated, authMiddlewares.isB
 router.delete("/remove-address", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, addressController.addressDelete);
 
 // SHOP ROUTES
-router.get('/get-all-products', visitorCount, productController.getAllProducts);
-router.get('/product/view', visitorCount, productController.productDetails);
+router.get('/get-all-products', productController.getAllProducts);
+router.get('/product/view', productController.productDetails);
 
 // CART ROUTES
 router.post("/add-cart", authMiddlewares.isAuthenticated, authMiddlewares.isBlocked, cartController.cartAdd);
